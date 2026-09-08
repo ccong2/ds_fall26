@@ -1,0 +1,18 @@
+---
+title: "Lecture Overview"
+---
+
+Welcome to the lectures section. Click below to access individual sessions.
+
+-   Lecture 1: Course Overview
+-   Lecture 2: R Programming and Data Manipulation
+-   Lecture 3: Data Transformation and Visualization I
+-   Lecture 4: Data Transformation and Visualization II
+-   Lecture 5: Spatial analysis with R
+-   Lecture 6: Working with Census Data
+-   Lecture 7: Interactive Map and Dashboard
+-   Lecture 8: Web-based storytelling
+-   Lecture 9: Machine Learning: Concepts & Workflow
+-   Lecture 10: Geospatial ML and Hyperparameter Tuning
+-   Lecture 11: Classification Models, Algorithmic Fairness
+-   Lecture 12: Overview of Neural Networks

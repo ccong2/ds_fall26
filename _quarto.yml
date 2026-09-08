@@ -1,0 +1,34 @@
+project:
+  type: website
+  output-dir: docs
+  render: 
+    - "*.qmd"
+    
+execute: 
+  freeze: auto
+
+website:
+  title: "Applied Data Science for Cities"
+  navbar:
+    left:
+      - text: Home
+        href: index.qmd
+      - text: Labs
+        href: labs/index.qmd
+      # - text: Resource
+      #   href: resource.qmd
+    search: true
+  favicon: favicon.png
+  page-footer:
+    right: "Made with R and [Quarto](https://quarto.org/)"
+
+format:
+  html:
+    theme:
+      light: [flatly]
+    css: 
+      - styles.css
+    toc: true
+
+editor: visual
+

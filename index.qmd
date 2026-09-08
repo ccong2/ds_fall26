@@ -1,0 +1,59 @@
+---
+title: "Welcome to the 11.118/218"
+format: html
+---
+
+::: page-container
+Urban science draws on statistics, visualization, and spatial analysis techniques to gain deeper insights into cities and actively contribute to their development.
+
+In this course, we’ll dive into the dynamic world of urban science by learning how to tell stories about cities and neighborhoods, covering a range of topics including demographic analysis, environment and transportation, and using R as our primary quantitative analysis and interactive visualization tool.
+:::
+
+## Schedule
+
+```{r}
+#| echo: false
+library(knitr)
+library(kableExtra)
+
+schedule <- data.frame(
+  Week = seq(1, 14, 1),
+  Topic = c(
+    "Contextualize Data Science for Cities",
+    "Statistical Descriptions of Data",
+    "Visual Descriptions of Data",
+    "Sourcing and Working with Spatial Data",
+    "Census Data",
+    "Interactive Mapping and Data Visualization",
+    "Web Apps; Midterm Exam",
+    "Statistical Modeling and Interpretation",
+    "Predictive Modeling and Supervised Learning",
+    "Data Challenges, Missing Data Imputation",
+    "Classification Models",
+    "Unsupervised Learning and Clustering",
+    "AI in Planning; Project Work",
+    "Presentation"
+  )
+)
+
+schedule |>
+  kable(
+    format = "html",
+    col.names = c("Week", "Topic"),
+    align = c("c", "c")
+  ) |>
+  kable_styling(
+    bootstrap_options = c("bordered", "striped", "hover", "condensed"),
+    full_width = FALSE
+  ) |>
+  column_spec(1, width = "2em") |>
+  column_spec(2, width = "20em") |>
+  pack_rows(
+    "Module 1: Descriptive Data Science", 1, 7,
+    label_row_css = "background-color: #f2f2f2; text-align: left;"
+  ) |>
+  pack_rows(
+    "Module 2: Predictive and Statistical Modeling", 8, 14,
+    label_row_css = "background-color: #f2f2f2; text-align: left;"
+  )
+```

@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2026-09-07">
+
+<title>Get started with  – Applied Data Science for Cities</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../favicon.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Applied Data Science for Cities</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../labs/index.html"> 
+<span class="menu-text">Labs</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#work-with-quarto-documents" id="toc-work-with-quarto-documents" class="nav-link active" data-scroll-target="#work-with-quarto-documents">Work with Quarto Documents</a>
+  <ul class="collapse">
+  <li><a href="#set-up-a-new-project" id="toc-set-up-a-new-project" class="nav-link" data-scroll-target="#set-up-a-new-project">Set up a New Project</a></li>
+  <li><a href="#practice-formatting-text-with-quarto" id="toc-practice-formatting-text-with-quarto" class="nav-link" data-scroll-target="#practice-formatting-text-with-quarto">Practice formatting text with Quarto</a>
+  <ul class="collapse">
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#download-and-read-data" id="toc-download-and-read-data" class="nav-link" data-scroll-target="#download-and-read-data">Download and Read Data</a>
+  <ul class="collapse">
+  <li><a href="#prepare-packages" id="toc-prepare-packages" class="nav-link" data-scroll-target="#prepare-packages">Prepare packages</a></li>
+  </ul></li>
+  <li><a href="#make-this-dataset-small" id="toc-make-this-dataset-small" class="nav-link" data-scroll-target="#make-this-dataset-small">Make This Dataset “Small”</a></li>
+  <li><a href="#key-dplyr-functions" id="toc-key-dplyr-functions" class="nav-link" data-scroll-target="#key-dplyr-functions">Key <code>dplyr</code> functions</a>
+  <ul class="collapse">
+  <li><a href="#select-selects-a-subset-of-columns." id="toc-select-selects-a-subset-of-columns." class="nav-link" data-scroll-target="#select-selects-a-subset-of-columns."><code>Select</code>: selects a subset of <strong>columns.</strong></a></li>
+  <li><a href="#filter-select-a-subset-of-rows" id="toc-filter-select-a-subset-of-rows" class="nav-link" data-scroll-target="#filter-select-a-subset-of-rows"><code>filter</code>: Select a subset of <strong>rows</strong></a></li>
+  <li><a href="#summarise-create-a-summary-of-your-data" id="toc-summarise-create-a-summary-of-your-data" class="nav-link" data-scroll-target="#summarise-create-a-summary-of-your-data"><code>Summarise</code>: Create a summary of your data</a></li>
+  <li><a href="#exercise-1" id="toc-exercise-1" class="nav-link" data-scroll-target="#exercise-1">Exercise</a></li>
+  </ul></li>
+  <li><a href="#finalize-your-report" id="toc-finalize-your-report" class="nav-link" data-scroll-target="#finalize-your-report">Finalize Your Report</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Get started with <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+<p class="subtitle lead"><span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span></p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 7, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>In this lab, we will get started with <strong>R</strong>, learn how to use <strong>Quarto</strong>, and generate a report. We will walk through a workflow that you will use repeatedly throughout the course.</p>
+<section id="work-with-quarto-documents" class="level1">
+<h1>Work with Quarto Documents</h1>
+<section id="set-up-a-new-project" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-a-new-project">Set up a New Project</h2>
+<p>We will first develop a habit of creating a <strong>R project</strong> for each lab you do. This gives your work an isolated folder where you should keep everything related to that project in it.</p>
+<p>Let’s launch RStudio, then click <strong>File - New Project…</strong> A dialog box will open up. Select <strong>New Directory</strong>, then <strong>New Project.</strong> Here, you can create a new folder to save everything related to this project. For example, I chose my D:/Fall26 folder. and created a new folder there called Lab 1:</p>
+<p><img src="../img/lab1_project.PNG" class="img-fluid" width="446"></p>
+<p>Click the button “Create Project”. R will take a second to refresh.</p>
+<p>Then you will see in your <strong>Files</strong> tab that you have been directed to your current working directory: D:/Fall26/Lab 1. You will also see a <strong>.Rproj</strong> file in that folder.</p>
+<p><img src="../img/lab1_files_tab.PNG" class="img-fluid" width="450"></p>
+<p>The .Rproj file serves as a reference point that R uses to locate all files associated with the project. <strong>Next time you want to continue on this lab, <em>double-clicking the .Rproj file, you will be taken directly to the project’s home directory.</em></strong></p>
+</section>
+<section id="practice-formatting-text-with-quarto" class="level2">
+<h2 class="anchored" data-anchor-id="practice-formatting-text-with-quarto">Practice formatting text with Quarto</h2>
+<p>Now go to <strong>File - New File - Quarto Document</strong> to create a new Quarto document. The prompt shown below will appear. Type in a document title (e.g.&nbsp;Lab 1) and your name. Keep the radio button for HTML selected.</p>
+<p><img src="../img/lab1_quarto.PNG" class="img-fluid" width="447"></p>
+<p>You will then see a template file. At the very top you will see the <a href="https://en.wikipedia.org/wiki/YAML">YAML</a> (or “Yet Another Markdown Language”) header which begins and ends with three dashes <code>---</code>. The YAML header determines how your document will be “rendered” to your desired output format. Now it specifies the title, author, output format and text editor.</p>
+<p>To get an idea of how everything works, let’s <strong>click the</strong> <strong>“Render”</strong> <strong>button</strong> on top of your toolbar.</p>
+<p>When prompted, give this file a name, it should be <strong>saved in the folder</strong> where your “.Rproj” file is, as a .qmd file.</p>
+<p>You will now see a formatted document in a web browser. <strong>Switch between your code and the document back and forth</strong> to see where each part of the code is placed in the rendered HTML file.</p>
+<p>There can be other options specified in the YAML, particularly if you are rendering to a format other than HTML (such as pdf, or Word, see <a href="https://quarto.org/docs/output-formats/all-formats.html">all formats</a>).</p>
+<p><strong>Visual and Source</strong></p>
+<p>The Quarto visual interface looks pretty much like a Word document. There is a <strong>toolbar</strong> that allows you to edit text formats, create a bullet list, insert a link or an image, insert a code block, etc.</p>
+<p>For those of you who have worked with R Markdown before, you can switch to Markdown editing mode by toggling from “Visual” to “Source” on the very left of the toolbar. Just for everyone to know, texts in “Source” are explicitly formatted using <a href="https://quarto.org/docs/authoring/markdown-basics.html">Markdown syntax</a>. For example: # as a header element. ** for bold text, ` for code blocks, etc.</p>
+<p>We will stick with working in “Visual” mode in our course.</p>
+<section id="exercise" class="level3">
+<h3 class="anchored" data-anchor-id="exercise">Exercise</h3>
+<p>Now let’s delete everything below the YAML header in your file, so that we will start creating our own formatted report.</p>
+<p>In 2014, the City of Cambridge passed a local ordinance on building energy use disclosure. Spend a few moments reviewing <a href="https://www.cambridgema.gov/CDD/zoninganddevelopment/sustainabledevelopment/buildingenergydisclosureordinance">this website</a> to become familiar with the ordinance (in general). Then, <strong>add 1-2 sentences below your YAML section</strong> that explain the following:</p>
+<ul>
+<li><strong>What is BEUDO, and why did Cambridge create it?</strong><br>
+This is basic purpose + context of your analysis</li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>Which buildings are required to report their energy and water use?</strong><br>
+Identify the scope of the dataset.</li>
+</ul>
+<!-- -->
+<ul>
+<li><strong>What information does a building report under BEUDO?</strong><br>
+Anticipate key variables in your data.</li>
+</ul>
+<p>You can try using bold, italics, bullet points, etc. in your text to get familiar with this editing interface.</p>
+<p>When you finish, <strong>save your file and click Render again</strong>. You can immediately see your nicely formatted document in a web browser.</p>
+</section>
+</section>
+</section>
+<section id="download-and-read-data" class="level1">
+<h1>Download and Read Data</h1>
+<p>Quarto Document integrates both texts and code chunks. Code chunks are where the R code lives in a document. These are easy to spot as shaded blocks leading by <code>{r}</code>. (In the Source panel, they always have three backticks followed by <code>{r}</code>).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>{r}</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>1 + 1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In accordance with the ordinance, the City maintains BEUDO data for individual properties from 2015-2024. You can view this data on the&nbsp;<a href="https://data.cambridgema.gov/Energy-and-the-Environment/Cambridge-Building-Energy-and-Water-Use-Data-Discl/72g6-j7aq/">Cambridge Open Data Portal</a>.&nbsp;Take a few moments to explore the dataset by scrolling down the page and viewing the <strong>“What’s in the Dataset”</strong> sections in particular.</p>
+<p>Download this dataset in CSV format. We need to make sure we save it somewhere we can easily find it. This is where using an <strong>R Project</strong> becomes helpful. Let’s create a new <strong>“data” folder</strong> in your project folder and save your table there. The file name is pretty long, to avoid typos, we can <strong>rename it to “energy.csv”</strong>.</p>
+<section id="prepare-packages" class="level2">
+<h2 class="anchored" data-anchor-id="prepare-packages">Prepare packages</h2>
+<p>Check if you have installed the <code>tidyverse</code> package: Click the <strong>Packages</strong> <strong>tab</strong> in your lower-right panel in RStudio. Type “tidyverse” in the search box. If it’s NOT shown in the list, go to your <strong>Console</strong> <strong>panel</strong> and run <code>install.packages("tidyverse")</code></p>
+<p>Insert a code chunk in your Quarto document by going to <strong>Code - Insert Chunk</strong>. I usually use the shortcut key RStudio provides (Alt+Ctrl/Cmd+I). Type the following texts here in the chunk, and make it look like the following:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>{r}</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>#| message: FALSE</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>#| warning: FALSE</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>library(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>All lines led by the symbol <code>#|</code> are <a href="https://quarto.org/docs/computations/execution-options.html">chuck options</a> (described <a href="https://quarto.org/docs/computations/execution-options.html">in detail here</a>). They are optional. If you remove these two lines, the code runs, but will display a lot of background information below your code chunk. (Feel free to try removing them and adding them back to see what they do). Here we decide to suppress all <code>warnings</code> and <code>messages</code> that might otherwise appear in the rendered HTML output.</p>
+<p>Run this code chunk to load <code>tidyverse</code> package. You can either click the green triangle on the top-right of this chunk, or use Ctrl/Cmd+Enter.</p>
+<p><em><strong>Note:</strong> Why I said running <code>install.packages("tidyverse")</code> in the <strong>console</strong> but <code>library(tidyverse)</code> in the <strong>code chunk</strong>? You only need to “install” a package once, so there is no need to keep it in the script and run it every time you render the document. However, you must “library” (i.e.: activate) the package each time to use its functions.</em></p>
+<p>Insert a new code chunk, write this line of code that imports your .csv file and assigns it to an object called energy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>energy <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/energy.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="make-this-dataset-small" class="level1">
+<h1>Make This Dataset “Small”</h1>
+<p>Data downloaded from the web is often <strong>large, comprehensive, and not cleanly formatted</strong>. We need to spend some to read it, and identify the information that is actually useful for our analysis. Suppose that today, we only want to find out, for all MIT buildings, through all these recording years, what is the average annual GHG emission.</p>
+</section>
+<section id="key-dplyr-functions" class="level1">
+<h1>Key <code>dplyr</code> functions</h1>
+<p><code>dplyr</code> is a package within <code>tidyverse</code>, specializing in data manipulation and transformation. It provides a set of functions that work with data frames in a clean and consistent way. Explore more of <code>dplyr</code> functionality described <a href="https://dplyr.tidyverse.org/">here</a>. We are going to walk through some essential “verbs” of <code>dplyr</code>.</p>
+<section id="select-selects-a-subset-of-columns." class="level2">
+<h2 class="anchored" data-anchor-id="select-selects-a-subset-of-columns."><code>Select</code>: selects a subset of <strong>columns.</strong></h2>
+<p>In the <code>energy</code> dataset, we probably don’t need all of the 67 columns. So we can make it a smaller dataset by specifying a few columns to keep.</p>
+<p><code>dataset |&gt; select(Column1, Column2)</code></p>
+<p>Insert a new code chunk in your document to select a few variables. You don’t need the copy and paste the code below, let’s type the variable names ourselves to see what shows up along the way. You can type the pipe <code>|&gt;</code> operator using Shift+Ctrl/Cmd+M.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>energy |&gt;</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  select(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    `Data Year`,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    Owner,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    `Primary Property Type - Self Selected`,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    `Total GHG Emissions (Metric Tons CO2e)`</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Some of the column names are surrounded by backticks (`), that’s because they include special characters or spaces (such as spaces and () ). The use of backticks is to preserve these unique names. If you just keep typing the column names, dplyr will populate the correct names for you.</p>
+<p>However, it would be helpful to make the columns names clean and easy to read. What we usually do is to <code>rename</code> the columns using snake-case naming conventions while we are making selections.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>energy <span class="ot">&lt;-</span> energy <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data_year =</span> <span class="st">`</span><span class="at">Data Year</span><span class="st">`</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">owner =</span> Owner,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">property_type =</span> <span class="st">`</span><span class="at">Primary Property Type - Self Selected</span><span class="st">`</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ghg_emission =</span> <span class="st">`</span><span class="at">Total GHG Emissions (Metric Tons CO2e)</span><span class="st">`</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Click the <code>energy</code> variable in your Environment panel now to browse this smaller dataset that only include 9 variables, with clean column names.</p>
+<p><em>Note: <code>&lt;-</code> and <code>|&gt;</code> look quite similar but it’s important to distinguish them. <code>|&gt;</code> works data through functions but doesn’t store the result unless assigned. <code>&lt;-</code> assigns (stores) the result to a variable.</em></p>
+</section>
+<section id="filter-select-a-subset-of-rows" class="level2">
+<h2 class="anchored" data-anchor-id="filter-select-a-subset-of-rows"><code>filter</code>: Select a subset of <strong>rows</strong></h2>
+<p>Now let’s create a new dataset that only contains energy use records from MIT buildings.</p>
+<p><code>dataset |&gt; filter(&lt;condition&gt;)</code></p>
+<p>Take a look at how we achieve this using the following code:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>{r}</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>energy |&gt; </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  filter(owner == "MASSACHUSETTS INSTITUTE OF TECHNOLOGY")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Results will be showing in your console. You’ll notice that some entries are missing records for total GHG emissions, which appear as NA under the “ghg_emission” and “ghg_intensity” column. If we want to simplify the dataset by keeping only the rows with valid GHG emission records, we can apply that as an additional <code>filter</code> condition too.</p>
+<p>Proceed to insert a new code chunk in your document like the one below. Now we are filtering with two conditions: MIT buildings, and have emission data. We are assigning the result to a new variable “mit_energy”.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mit_energy <span class="ot">&lt;-</span> energy <span class="sc">|&gt;</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(owner <span class="sc">==</span> <span class="st">"MASSACHUSETTS INSTITUTE OF TECHNOLOGY"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(ghg_emission))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>is.na()</code> is a function commonly used to check whether each value in a column is missing (NA). The <code>!</code> is a logical negation operator, so <code>!is.na()</code> checks for values that are not missing. It returns TRUE for non-missing values and FALSE for missing values.</p>
+</section>
+<section id="summarise-create-a-summary-of-your-data" class="level2">
+<h2 class="anchored" data-anchor-id="summarise-create-a-summary-of-your-data"><code>Summarise</code>: Create a summary of your data</h2>
+<p>Go ahead and run the following code and observe how we got the result:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>mit_energy <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_emission =</span> <span class="fu">mean</span>(ghg_emission))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 1
+  avg_emission
+         &lt;dbl&gt;
+1        1409.</code></pre>
+</div>
+</div>
+<p>It calculates the average of the column “ghg_emission” of the entire dataset, and names the result “avg_emission”. The result says, of all MIT buildings, through all years, the average annual GHG emission is ~1409 MTCO2e.</p>
+<p><code>summarise</code> calculates summary statistics, like a total, mean, or count, across all values in the dataset. However, when used along with <code>group_by()</code>, it calculates each group separately, collapsing each group into its own summary row.</p>
+<p>For instance, below we calculate the average GHG emissions by <code>data_year</code>, which is the year when the energy record was taken.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mit_energy <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="at">year =</span> data_year) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">avg_emission =</span> <span class="fu">mean</span>(ghg_emission))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+    year avg_emission
+   &lt;dbl&gt;        &lt;dbl&gt;
+ 1  2015        1528.
+ 2  2016        1417.
+ 3  2017        1477.
+ 4  2018        1444.
+ 5  2019        1385.
+ 6  2020        1316.
+ 7  2021        1415.
+ 8  2022        1423.
+ 9  2023        1370.
+10  2024        1323.</code></pre>
+</div>
+</div>
+<p>This says, in 2015, the average annual GHG emission was ~1528 MTCO2e., and in 2016, it was ~1417 MTCO2e., so on and so forth.</p>
+</section>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise</h2>
+<p><strong>Insert a few new code chunks below this one to document your code and show your results.</strong>&nbsp;</p>
+<ol type="1">
+<li><p>From the <code>mit_energy</code> dataset, compare the GHG emissions by property type (Hint: which column has this information?), and generate a table that shows the following results:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 2
+  property_type         avg_emission
+  &lt;chr&gt;                        &lt;dbl&gt;
+1 Laboratory                  3006. 
+2 College/University          1596. 
+3 Hotel                       1497. 
+4 Office                       686. 
+5 Parking                      173. 
+6 Multifamily Housing          155. 
+7 Self-Storage Facility         20.6</code></pre>
+</div>
+</div></li>
+</ol>
+<p><strong>You can create this table mostly by modifying our example code,</strong> however, the table is arranged in descending order based on the “avg_emission” column, how to do that? (<a href="https://dplyr.tidyverse.org/reference/arrange.html">Hint</a>)</p>
+<p>We are already asking questions and finding insights from the dataset. If the results in this table look interesting/surprising/expected to you, write a few sentences describing what you see from the analysis.</p>
+<p><br><br></p>
+<p>Now <strong>Save</strong>, <strong>Render</strong> your document again. You have now created your first lab report using Quarto!</p>
+<pre><code>------</code></pre>
+</section>
+</section>
+<section id="finalize-your-report" class="level1">
+<h1>Finalize Your Report</h1>
+<p>To finish it up, add one more line to your YAML header: <code>embed-resources: true</code></p>
+<p><img src="..\img/lab3-html.PNG" class="img-fluid" width="533"></p>
+<p>This ensures all your pictures and maps will be correctly displayed. This will become very important when we start to creating visuals.</p>
+<p>Once you are ready, render the Quarto document again. You will find <strong>an “.html” file in your project folder</strong>. This is your lab report this week.</p>
+<p>You do not need to submit a lab report for this week. However, a lot of the content covered in this lab will be repeatedly used in future labs, such as creating a project, installing and loading packages, and setting up code chunks. So, talk to the teaching team if you have any questions, and come back to this whenever you need.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p>Made with R and <a href="https://quarto.org/">Quarto</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

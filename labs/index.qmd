@@ -1,0 +1,16 @@
+---
+title: "Lab Overview"
+---
+
+Here you’ll find links and resources for each lab session:
+
+-   [Lab 0: Getting Started with R and Quarto](lab0.qmd)
+-   [Lab 1: Making Exploratory Graphs: Opportunity Zones](lab1.qmd)
+-   [Lab 2: Enhancing Visualizations: Airbnb Data](lab2.qmd)
+-   [Lab 3: Spatial Analysis: Neighborhood Built Environment](lab3.qmd)
+-   [Lab 4: Census Data: Describe Population](lab4.qmd)
+-   [Lab 5: Online Map and Dashboard](lab5.qmd)
+-   [Lab 6: Shiny Apps](lab6.qmd)
+-   [Lab 7: Build Machine Learning Models: Predict Housing Prices](lab7.qmd)
+-   [Lab 8: Tree-Based Models and Hyperparameter Tuning](lab8.qmd)
+-   [Lab 9: Fairness-Aware ML Models: Predict Recidivism](lab9.qmd)
