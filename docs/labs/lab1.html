@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-09-07">
+<meta name="dcterms.date" content="2026-09-14">
 
 <title>Exploratory Data Analysis with  – Applied Data Science for Cities</title>
 <style>
@@ -149,27 +149,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#our-study-topic-today" id="toc-our-study-topic-today" class="nav-link" data-scroll-target="#our-study-topic-today">Our study topic today</a>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#what-we-will-do-today" id="toc-what-we-will-do-today" class="nav-link" data-scroll-target="#what-we-will-do-today">What We Will Do Today</a></li>
+  <li><a href="#project-management-data-and-packages" id="toc-project-management-data-and-packages" class="nav-link" data-scroll-target="#project-management-data-and-packages">Project Management, Data and Packages</a></li>
+  <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read Data</a></li>
+  <li><a href="#explore-the-table" id="toc-explore-the-table" class="nav-link" data-scroll-target="#explore-the-table">Explore the Table</a>
   <ul class="collapse">
-  <li><a href="#project-management-data-and-packages" id="toc-project-management-data-and-packages" class="nav-link" data-scroll-target="#project-management-data-and-packages">Project management, data and packages</a></li>
+  <li><a href="#modify-values" id="toc-modify-values" class="nav-link" data-scroll-target="#modify-values">Modify Values</a></li>
+  <li><a href="#check-completeness" id="toc-check-completeness" class="nav-link" data-scroll-target="#check-completeness">Check Completeness</a></li>
+  <li><a href="#quick-data-checks" id="toc-quick-data-checks" class="nav-link" data-scroll-target="#quick-data-checks">Quick Data Checks</a></li>
   </ul></li>
-  <li><a href="#read-and-examine-our-data" id="toc-read-and-examine-our-data" class="nav-link" data-scroll-target="#read-and-examine-our-data">Read and examine our data</a>
-  <ul class="collapse">
-  <li><a href="#data-cleaning" id="toc-data-cleaning" class="nav-link" data-scroll-target="#data-cleaning">Data cleaning</a></li>
-  <li><a href="#create-summary-tables" id="toc-create-summary-tables" class="nav-link" data-scroll-target="#create-summary-tables">Create summary tables</a></li>
-  </ul></li>
-  <li><a href="#generate-diagnostic-graphs" id="toc-generate-diagnostic-graphs" class="nav-link" data-scroll-target="#generate-diagnostic-graphs">Generate Diagnostic Graphs</a>
+  <li><a href="#make-summary-tables" id="toc-make-summary-tables" class="nav-link" data-scroll-target="#make-summary-tables">Make Summary Tables</a>
   <ul class="collapse">
   <li><a href="#distribution-of-one-variable" id="toc-distribution-of-one-variable" class="nav-link" data-scroll-target="#distribution-of-one-variable">Distribution of one variable</a>
   <ul class="collapse">
-  <li><a href="#boxplot" id="toc-boxplot" class="nav-link" data-scroll-target="#boxplot">Boxplot</a></li>
   <li><a href="#density-plot" id="toc-density-plot" class="nav-link" data-scroll-target="#density-plot">Density plot</a></li>
-  <li><a href="#combinations-of-basic-graphs-to-create-composite-views" id="toc-combinations-of-basic-graphs-to-create-composite-views" class="nav-link" data-scroll-target="#combinations-of-basic-graphs-to-create-composite-views">Combinations of basic graphs to create composite views</a></li>
+  <li><a href="#boxplot" id="toc-boxplot" class="nav-link" data-scroll-target="#boxplot">Boxplot</a></li>
+  <li><a href="#combine-basic-graphs-to-create-composite-views" id="toc-combine-basic-graphs-to-create-composite-views" class="nav-link" data-scroll-target="#combine-basic-graphs-to-create-composite-views">Combine basic graphs to create composite views</a></li>
   </ul></li>
   <li><a href="#relationship-between-two-variables" id="toc-relationship-between-two-variables" class="nav-link" data-scroll-target="#relationship-between-two-variables">Relationship between two variables</a>
   <ul class="collapse">
-  <li><a href="#scatter-plot" id="toc-scatter-plot" class="nav-link" data-scroll-target="#scatter-plot">Scatter Plot</a></li>
+  <li><a href="#scatter-plot" id="toc-scatter-plot" class="nav-link" data-scroll-target="#scatter-plot">Scatter plot</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a>
@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 7, 2026</p>
+      <p class="date">September 14, 2026</p>
     </div>
   </div>
   
@@ -211,44 +211,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="overview" class="level1">
-<h1>Overview</h1>
-<p>This week’s Lab Exercise focuses on the <a href="https://dplyr.tidyverse.org/index.html">dplyr</a> package and the <a href="https://ggplot2.tidyverse.org">ggplot2</a> package. We will practice how to create and interpret a variety of graphics.</p>
-<p>Our practice connects directly to the broader idea of Exploratory Data Analysis (EDA), a stage in the data science workflow that emphasizes getting to know the data before rushing to analyze it. EDA usually involves checking the quality of the data, then creating diagnostic plots to spot patterns, issues, or unusual values, so that we can make better choices about the next steps in our analysis.</p>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>The 2017 <a href="https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf">Tax Cuts and Jobs Act</a> created a federal incentive to encourage investment in low-income and undercapitalized communities. States were allowed to select specific census tracts as <a href="https://www.hud.gov/opportunity-zones">Opportunity Zones</a>, where investors could receive tax benefits on eligible investments.</p>
+<p>The motivation was: the US recovery after 2008 was extremely lopsided. A handful of metros captured most of the new jobs and business formation, while thousands of neighborhoods struggled to come back. The policy aims to steer private capital toward the places it had abandoned.</p>
+<p>The unit of designation is the <a href="https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_13">census tract</a>, a neighborhood-sized area of roughly 1,200-8,000 people. Selection of opportunity zones happened in two steps:</p>
+<ol type="1">
+<li><p><strong>Eligibility.</strong> A tract had to qualify as a “Low-Income Community”: a poverty rate of at least 20%, or a median household income no greater than 70% of the state median<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Some tracts also qualified simply by being adjacent to an eligible one.</p></li>
+<li><p><strong>Designation.</strong> Each state’s governor nominated tracts, capped at 25% of the state’s eligible tracts, and the Treasury Secretary certified them.</p></li>
+</ol>
+<p>In 2018 this produced 8,764 opportunity zones nationwide.</p>
+<p>The 2025 tax law made Opportunity Zones (OZ) permanent and reset the map. The original designations expire on December 31, 2028, and states are nominating a new round as we speak. New zones are expected to take effect January 1, 2027. Re-designation will happen every 10 years after that.</p>
+<p><a href="https://opportunityzones.com/map/">Check out OZ maps</a> | <a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf">Read about the new rules for OZ2.0 eligibility</a></p>
+<p><a href="https://opportunityzones.com/oz2-tracker/">Track the OZ2.0 nomination progress</a></p>
 </section>
-<section id="our-study-topic-today" class="level1">
-<h1>Our study topic today</h1>
-<p>In the 2017 <a href="https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf">Tax Cuts and Jobs Act</a>, a new federal incentive was introduced to encourage investment in low-income and undercapitalized communities. States were given the chance to select specific census tracts as Opportunity Zones, where investors could enjoy tax benefits for their eligible investments. Although, there’s been <a href="https://www.urban.org/policy-centers/metropolitan-housing-and-communities-policy-center/projects/opportunity-zones">a lot of curiosity</a> among practitioners and researchers regarding how effective the program is and whether the designations made by governors were successful.</p>
-<p>If you are interested in the locations of these Opportunity Zones, you can check out <a href="https://www.arcgis.com/apps/View/index.html?appid=77f3cad12b6c4bffb816332544f04542">this map</a>. The brown geometries reflected on the map are <a href="https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_13">census tracts</a>, which are statistical subdivisions of a county for collecting demographic and socioeconomic information about inhabitants. Find a place you are familiar with, and see which areas have been designated as Opportunity Zones.</p>
-<section id="project-management-data-and-packages" class="level2">
-<h2 class="anchored" data-anchor-id="project-management-data-and-packages">Project management, data and packages</h2>
+<section id="what-we-will-do-today" class="level1">
+<h1>What We Will Do Today</h1>
+<p>The main factors used to determine OZ eligibility are median household income and poverty rate, both drawn from Census data. In this exercise, we will take a look at these census economic variables across all tracts. The selection logic indicates a hierarchy: <strong>designated tracts, tracts that were eligible but not designated, and tracts that never entered the eligibility pool</strong>. It will be an empirical question to see how they look economically different from one another.</p>
+<p>This approach can be generalized to, for example, comparing parcels inside versus outside a floodplain, districts in and out of an historic redlining zone, schools above and below a funding cutoff, etc.</p>
+</section>
+<section id="project-management-data-and-packages" class="level1">
+<h1>Project Management, Data and Packages</h1>
 <p>I recommend creating a separate folder for each assignment. For today, open RStudio and navigate to <strong>File &gt; New Project…</strong> When the dialog box appears, choose <strong>New Directory</strong>, then <strong>New Project</strong>. Proceed to create a “Lab 1” folder as your working directory.</p>
-<p>You do not need to start a Quarto Document for now. Instead, you can either:</p>
-<ul>
-<li>Read through the tutorial, paying attention to the code and its output, or</li>
-<li>Open a plain R script to type, test, and run the code yourself.</li>
-</ul>
-<p><strong>When you get to the exercises at the end of the tutorial, you’ll be asked to start a Quarto document</strong>.</p>
-<p>Now navigate to Urban Institute’s website about <a href="https://www.urban.org/policy-centers/metropolitan-housing-and-communities-policy-center/projects/opportunity-zones">Opportunity Zones</a>, find the link <strong>“Download tract-level data on all Opportunity Zones”</strong>, and <strong>download this dataset</strong> to a “data” folder in your Lab 2 project folder. Rename the file if you need.</p>
-<p>To stay organized, we should load packages at the beginning of our script. These are the three packages we are going to use today. <em>You may want to run <code>install.packages()</code> on <code>readxl</code> and <code>DataExplorer</code> if it’s the first time you use them.</em></p>
+<p>While we wait to see what OZ 2.0 looks like, the 2018 data gives us plenty to work with. Urban Institute has been doing <a href="https://www.urban.org/tags/opportunity-zones">a series of research</a> on opportunity zones and have originally compiled nationwide tract-level OZ data. For today’s analysis, we will use data for all tracts in Massachusetts.</p>
+<p><a href="https://www.dropbox.com/scl/fi/botumduheu6vnk8gv5b95/oz_analysis.csv?rlkey=nsvrusbhqxqkeu5776g0d675p&amp;st=dlegqh6k&amp;dl=0">Data download link</a></p>
+<p>Download the data and save it to a “data” folder in your Lab 1 project folder.</p>
+<p>You do not need to start a Quarto Document right now. Instead, you can open a plain R script to type, test, and run the code as your read through the tutorial. When you get to the exercises at the end of the tutorial, you will be asked to start a Quarto document.</p>
+<p>To stay organized, let’s load packages at the beginning of our script. These are the two packages we are going to use today. <em>You may want to run <code>install.packages()</code> on <code>DataExplorer</code> if it’s the first time you use it.</em></p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DataExplorer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-<section id="read-and-examine-our-data" class="level1">
-<h1>Read and examine our data</h1>
-<p>The file we’ve downloaded is in the Microsoft Excel “.xlsx” format. But it’s not a problem at all. We can use <code>read_xlsx</code> from the <code>readxl</code> package to read these files.</p>
-<p><code>data &lt;- read_xlsx("data/urbaninstitute_tractlevelozanalysis_update01142021.xlsx")</code></p>
-<p>This data lists <strong>census tracts</strong> nationwide that are eligible to be designated as Opportunity Zones. The ones that have already been designated as Opportunity Zones are marked as “1” in the <code>DesignatedOZ</code> column. If it is the first time you heard of census tracts, they are subdivisions of a county used for census data collection.</p>
-<p>The table also contains many Census economic and demographic data that describe these tracts. You can see this dataset has 42,178 observations (rows) and 27 variables (columns).</p>
-<p>Here are the definitions for most of the columns:</p>
+<section id="read-data" class="level1">
+<h1>Read Data</h1>
+<p>We can use <code>read_csv</code> provided by <code>tidyverse</code> packages to read this file.</p>
+<p><code>data &lt;- read_csv("data/oz_analysis.csv")</code></p>
+<p>This data lists all 1,478 <strong>census tracts</strong> in Massachusetts. You can view the dataset dimensions in the <code>Environment</code> panel, or use <code>View(data)</code>, <code>glimpse(data)</code>, or <code>nrow(data)</code> to observe its structure.</p>
+<p>The column <code>Type</code> indicates OZ <strong>eligibility</strong>: Those marked as “Low-Income Community” and “Non-LIC Contiguous” are eligible tracts.</p>
+<p>And the column <code>DesignatedOZ</code> indicates <strong>designation</strong> results: Those marked by 1 are tracts ended up designed as OZ in the 2018 round.</p>
+<p>The table also contains many Census economic and demographic data that describe these tracts:</p>
 <ul>
-<li><strong>geoid</strong>: combined state, county, tract FIPS (Federal Information Processing Standards) code this is a unique identification number for each census tract.</li>
-<li><strong>DesignatedOZ</strong>: 1 when an eligible tract was designated as an opportunity zone, and NA where the tract was not designated.</li>
-<li><strong>Type</strong>: category for OZ designation</li>
 <li><strong>Population</strong>: total population of the tract</li>
 <li><strong>medhhincome</strong>: median household income in a tract</li>
 <li><strong>PovertyRate</strong>: poverty rate</li>
@@ -258,7 +261,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>severerentburden:</strong> % of households spending more than 50% of their income on rent</li>
 <li><strong>vacancyrate</strong>: residential vacancy rate</li>
 <li><strong>pctwhite</strong>: White non-Hispanic population (%)</li>
-<li><strong>pctblack</strong>: Black non-Hispanic population (%)</li>
+<li><strong>pctBlack</strong>: Black non-Hispanic population (%)</li>
 <li><strong>pctHispanic</strong>: Hispanic and Latino population (%)</li>
 <li><strong>pctunder18</strong>: population under 18 years old (%)</li>
 <li><strong>pctover64</strong>: population over 64 years old (%)</li>
@@ -266,67 +269,62 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>BAorhigher</strong>: population with a bachelor’s degree or any higher level of education (%)</li>
 </ul>
 <hr>
-<p>While browsing this table, there might be something we are interested to know:</p>
-<ul>
-<li>How many Opportunity Zones are there, at the federal, state, and county levels?</li>
-<li>Are there any notable differences in economic conditions, such as poverty rate, vacancy rate, median household income, or demographics, between designated and non-designated census tracts?</li>
-</ul>
-<section id="data-cleaning" class="level2">
-<h2 class="anchored" data-anchor-id="data-cleaning">Data cleaning</h2>
-<p>The <code>mutate</code> function in <code>dplyr</code> allows you to modify your dataset by either adding new columns, or updating values in existing columns. You can transform existing variables using a wide range of operations, such as arithmetic calculations, conditional expressions, or functions.</p>
-<p>For example, the Urban Institute has coded the designated variable as either taking a value of 1 when designated, or <em>NA</em> when not. Since the <em>NA</em> and 1 here have no mathematical meaning, it would be easier to read if the column simply showed text like “Designated” or “Not Designated.” In the following code, we are updating the column <code>DesignatedOZ</code>.</p>
+</section>
+<section id="explore-the-table" class="level1">
+<h1>Explore the Table</h1>
+<section id="modify-values" class="level2">
+<h2 class="anchored" data-anchor-id="modify-values">Modify Values</h2>
+<p>The Urban Institute has coded the <strong>DesignatedOZ</strong> variable as either taking a value of 1 when designated, or <em>NA</em> when not. Since the <em>NA</em> and 1 here have no mathematical meaning, it would be easier to read if the column simply showed text like “Designated” or “Not Designated.” In the following code, we are updating the column <code>DesignatedOZ</code>.</p>
+<p>The <code>mutate</code> function in <code>dplyr</code> allows you to modify your dataset by either adding new columns, or updating values in existing columns.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
+<div class="sourceCode cell-code" id="cb2" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DesignatedOZ =</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>           <span class="fu">ifelse</span>(<span class="fu">is.na</span>(DesignatedOZ), </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"not_designated"</span>, <span class="st">"designated"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Not Designated"</span>, <span class="st">"Designated"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>ifelse(condition, "not_designated", "designated")</code> is used to set the value of <code>DesignatedOZ</code> based on the condition: If DesignatedOZ is NA, it assigns the text “not_designated”. Otherwise, it assigns “designated”. After the modification, we can make a quick count of both types of tracts.</p>
+<p>Within <code>mutate()</code>, the <code>DesignatedOZ =</code> is taking new values. The <code>ifelse(condition, "Not Designated", "Designated")</code> is used to set the value of <code>DesignatedOZ</code> based on the condition: If NA, it assigns the text “Not Designated”. Otherwise, it assigns “Designated”.</p>
+<p>After the modification, we can make a quick count of both types of tracts.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(DesignatedOZ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code># A tibble: 2 × 2
   DesignatedOZ       n
   &lt;chr&gt;          &lt;int&gt;
-1 designated      8764
-2 not_designated 33414</code></pre>
+1 Designated       138
+2 Not Designated  1340</code></pre>
 </div>
-</div>
-<p>There are a few columns (such as <code>SE_Flag</code>) that won’t be very helpful for this analysis. We can <code>select</code> a subset of columns to work on. If there is a minus sign in front of the column names, that means to drop these specified columns.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb5" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="ot">&lt;-</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  ozs <span class="sc">|&gt;</span> </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(dec_score, SE_Flag, pctown, Metro, Micro, NoCBSAType))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A quick reminder of when to use <code>&lt;-</code> (assign to).</p>
 <ul>
-<li>Use <code>&lt;-</code>: when you want to save our result. In the example above, we are keeping the original <code>data</code> intact, but created a new object called <code>ozs</code>.</li>
-<li>Do not to use <code>&lt;-</code>: If you only want to view results without modifying the object.</li>
+<li>Use <code>&lt;-</code>: when you want to <strong>save</strong> your result to a variable. In the example above, we saved the mutated result back to the <code>data</code> variable</li>
+<li>Do not to use <code>&lt;-</code>: when you want to just <strong>view</strong> results without modifying the data.</li>
 </ul>
-<p>One of the characteristics tracked in the Urban Institute data is the median household income for each tract (<code>medhhincome</code>). Median household income is the income value that falls right in the middle when all households in the tract are lined up from lowest to highest. We can take a look at whether there’s a difference in the median household income for designated and not-designated census tracts.</p>
-<p>However, if you scroll down to the bottom of the dataset in the data viewer, you will notice there are quite a few of NAs in the Census demographic columns.</p>
-<p>How many missing values are there, and how many would be a hurdle for my analysis? It will be great to have a sense of <strong>completeness</strong> in terms of what proportion of a field actually holds data. Below we use <code>is.na</code> to check if each element in <code>ozs</code> is <code>NA</code>, and use <code>colSums</code> to sum up all TRUE values by column.</p>
+</section>
+<section id="check-completeness" class="level2">
+<h2 class="anchored" data-anchor-id="check-completeness">Check Completeness</h2>
+<p>When scrolling around data in the data viewer, you will notice there are multiple rows of NAs in the demographic attributes. How many missing values are there, and how many would be a hurdle for my analysis? It will be great to have a sense of <strong>completeness</strong> in terms of what proportion of a field actually holds data.</p>
+<p>Below we use <code>is.na</code> to check if each element in <code>data</code> is <code>NA</code>, and use <code>colSums</code> to sum up all TRUE values by column.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(ozs))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(data))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code>           geoid            state     DesignatedOZ           county 
-               0               23                0               98 
+               0                0                0                0 
             Type       Population      medhhincome      PovertyRate 
-               0              112              249              141 
+               0                0               23               16 
        unemprate         medvalue          medrent severerentburden 
-             141             1106              395              189 
+              15               37               61               23 
      vacancyrate         pctwhite         pctBlack      pctHispanic 
-             167              131              131              131 
-    pctAAPIalone       pctunder18        pctover64        HSorlower 
-             131              131              131              132 
-      BAorhigher 
-             132 </code></pre>
+              18               13               13               13 
+      pctunder18        pctover64        HSorlower       BAorhigher 
+              13               13               13               13 
+        CBSAType 
+               0 </code></pre>
 </div>
 </div>
 <p>Another way to observe missing values in each column is to use <code>plot_missing</code> in the <code>DataExplorer</code> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>DataExplorer<span class="sc">::</span><span class="fu">plot_missing</span>(ozs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_missing</span>(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -335,197 +333,85 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p><code>plot_missing</code> calculates the proportion of missing values in a given variable, and makes some judgemental calls of whether the missing is significant, indicated by “Good”, “OK”, and “Bad”. (Feel feel to check out <code>?plot_missing</code> in your console. What are the default ranges for these three categories?) Overall, most of our columns have a very small portion of missing values (less than 1%) and would not create significant representative issues. However, when performing calculations, we need to include the <code>na.rm = TRUE</code> argument, indicating that we are calculating based on the available 99%.</p>
+<p><code>plot_missing</code> calculates the proportion of missing values in a given variable, and makes some judgemental calls of whether the missing is significant, indicated by “Good”, “OK”, and “Bad”. (Feel feel to check out <code>?plot_missing</code> in your console. What are the default ranges for these three categories?)</p>
+<p>Overall, most of our columns have a very small portion of missing values (around 1%). When we examine where these missing values occur, we will find that a lot of them are associated with tracts with zero population, most likely representing green spaces or bodies of water, while others reflect unavailable Census data. Removing these observations is unlikely to cause significant representativeness issues.</p>
+<p>However, when performing calculations, we need to include the <code>na.rm = TRUE</code> argument, indicating that we are calculating based on the available 99%.</p>
 </section>
-<section id="create-summary-tables" class="level2">
-<h2 class="anchored" data-anchor-id="create-summary-tables">Create summary tables</h2>
-<p>We can calculate the average <strong>median household income</strong> for designated and not-designated census tracts. That is to collapse the stat summary of median household income <code>summarise(mean(medhhincome))</code> into two groups <code>group_by(DesignatedOZ)</code> .</p>
+<section id="quick-data-checks" class="level2">
+<h2 class="anchored" data-anchor-id="quick-data-checks">Quick Data Checks</h2>
+<p>We can calculate the statewide median of <strong>median household income</strong>. Function <code>summarise()</code> collapses the <code>medhhincome</code> column into a single summary value.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Tracts =</span> <span class="fu">n</span>(),</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">mean</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">state_value =</span> <span class="fu">median</span>(medhhincome, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 2 × 3
-  DesignatedOZ   Tracts Income
-  &lt;chr&gt;           &lt;int&gt;  &lt;dbl&gt;
-1 designated       8764 33346.
-2 not_designated  33414 44446.</code></pre>
+<pre data-code-line-numbers=""><code># A tibble: 1 × 1
+  state_value
+        &lt;dbl&gt;
+1       71172</code></pre>
 </div>
 </div>
-<p>We can also put two columns in the <code>group_by</code> function, for instance, grouping first by state and then by eligibility, allowing for comparisons within each state.</p>
+<p>But we can also summarize by groups, collapsing values according to the values in the <code>Type</code> column. Here we use <code>group_by(Type)</code> before <code>summarise()</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">mean</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Type) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_value =</span> <span class="fu">median</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 108 × 3
-# Groups:   state [57]
-   state          DesignatedOZ   Income
-   &lt;chr&gt;          &lt;chr&gt;           &lt;dbl&gt;
- 1 Alabama        designated     30044.
- 2 Alabama        not_designated 36542.
- 3 Alaska         designated     49840.
- 4 Alaska         not_designated 54784.
- 5 American Samoa designated       NaN 
- 6 Arizona        designated     34373.
- 7 Arizona        not_designated 40961.
- 8 Arkansas       designated     31254.
- 9 Arkansas       not_designated 37814.
-10 California     designated     36134.
-# ℹ 98 more rows</code></pre>
+<pre data-code-line-numbers=""><code># A tibble: 3 × 2
+  Type                 group_value
+  &lt;chr&gt;                      &lt;dbl&gt;
+1 Low-Income Community       45913
+2 Non-LIC Contiguous         68938
+3 Not Eligible               91049</code></pre>
 </div>
 </div>
-<p>“American Samoa” might have caught our attention at this step, because we’ve got <code>NaN</code> (not a number), indicating that ALL values in this region are NA. This prompts us to return to the dataset and further clean our data.</p>
-<p>Are there any other states where all economic variable values are NA, possibly meaning that we have no records for any of the tracts in those areas?</p>
+<p>Low income community tracts have a median household income of about 64% of the state median ($45,913/$71,172), below the 70% eligibility threshold.</p>
+</section>
+</section>
+<section id="make-summary-tables" class="level1">
+<h1>Make Summary Tables</h1>
+<p>Eligibility was defined by poverty and income, so comparing eligible vs.&nbsp;non-eligible tracts is less interesting. What would be more interesting is comparing eligible-but-not-designated and designated tracts. Both cleared the same statutory bar; governors picked some and not others. So how economically different were the two groups?</p>
+<p>Now we use <code>filter()</code> to shrink the data to the 677 eligible tracts. Here we created a new variable <code>ozs</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Type <span class="sc">!=</span> <span class="st">"Not Eligible"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>List a few summary statistics that we might be interested in for the two groups:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state) <span class="sc">|&gt;</span> </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">no_record =</span> <span class="fu">all</span>(<span class="fu">is.na</span>(Population))) <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(no_record <span class="sc">==</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(medhhincome)) <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DesignatedOZ) <span class="sc">|&gt;</span> </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median =</span> <span class="fu">median</span>(medhhincome),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">IQR =</span> <span class="fu">IQR</span>(medhhincome),</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">min =</span> <span class="fu">min</span>(medhhincome),</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(medhhincome))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 5 × 2
-  state                    no_record
-  &lt;chr&gt;                    &lt;lgl&gt;    
-1 American Samoa           TRUE     
-2 Guam                     TRUE     
-3 Northern Mariana Islands TRUE     
-4 Virgin Islands           TRUE     
-5 &lt;NA&gt;                     TRUE     </code></pre>
+<pre data-code-line-numbers=""><code># A tibble: 2 × 5
+  DesignatedOZ   median   IQR   min    max
+  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 Designated      39875 20479 12628 102171
+2 Not Designated  52163 25607 13469 122264</code></pre>
 </div>
 </div>
-<p>The <code>all(is.na(Population))</code> function checks if all values in the <code>Population</code> column for that state are <code>NA</code>. If they are, <code>no_record</code> will be <code>TRUE</code>. If we aim to produce economic stats, then find these states uninformative, we can choose to remove them from our dataset:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="ot">&lt;-</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  ozs <span class="sc">|&gt;</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>state <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"American Samoa"</span>, <span class="st">"Guam"</span>, </span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                       <span class="st">"Northern Mariana Islands"</span>, <span class="st">"Virgin Islands"</span>) </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>         <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(state))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Then perform the summary again:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">mean</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 103 × 3
-# Groups:   state [52]
-   state      DesignatedOZ   Income
-   &lt;chr&gt;      &lt;chr&gt;           &lt;dbl&gt;
- 1 Alabama    designated     30044.
- 2 Alabama    not_designated 36542.
- 3 Alaska     designated     49840.
- 4 Alaska     not_designated 54784.
- 5 Arizona    designated     34373.
- 6 Arizona    not_designated 40961.
- 7 Arkansas   designated     31254.
- 8 Arkansas   not_designated 37814.
- 9 California designated     36134.
-10 California not_designated 50858.
-# ℹ 93 more rows</code></pre>
-</div>
-</div>
-<p>It would be even more helpful to reshape our summary table, arranging it in a way that <strong>each state has</strong> <strong>a single row</strong> with <strong>separate columns</strong> for designated and not-designated income value.</p>
-<p>Functions <code>pivot_wider()</code> and <code>pivot_longer()</code> are useful for reshaping data. <code>pivot_wider()</code> adds columns to a dataset by transitioning content from rows to columns. <code>pivot_longer()</code> does the opposite: making a dataset longer by transitioning columns to rows.</p>
-<p>In our case, let’s use <code>pivot_wider()</code> to transition our Designated and Not Designated rows into columns.</p>
-<div class="cell" data-source-line-numbers="5">
-<div class="sourceCode cell-code" id="cb18" data-source-line-numbers="5" data-code-line-numbers="5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">mean</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> DesignatedOZ, <span class="at">values_from =</span> Income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 52 × 3
-# Groups:   state [52]
-   state                designated not_designated
-   &lt;chr&gt;                     &lt;dbl&gt;          &lt;dbl&gt;
- 1 Alabama                  30044.         36542.
- 2 Alaska                   49840.         54784.
- 3 Arizona                  34373.         40961.
- 4 Arkansas                 31254.         37814.
- 5 California               36134.         50858.
- 6 Colorado                 41138.         49601.
- 7 Connecticut              36760.         51389.
- 8 Delaware                 40971.         50143.
- 9 District of Columbia     38291.         62840.
-10 Florida                  31015.         40931.
-# ℹ 42 more rows</code></pre>
-</div>
-</div>
-<p>Add one more step, we can create another column, to calculate and show the <strong>difference in income</strong> between designated and not designated tracts:</p>
-<div class="cell" data-source-line-numbers="6">
-<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="6" data-code-line-numbers="6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(state, DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">mean</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> DesignatedOZ, <span class="at">values_from =</span> Income) <span class="sc">|&gt;</span> </span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Difference =</span> designated <span class="sc">-</span> not_designated)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre data-code-line-numbers=""><code># A tibble: 52 × 4
-# Groups:   state [52]
-   state                designated not_designated Difference
-   &lt;chr&gt;                     &lt;dbl&gt;          &lt;dbl&gt;      &lt;dbl&gt;
- 1 Alabama                  30044.         36542.     -6498.
- 2 Alaska                   49840.         54784.     -4944.
- 3 Arizona                  34373.         40961.     -6588.
- 4 Arkansas                 31254.         37814.     -6560.
- 5 California               36134.         50858.    -14724.
- 6 Colorado                 41138.         49601.     -8463.
- 7 Connecticut              36760.         51389.    -14628.
- 8 Delaware                 40971.         50143.     -9172.
- 9 District of Columbia     38291.         62840.    -24548.
-10 Florida                  31015.         40931.     -9916.
-# ℹ 42 more rows</code></pre>
-</div>
-</div>
-</section>
-</section>
-<section id="generate-diagnostic-graphs" class="level1">
-<h1>Generate Diagnostic Graphs</h1>
-<p>While summary tables are helpful, visualizations oftentimes provides a clearer picture of the data, making it easier to spot trends and patterns.</p>
 <section id="distribution-of-one-variable" class="level2">
 <h2 class="anchored" data-anchor-id="distribution-of-one-variable">Distribution of one variable</h2>
-<section id="boxplot" class="level3">
-<h3 class="anchored" data-anchor-id="boxplot">Boxplot</h3>
-<p>The code below creates a <strong>boxplot</strong> to contrast the distribution of <strong>poverty rates</strong> between designated opportunity zones and undesignated zones. We are using grammars of the <code>ggplot</code> function introduced in class, then adding more features with the <code>+</code> operator and other functions <a href="https://ggplot2.tidyverse.org/reference/index.html">listed in the package reference</a>.</p>
-<ul>
-<li><code>ozs |&gt; ggplot()</code>: This is the main plotting function. <code>ozs</code> is your dataset we use.</li>
-<li><code>geom_boxplot()</code>: Recall that geometric layers are called <strong>geoms_*</strong>. It tells R what kind of geometry you want to use visualize the data.</li>
-<li><code>aes(x = DesignatedOZ, y = PovertyRate)</code>: The <code>aes()</code> function is where you tell <code>ggplot</code> which variable goes on the x axis followed by which variable goes on the y axis.</li>
-<li>The third aesthetic element is <code>fill</code>, which indicates the filled color of the boxplot. Wait, why we are not using <code>color</code>? <code>fill</code> controls the color of the <strong>inside</strong> of a shape, <code>color</code> controls the <strong>outline</strong>.</li>
-<li>We used a new function <code>scale_y_continuous</code> to specify y axis properties. Here we are making sure the poverty rate are labeled as <strong>percentages</strong>. If you remove this line, they will by default show as decimal numbers.</li>
-</ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> PovertyRate, <span class="at">fill =</span> DesignatedOZ)) <span class="sc">+</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Opportunity Zone Eligible Tracts"</span>, <span class="at">y =</span> <span class="st">"Poverty Rate"</span>, <span class="at">fill =</span> <span class="st">"Tracts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lab1_files/figure-html/boxplot-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>By comparing <em>the 50th percentile</em> (or median, the horizontal line inside each box) we can see that tracts designated as Opportunity Zones have a higher median poverty rate compared with those not designated.</p>
-<p>The <em>heights</em> of the boxes themselves give us an indication of how closely around the median all values in the dataset are concentrated: the degree of dispersion or spread.</p>
-<p>The <em>vertical lines</em> are called whiskers and extend upward and downward to the farthest non-outlier values. More points beyond these lines indicates higher variation.</p>
-</section>
 <section id="density-plot" class="level3">
 <h3 class="anchored" data-anchor-id="density-plot">Density plot</h3>
-<p>By modifying the last code chunk, we can make a <strong>density plot</strong> (using <code>geom_density</code>) to describe the distribution of poverty rate.</p>
-<p>A density plot can be understood as a smoothed version of the histogram. It takes the count of data points at different poverty rate levels and smooths it out into a continuous curve.</p>
+<p>The code below creates a <strong>density plot</strong> to contrast the distribution of <strong>median household value</strong> between designated and undesignated OZs. We are using grammars of the <code>ggplot</code> function introduced in class, then adding more features with the <code>+</code> operator and other functions <a href="https://ggplot2.tidyverse.org/reference/index.html">listed in the package reference</a>.</p>
+<p>A density plot (using <code>geom_density</code>) can be understood as a smoothed representation of the histogram. It takes account of the influence of every data point and smooths them out into a continuous curve.</p>
+<ul>
+<li><code>ozs |&gt; ggplot()</code>: This is the main plotting function. <code>ozs</code> is your dataset we use.</li>
+<li><code>geom_density()</code>: Recall that geometric layers are called <strong>geoms_*</strong>. It tells R what kind of geometry you want to use visualize the data.</li>
+<li><code>aes(x = medhhincome)</code>: The <code>aes()</code> function is where you tell <code>ggplot</code> which variable goes on the x or y axis. Density plot does not require a y.</li>
+<li>The next aesthetic element is <code>fill</code>, which indicates the filled color of the areas. Why we are not using <code>color</code>? <code>fill</code> controls the color of the <strong>inside</strong> of a shape, <code>color</code> controls the <strong>outline</strong>.</li>
+<li>We used a new function <code>scale_x_continuous</code> to specify x axis properties. Here we are setting the income values are labeled as <strong>dollar</strong>. (Without this line, they will by default show as decimal numbers).</li>
+</ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> PovertyRate, <span class="at">fill =</span> DesignatedOZ)) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>() <span class="sc">+</span> </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Poverty Rate"</span>, <span class="at">fill =</span> <span class="st">"Tracts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> medhhincome, <span class="at">fill =</span> DesignatedOZ)) <span class="sc">+</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span>    </span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span>   </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Median Household Income"</span>, <span class="at">fill =</span> <span class="st">"Tracts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -534,10 +420,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>If you look at both the boxplot and the density plot, they’re both telling us that the poverty rate values in the non-designated zones are more spread out, and their median is higher.</p>
+<p>Both distributions are right-skewed, and they overlap a lot. But designated tracts show a sharper, more concentrated peak at lower income levels (~$35–40k) compared to Not Designated tracts. Designated opportunity zones also tend to have lower median household income.</p>
 </section>
-<section id="combinations-of-basic-graphs-to-create-composite-views" class="level3">
-<h3 class="anchored" data-anchor-id="combinations-of-basic-graphs-to-create-composite-views">Combinations of basic graphs to create composite views</h3>
+<section id="boxplot" class="level3">
+<h3 class="anchored" data-anchor-id="boxplot">Boxplot</h3>
+<p>The code below creates a <strong>boxplot</strong> to contrast the distribution of <strong>median household income</strong> between designated tracts and undesignated tracts.&nbsp;</p>
+<ul>
+<li>Here we have <code>aes(x = DesignatedOZ, y = medhhincome)</code>, to tell <code>ggplot</code> that we will have two types of tracts on the x axis side by side, and the y axis will show the income.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> medhhincome, <span class="at">fill =</span> DesignatedOZ)) <span class="sc">+</span>   </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span>    </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span>   </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Opportunity Zone Eligible Tracts"</span>, </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Median Household Income"</span>, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Tracts"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab1_files/figure-html/boxplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This boxplot confirms Designated tracts have a lower median income (~$40k). The Not Designated group shows a few more high-income outliers, which ties back to the eligibility logic: tracts adjacent to low-income tracts could qualify for designation even if their own income was relatively high.</p>
+</section>
+<section id="combine-basic-graphs-to-create-composite-views" class="level3">
+<h3 class="anchored" data-anchor-id="combine-basic-graphs-to-create-composite-views">Combine basic graphs to create composite views</h3>
 <p>One of the coolest thing about <code>ggplot</code> is that we can plot multiple <code>geom_</code> on top of each other. For instance, we can combine the two plots above, to show both the curves and the essential statistics in the boxplot. The following code uses two <code>geom_</code>(<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">Check out <code>geom_violin</code> for more</a>), and introduces several new arguments for fine-tuning the cosmetics.</p>
 <ul>
 <li><code>trim = FALSE</code>: If TRUE (default), trim the tails of the violins to the range of the data. If FALSE, don’t trim the tails and show the complete distribution.</li>
@@ -546,19 +456,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>legend.position = "none"</code>: where to put the legend (“left”, “right”, “bottom”, “top”), or not showing the legend (“none”).</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> PovertyRate, <span class="at">fill =</span> DesignatedOZ), </span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">trim =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> PovertyRate), </span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">width =</span> .<span class="dv">15</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Opportunity Zone Eligible Tracts"</span>,</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Poverty Rate"</span>,</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Distribution of Poverty Rate"</span></span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> <span class="fu">ggplot</span>() <span class="sc">+</span>   </span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> medhhincome, <span class="at">fill =</span> DesignatedOZ), <span class="at">trim =</span> <span class="cn">FALSE</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> DesignatedOZ, <span class="at">y =</span> medhhincome),                 <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">width =</span> .<span class="dv">15</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span>   </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span>   </span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Opportunity Zone Eligible Tracts"</span>,     </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Median Household Income"</span>,     </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Distribution of Median Household Income"</span>) <span class="sc">+</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span>   </span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -573,24 +479,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="relationship-between-two-variables" class="level2">
 <h2 class="anchored" data-anchor-id="relationship-between-two-variables">Relationship between two variables</h2>
 <section id="scatter-plot" class="level3">
-<h3 class="anchored" data-anchor-id="scatter-plot">Scatter Plot</h3>
-<p>We are often interested in “bivariate relationships” - how two variables relate to one another. <strong>Scatterplots</strong> are often used to visualize the association between <strong>two</strong> <strong>continuous variables</strong>. They can reveal much about the <a href="https://www.jmp.com/en_hk/statistics-knowledge-portal/exploratory-data-analysis/scatter-plot.html">nature of the relationship</a> between two variables.</p>
-<p>Let’s use create a subset of <strong>Massachusetts data</strong> to perform this part of analysis. (We could use the nationwide dataset, but there will be over 40,000 points showing on the graph, which will not be pleasing to the eye).</p>
+<h3 class="anchored" data-anchor-id="scatter-plot">Scatter plot</h3>
+<p>A scatterplot allows us to plot two variables against each other, making it easier to see whether there is a pattern between them. Here, we can plot median household income against some demographic variables, e.g.&nbsp;the share of the population that is non-White.</p>
+<p>Note that we used <code>theme_bw</code>, which is a <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html"><code>theme</code> template</a> for a cleaner look.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>ozs_ma <span class="ot">&lt;-</span> </span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  ozs <span class="sc">|&gt;</span> <span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"Massachusetts"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>We begin by creating a scatterplot of poverty rate and racial distribution. Note that we used <code>theme_bw</code>, which is a <a href="https://ggplot2.tidyverse.org/reference/ggtheme.html"><code>theme</code> template</a> for a cleaner look.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ozs_ma <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pctBlack, <span class="at">y =</span> PovertyRate)) <span class="sc">+</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Proportion of Black Population"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Poverty rate"</span>,</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Poverty rate vs. proportion of black population in Opportunity Zone eligible tracts"</span>, </span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"State of Massachusetts"</span>,</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: Urban Institute (2018)"</span>) <span class="sc">+</span> </span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pctnonwhite =</span> <span class="dv">1</span> <span class="sc">-</span> pctwhite) <span class="sc">|&gt;</span> </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pctnonwhite, <span class="at">y =</span> medhhincome)) <span class="sc">+</span>  </span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>   </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Proportion of Non-White Population"</span>,        </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Median Household Income"</span>,        </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Median Household Income vs. Proportion of Non-White Population in Opportunity Zone Eligible Tracts"</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"State of Massachusetts"</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: Urban Institute (2021)"</span>) <span class="sc">+</span>  </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -599,19 +501,68 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>There seems to be a slight increase of slope as we move from left to right along the x-axis. But we can make it more explicit by adding a linear trend, and distinguish between the two groups.</p>
+<p>There seems to be a slight decrease of slope as we move from left to right along the x-axis. But we can make it more explicit by adding a linear trend (<code>geom_smooth</code>), and distinguish between the two groups (add the <code>color</code> argument in <code>aes()</code>).</p>
 <div class="cell" data-source-line-numbers="3,5">
-<div class="sourceCode cell-code" id="cb27" data-source-line-numbers="3,5" data-code-line-numbers="3,5"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>ozs_ma <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pctBlack, <span class="at">y =</span> PovertyRate, </span>
-<span id="cb27-3"><a href="#cb27-3"></a>             <span class="at">color =</span> DesignatedOZ)) <span class="sc">+</span></span>
-<span id="cb27-4"><a href="#cb27-4"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb27-5"><a href="#cb27-5"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>   <span class="co"># 'lm' represents linear model</span></span>
-<span id="cb27-6"><a href="#cb27-6"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Proportion of Black Population"</span>,</span>
-<span id="cb27-7"><a href="#cb27-7"></a>       <span class="at">y =</span> <span class="st">"Poverty rate"</span>,</span>
-<span id="cb27-8"><a href="#cb27-8"></a>       <span class="at">title =</span> <span class="st">"Poverty rate vs. proportion of black population in Opportunity Zone eligible tracts"</span>, </span>
-<span id="cb27-9"><a href="#cb27-9"></a>       <span class="at">subtitle =</span> <span class="st">"State of Massachusetts"</span>,</span>
-<span id="cb27-10"><a href="#cb27-10"></a>       <span class="at">caption =</span> <span class="st">"Source: Urban Institute (2018)"</span>) <span class="sc">+</span> </span>
-<span id="cb27-11"><a href="#cb27-11"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="3,5" data-code-line-numbers="3,5"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<span id="cb19-2"><a href="#cb19-2"></a>  <span class="fu">mutate</span>(<span class="at">pctnonwhite =</span> <span class="dv">1</span> <span class="sc">-</span> pctwhite) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pctnonwhite, <span class="at">y =</span> medhhincome,</span>
+<span id="cb19-4"><a href="#cb19-4"></a>             <span class="at">color =</span> DesignatedOZ)) <span class="sc">+</span>   </span>
+<span id="cb19-5"><a href="#cb19-5"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span>   </span>
+<span id="cb19-6"><a href="#cb19-6"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span>   </span>
+<span id="cb19-7"><a href="#cb19-7"></a>  <span class="co"># 'lm' represents linear model   </span></span>
+<span id="cb19-8"><a href="#cb19-8"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Proportion of Non-White Population"</span>,        </span>
+<span id="cb19-9"><a href="#cb19-9"></a>       <span class="at">y =</span> <span class="st">"Median Household Income"</span>,        </span>
+<span id="cb19-10"><a href="#cb19-10"></a>       <span class="at">title =</span> <span class="st">"Median Household Income vs. Proportion of Non-White Population in Opportunity Zone Eligible Tracts"</span>, </span>
+<span id="cb19-11"><a href="#cb19-11"></a>       <span class="at">subtitle =</span> <span class="st">"State of Massachusetts"</span>,        </span>
+<span id="cb19-12"><a href="#cb19-12"></a>       <span class="at">caption =</span> <span class="st">"Source: Urban Institute (2021)"</span>) <span class="sc">+</span> </span>
+<span id="cb19-13"><a href="#cb19-13"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As the percent of non-white population increases, median household income tends to decrease across tracts, regardless of whether they are designated as OZs. This isn’t because race is part of the OZ selection criteria. Rather, it reflects that income and racial composition are already strongly correlated, a legacy of redlining, exclusionary zoning, and other historical policies that pushed minority populations into lower-income areas. So when tracts are selected based on income and poverty, they tend to end up concentrating heavily toward people of color</p>
+</section>
+</section>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>Now let’s start a new Quarto document (refer to Lab 0 on how to do it). Remove its template texts. You are going to work on your lab report here.</p>
+<p><strong>Treat this blank Quarto document as a fresh start.</strong> Your current R environment variables (such as <code>ozs</code>) won’t carry over. So start by adding code blocks to load your packages, read in your data, and redo necessary cleaning steps from the tutorial. Use the tutorial code as a guide, but grab the parts you need to get your script working!</p>
+<p>In the YAML header of your Quarto document, remember to add <code>embed-resources: true</code> to ensure your HTML output is self-contained - so that you won’t lose any images when you submit it to us!</p>
+<p><img src="..\img/lab3-html.PNG" class="img-fluid"></p>
+<section id="exercise-1" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
+<p>Let’s start with your <code>ozs</code> variable. When creating summary tables, we can put, not one, but two, columns in the <code>group_by</code> function, for instance, grouping first by county and then by eligibility, allowing for comparisons within each county.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county, DesignatedOZ) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Income =</span> <span class="fu">median</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 25 × 3
+# Groups:   county [13]
+   county            DesignatedOZ   Income
+   &lt;chr&gt;             &lt;chr&gt;           &lt;dbl&gt;
+ 1 Barnstable County Designated     44620 
+ 2 Barnstable County Not Designated 63026.
+ 3 Berkshire County  Designated     33897 
+ 4 Berkshire County  Not Designated 53365 
+ 5 Bristol County    Designated     31906.
+ 6 Bristol County    Not Designated 40788 
+ 7 Dukes County      Not Designated 46816 
+ 8 Essex County      Designated     39875 
+ 9 Essex County      Not Designated 49842.
+10 Franklin County   Designated     37308 
+# ℹ 15 more rows</code></pre>
+</div>
+</div>
+<p>Building on this result, we will make a <strong>bar chart</strong>.</p>
+<p>Let’s first take a few minutes to observe the bar chart below:</p>
+<div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -620,60 +571,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-</section>
-</section>
-</section>
-<section id="exercise" class="level1">
-<h1>Exercise</h1>
-<p>Now let’s start a new Quarto document and remove its template texts. You are going to work on your lab report here.</p>
-<p>Treat this blank Quarto document as a fresh start. Your current R environment variables (such as <code>ozs</code>, <code>ozs_ma</code>) won’t carry over. So start by adding code blocks to load your packages, read in your data, and redo the cleaning steps from the tutorial. Use the tutorial code as a guide, but grab the parts you need to get your script working!</p>
-<p>In the YAML header of your Quarto document, remember to add <code>embed-resources: true</code> to ensure your HTML output is self-contained - so that you don’t lose any images when you submit it to us.</p>
-<p><img src="..\img/lab3-html.PNG" class="img-fluid"></p>
-<section id="exercise-1" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-1">Exercise 1</h2>
-<p>Let’s first create some summary tables to analyze opportunity zones in Massachusetts.</p>
+<p>The <code>geom</code> function you should use here is <code>geom_col()</code>.</p>
+<p>Once you have got the basic bar plot, think about how to polish it up. How can you modify your code to replicate the bar chart in the image? Try adjusting your code to answer the following questions.</p>
 <ol type="1">
-<li><p>Suppose you are interested in poverty rates. In Massachusetts, what are the average poverty rates for Opportunity Zones and non-Opportunity Zones?</p></li>
-<li><p>When you have the result of Question 1 (the summary for Massachusetts), what are the corresponding situations by county in Massachusetts?</p></li>
-<li><p>Reorganize your previous table, which county has the greatest disparity in poverty rate between designated and non-designated tracts?</p></li>
-</ol>
-</section>
-<section id="exercise-2" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
-<p>Focus on your Massachusetts data, now choose from the economic and demographic variables to answer the following questions. These include columns from <code>medhhincome</code> to <code>BAorhigher</code>.</p>
-<ol type="1">
-<li>Select one of the variables, create a graphical representation that contrasts its distribution in designated tracts and in undesignated tracts in Massachusetts.</li>
-<li>Select two variables, create a graphical representation that describes how they relate (or don’t relate) to each other, including the direction of this relationship.</li>
-<li>What can we say about the difference in demographic/economic conditions reflected by these graphs between designated and not designated tracts? Include in your document a few sentences of write-up. You can connect your findings with your summary tables above, and with some broader discussions/debates about Opportunities Zones found <a href="https://www.urban.org/policy-centers/metropolitan-housing-and-communities-policy-center/projects/opportunity-zones">here</a>.</li>
-</ol>
-</section>
-<section id="exercise-3" class="level2">
-<h2 class="anchored" data-anchor-id="exercise-3">Exercise 3</h2>
-<p>In this part, we will make a <strong>bar chart</strong>.</p>
-<p>Let’s first take a few minutes to observe the bar chart below:</p>
-<p><img src="../img/lab2-emp.png" class="img-fluid"></p>
-<p>First, you would used our familiar <code>group_by</code> + <code>summarise</code> process to calculate the average of median household income by county in Massachusetts.</p>
-<p>Then pipe that summarized table to <code>ggplot()</code> for visualization. The <code>geom</code> function you should use here is <code>geom_col()</code>.</p>
-<p>Once you’ve got the basic bar plot, think about how to polish it up. How can you modify your code to replicate the bar chart in the image? Try adjusting your code to answer the following questions.</p>
-<ol type="1">
-<li><p>The bars in the image are put side-by-side instead of stacking on top of one another. If you don’t want a stacked bar chart, you can adjust the <code>position</code> argument in <code>geom_col()</code>.</p></li>
-<li><p>The x-axis labels are titled to 45 degrees. How can I achieve this? <a href="https://ggplot2.tidyverse.org/reference/theme.html">Hint</a>.</p></li>
-<li><p>The labels on the y-axis are formatted in thousands with commas. This can be achieved by modifying the function <code>scale_y_continuous(labels = scales::percent)</code> we have seen above. <a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">Hint</a>.</p></li>
-<li><p>Lastly, the counties are not arranged alphabetically, but rather by the income values mapped to the y-axis, starting from large to small. How can I achieve this? <a href="https://www.rpubs.com/dvdunne/reorder_ggplot_barchart_axis">Hint</a>.</p></li>
+<li><p>The bars in the image are not stacking on top of one another. If you don’t want a stacked bar chart, you can adjust the <code>position</code> argument in <code>geom_col()</code>.</p></li>
+<li><p>The x-axis labels are titled to 45 degrees. How can I achieve this? (Hint: adjust <a href="https://ggplot2.tidyverse.org/articles/faq-axes.html">theme</a>, <code>axis.text.x</code>)</p></li>
+<li><p>The counties are not arranged alphabetically, but rather by values mapped to the y-axis, starting from large to small. How to achieve this? (<a href="https://www.rpubs.com/dvdunne/reorder_ggplot_barchart_axis">Hint</a>: reorder x based on y).</p></li>
 <li><p>Please add the title, subtitle, x- and y-axis labels, and the data source annotation to your bar chart.</p></li>
 </ol>
 <p>Feel free to consult the&nbsp;<a href="#0">R Graph Gallery</a> and <a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">Aesthetic specifications</a> for additional resources. If there is anything else you want to experiment, like changing the color scheme or the theme template, go for it.</p>
 </section>
+<section id="exercise-2" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
+<p>It would be even more helpful to reshape our result, arranging the previous table in a way that <strong>each county has</strong> <strong>a single row</strong> with <strong>separate columns</strong> for designated and not-designated income value.</p>
+<p>Functions <code>pivot_wider()</code> and <code>pivot_longer()</code> are useful for reshaping data. <code>pivot_wider()</code> adds columns to a dataset by transitioning content from rows to columns. <code>pivot_longer()</code> does the opposite: making a dataset longer by transitioning columns to rows.</p>
+<div class="cell" data-source-line-numbers="5">
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="5" data-code-line-numbers="5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(county, DesignatedOZ) <span class="sc">|&gt;</span>    </span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">Income =</span> <span class="fu">median</span>(medhhincome, <span class="at">na.rm=</span><span class="cn">TRUE</span>)) <span class="sc">|&gt;</span>    </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> DesignatedOZ, <span class="at">values_from =</span> Income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 13 × 3
+# Groups:   county [13]
+   county            Designated `Not Designated`
+   &lt;chr&gt;                  &lt;dbl&gt;            &lt;dbl&gt;
+ 1 Barnstable County     44620            63026.
+ 2 Berkshire County      33897            53365 
+ 3 Bristol County        31906.           40788 
+ 4 Dukes County             NA            46816 
+ 5 Essex County          39875            49842.
+ 6 Franklin County       37308            62986.
+ 7 Hampden County        26507            44751 
+ 8 Hampshire County      45108.           72886 
+ 9 Middlesex County      53894            64286.
+10 Norfolk County        46947            65845 
+11 Plymouth County       50549            59545 
+12 Suffolk County        37364.           49559 
+13 Worcester County      40312            49464 </code></pre>
+</div>
+</div>
+<p>From here, your tasks are:</p>
+<ol type="1">
+<li><p>Use function <code>mutate()</code> to add one new column, so that it show the <strong>difference in income</strong> between designated and not designated tracts. Save this table as a new variable. (If you see NAs, talk about where it comes from and how you would handle it).</p></li>
+<li><p>Arrange the counties in descending order of the difference. Which county has the greatest disparity in median household income between designated and non-designated tracts?</p></li>
+</ol>
+</section>
+<section id="exercise-3" class="level2">
+<h2 class="anchored" data-anchor-id="exercise-3">Exercise 3</h2>
+<p>We have been exploring <code>medhhincome</code> in the tutorial, now let’s investigate the <code>PovertyRate</code> variable, the other economic variable involved in OZ eligibility.</p>
+<ol type="1">
+<li><p>Using <code>PovertyRate</code>, create a graphical representation that compares its distribution between designated Opportunity Zone tracts and undesignated tracts in Massachusetts. Your visualization should make it easy to see whether the two groups differ in their poverty-rate distributions.</p></li>
+<li><p>Choose <strong>one demographic variable</strong> from the table, then create a graphical representation showing how it relates to <code>PovertyRate</code>. Describe whether the two variables appear to be related or unrelated, and identify the direction of the observed relationship.</p></li>
+<li><p><strong>Connect your analysis to the broader discussion of Opportunity Zones.</strong><br>
+There is a broader discussion about how OZs have been and should be designated. A clean “more distressed tracts got picked” story might not hold up everywhere. Designation can happen due to geography, adjacency to other investment, political considerations, or growth potential (e.g., tracts near universities or transit).</p>
+<p>Critics also argue that the designation directs subsidies toward areas that are already attracting investment, rather than toward the most distressed communities. (<a href="https://www.congress.gov/crs-product/R48952">CRS/OBBBA reform reporting, 2026</a>). Others point out that investment in some zones actually translates into displacement rather than improvement for existing residents, a pattern especially strong in places like Washington, D.C. (<a href="https://www.brookings.edu/articles/opportunity-zones-impacts-and-how-to-improve-them/">Brookings, 2026</a>).</p>
+<p>In this lab, we have only touched on a small piece of OZ discussions. Based on your results so far, suggest 1-2 questions you would want to explore further. For each, conceptually describe what additional data or information you would need to investigate it.</p></li>
+</ol>
+</section>
 </section>
 <section id="lab-report" class="level1">
 <h1>Lab Report</h1>
-<p>Please include the code you used, the tables you produced, and any explanatory text that you think would help clarify your results. After you render your Quarto document, you will find an “.html” file in your project folder. Please submit <strong>the</strong> <strong>Rendered HTML file</strong> that shows your work and responses for each of the three Exercises included in this lab.</p>
+<p>Please complete your Quarto document, include the code you used, the tables you produced, and any explanatory text that you think would help clarify your results. After you render your Quarto document, you will find an “.html” file in your project folder. Please submit <strong>the</strong> <strong>Rendered HTML file</strong> that shows your work and responses for each of the three Exercises included in this lab.</p>
 <p>Please <strong>upload your report to Canvas</strong> <strong>by 9am, Wednesday, Sep 23.</strong></p>
 
 
 </section>
 
-</main> <!-- /main -->
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p><a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf" class="uri">https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
