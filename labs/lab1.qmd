@@ -1,5 +1,5 @@
 ---
-title: "Exploratory Data Analysis with ![](../img/Rlogo.png){width=60px}"
+title: "Exploratory Data Analysis: Opportunity Zones ![](../img/Rlogo.png){width=60px} "
 subtitle: <span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span>
 date: "Last Updated `r Sys.Date()`"
 format: html
@@ -22,7 +22,7 @@ The unit of designation is the [census tract](https://www.census.gov/programs-su
 
 2.  **Designation.** Each state's governor nominated tracts, capped at 25% of the state's eligible tracts, and the Treasury Secretary certified them.
 
-[^1]: Department of the treasury office of tax analysis. March 2026. Eligibility criteria for determining census tracts eligible to be nominated as 2027 qualified opportunity zones. <https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf>
+[^1]: Department of the treasury office of tax analysis. March 2026. [Eligibility criteria for determining census tracts eligible to be nominated as 2027 qualified opportunity zones](https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf).
 
 In 2018 this produced 8,764 opportunity zones nationwide.
 
