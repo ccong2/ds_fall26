@@ -5,7 +5,7 @@ title: "Lab Overview"
 Here you’ll find links and resources for each lab session:
 
 -   [Lab 0: Getting Started with R and Quarto](lab0.qmd)
--   [Lab 1: Making Exploratory Graphs: Opportunity Zones](lab1.qmd)
+-   [Lab 1: Exploratory Data Analysis: Opportunity Zones](lab1.qmd)
 -   [Lab 2: Enhancing Visualizations: Airbnb Data](lab2.qmd)
 -   [Lab 3: Spatial Analysis: Neighborhood Built Environment](lab3.qmd)
 -   [Lab 4: Census Data: Describe Population](lab4.qmd)

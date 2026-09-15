@@ -74,7 +74,7 @@
     "href": "labs/index.html",
     "title": "Lab Overview",
     "section": "",
-    "text": "Here you’ll find links and resources for each lab session:\n\nLab 0: Getting Started with R and Quarto\nLab 1: Making Exploratory Graphs: Opportunity Zones\nLab 2: Enhancing Visualizations: Airbnb Data\nLab 3: Spatial Analysis: Neighborhood Built Environment\nLab 4: Census Data: Describe Population\nLab 5: Online Map and Dashboard\nLab 6: Shiny Apps\nLab 7: Build Machine Learning Models: Predict Housing Prices\nLab 8: Tree-Based Models and Hyperparameter Tuning\nLab 9: Fairness-Aware ML Models: Predict Recidivism"
+    "text": "Here you’ll find links and resources for each lab session:\n\nLab 0: Getting Started with R and Quarto\nLab 1: Exploratory Data Analysis: Opportunity Zones\nLab 2: Enhancing Visualizations: Airbnb Data\nLab 3: Spatial Analysis: Neighborhood Built Environment\nLab 4: Census Data: Describe Population\nLab 5: Online Map and Dashboard\nLab 6: Shiny Apps\nLab 7: Build Machine Learning Models: Predict Housing Prices\nLab 8: Tree-Based Models and Hyperparameter Tuning\nLab 9: Fairness-Aware ML Models: Predict Recidivism"
   },
   {
     "objectID": "about.html",
