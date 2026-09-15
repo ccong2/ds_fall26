@@ -12,7 +12,7 @@ execute:
 
 # Background
 
-The 2017 [Tax Cuts and Jobs Act](https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf) created a federal incentive to encourage investment in low-income and undercapitalized communities. States were allowed to select specific census tracts as [Opportunity Zones](https://www.hud.gov/opportunity-zones), where investors could receive tax benefits on eligible investments.
+The 2017 [Tax Cuts and Jobs Act](https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf) created a federal incentive to encourage investment in low-income and undercapitalized communities. States were allowed to select specific census tracts as [Opportunity Zones](https://www.hud.gov/opportunity-zones) (OZs), where investors could receive tax benefits on eligible investments.
 
 The motivation was: the US recovery after 2008 was extremely lopsided. A handful of metros captured most of the new jobs and business formation, while thousands of neighborhoods struggled to come back. The policy aims to steer private capital toward the places it had abandoned.
 
@@ -22,19 +22,19 @@ The unit of designation is the [census tract](https://www.census.gov/programs-su
 
 2.  **Designation.** Each state's governor nominated tracts, capped at 25% of the state's eligible tracts, and the Treasury Secretary certified them.
 
-[^1]: <https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf>
+[^1]: Department of the treasury office of tax analysis. March 2026. Eligibility criteria for determining census tracts eligible to be nominated as 2027 qualified opportunity zones. <https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf>
 
 In 2018 this produced 8,764 opportunity zones nationwide.
 
-The 2025 tax law made Opportunity Zones (OZ) permanent and reset the map. The original designations expire on December 31, 2028, and states are nominating a new round as we speak. New zones are expected to take effect January 1, 2027. Re-designation will happen every 10 years after that.
+The 2025 tax law made Opportunity Zones permanent and reset the map. The original designations expire on December 31, 2028, and states are nominating a new round as we speak. New zones are expected to take effect January 1, 2027. Re-designation will happen every 10 years after that.
 
-[Check out OZ maps](https://opportunityzones.com/map/) \| [Read about the new rules for OZ2.0 eligibility](https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf)
+[Check out 2018 OZ maps](https://opportunityzones.com/map/) \| [Read about the new rules for OZ2.0 eligibility](https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf)
 
 [Track the OZ2.0 nomination progress](https://opportunityzones.com/oz2-tracker/)
 
 # What We Will Do Today
 
-The main factors used to determine OZ eligibility are median household income and poverty rate, both drawn from Census data. In this exercise, we will take a look at these census economic variables across all tracts. The selection logic indicates a hierarchy: **designated tracts, tracts that were eligible but not designated, and tracts that never entered the eligibility pool**. It will be an empirical question to see how they look economically different from one another.
+The main factors used to determine OZ eligibility are median household income and poverty rate, both drawn from Census data. In this exercise, we will take a look at these economic variables across census tracts. The selection logic indicates a hierarchy: **designated tracts, tracts that were eligible but not designated, and tracts that never entered the eligibility pool**. It will be an empirical question to see how they look economically different from one another.
 
 This approach can be generalized to, for example, comparing parcels inside versus outside a floodplain, districts in and out of an historic redlining zone, schools above and below a funding cutoff, etc.
 
@@ -46,7 +46,7 @@ While we wait to see what OZ 2.0 looks like, the 2018 data gives us plenty to wo
 
 [Data download link](https://www.dropbox.com/scl/fi/botumduheu6vnk8gv5b95/oz_analysis.csv?rlkey=nsvrusbhqxqkeu5776g0d675p&st=dlegqh6k&dl=0)
 
-Download the data and save it to a "data" folder in your Lab 1 project folder.
+Download the data and **save it to a "data" folder in your Lab 1 project folder**.
 
 You do not need to start a Quarto Document right now. Instead, you can open a plain R script to type, test, and run the code as your read through the tutorial. When you get to the exercises at the end of the tutorial, you will be asked to start a Quarto document.
 
@@ -60,7 +60,7 @@ library(DataExplorer)
 
 # Read Data
 
-We can use `read_csv` provided by `tidyverse` packages to read this file.
+We can use `read_csv` provided by `readr` packages to read this file.
 
 `data <- read_csv("data/oz_analysis.csv")`
 
@@ -70,7 +70,7 @@ We can use `read_csv` provided by `tidyverse` packages to read this file.
 data <- read_csv("../data/oz_analysis.csv")
 ```
 
-This data lists all 1,478 **census tracts** in Massachusetts. You can view the dataset dimensions in the `Environment` panel, or use `View(data)`, `glimpse(data)`, or `nrow(data)` to observe its structure.
+This data lists all 1,478 census tracts in Massachusetts. You can view the dataset dimensions in the `Environment` panel, or use `View(data)`, `glimpse(data)`, or `nrow(data)` to observe its structure.
 
 The column `Type` indicates OZ **eligibility**: Those marked as "Low-Income Community" and "Non-LIC Contiguous" are eligible tracts.
 
@@ -98,7 +98,7 @@ The table also contains many Census economic and demographic data that describe 
 
 # Explore the Table
 
-## Modify Values
+## Clean Up Values
 
 The Urban Institute has coded the **DesignatedOZ** variable as either taking a value of 1 when designated, or *NA* when not. Since the *NA* and 1 here have no mathematical meaning, it would be easier to read if the column simply showed text like "Designated" or "Not Designated." In the following code, we are updating the column `DesignatedOZ`.
 
@@ -114,7 +114,7 @@ data <- data |>
 
 Within `mutate()`, the `DesignatedOZ =` is taking new values. The `ifelse(condition, "Not Designated", "Designated")` is used to set the value of `DesignatedOZ` based on the condition: If NA, it assigns the text "Not Designated". Otherwise, it assigns "Designated".
 
-After the modification, we can make a quick count of both types of tracts.
+You can browse the dataset again. After the modification, we can make a quick count of both types of tracts.
 
 ```{r}
 #| label: "count"
@@ -182,14 +182,14 @@ ozs <- data |>
   filter(Type != "Not Eligible")
 ```
 
-List a few summary statistics that we might be interested in for the two groups:
+The `summarise` function is very helpful for generating multiple statistics of interest for the two groups, all in one step:
 
 ```{r}
 ozs |> 
   filter(!is.na(medhhincome)) |> 
   group_by(DesignatedOZ) |> 
-  summarise(median = median(medhhincome),
-            IQR = IQR(medhhincome),
+  summarise(mean = mean(medhhincome),
+            sd = sd(medhhincome),
             min = min(medhhincome),
             max = max(medhhincome))
 ```
@@ -204,9 +204,9 @@ A density plot (using `geom_density`) can be understood as a smoothed representa
 
 -   `ozs |> ggplot()`: This is the main plotting function. `ozs` is your dataset we use.
 -   `geom_density()`: Recall that geometric layers are called **geoms\_\***. It tells R what kind of geometry you want to use visualize the data.
--   `aes(x = medhhincome)`: The `aes()` function is where you tell `ggplot` which variable goes on the x or y axis. Density plot does not require a y.
+-   `aes(x = medhhincome)`: The `aes()` function is where you tell `ggplot` which variable goes on the x or y axis. A one-variable plot does not require a y.
 -   The next aesthetic element is `fill`, which indicates the filled color of the areas. Why we are not using `color`? `fill` controls the color of the **inside** of a shape, `color` controls the **outline**.
--   We used a new function `scale_x_continuous` to specify x axis properties. Here we are setting the income values are labeled as **dollar**. (Without this line, they will by default show as decimal numbers).
+-   We used a new function `scale_x_continuous` to specify x axis properties. Here we are setting the income values are labeled as **dollar**, so that they are better formatted. (Without this line, they will by default show as decimal numbers).
 
 ```{r}
 #| label: "densityplot" 
@@ -223,7 +223,7 @@ Both distributions are right-skewed, and they overlap a lot. But designated trac
 
 The code below creates a **boxplot** to contrast the distribution of **median household income** between designated tracts and undesignated tracts. 
 
--   Here we have `aes(x = DesignatedOZ, y = medhhincome)`, to tell `ggplot` that we will have two types of tracts on the x axis side by side, and the y axis will show the income.
+-   Here we have `aes(x = DesignatedOZ, y = medhhincome)`, to tell `ggplot` that we will put the two types of tracts on the x axis side by side, and the y axis will show the income.
 
 ```{r}
 #| label: "boxplot" 
@@ -236,11 +236,11 @@ ozs |>
        fill = "Tracts")
 ```
 
-This boxplot confirms Designated tracts have a lower median income (\~\$40k). The Not Designated group shows a few more high-income outliers, which ties back to the eligibility logic: tracts adjacent to low-income tracts could qualify for designation even if their own income was relatively high.
+This boxplot confirms Designated tracts have a lower median income (\~\$40k). The Not Designated group shows more high-income outliers, which ties back to the eligibility logic: tracts adjacent to low-income tracts could qualify for designation even if their own income was relatively high.
 
 ### Combine basic graphs to create composite views
 
-One of the coolest thing about `ggplot` is that we can plot multiple `geom_` on top of each other. For instance, we can combine the two plots above, to show both the curves and the essential statistics in the boxplot. The following code uses two `geom_`([Check out `geom_violin` for more](https://ggplot2.tidyverse.org/reference/geom_violin.html)), and introduces several new arguments for fine-tuning the cosmetics.
+`ggplot` provides the option to plot multiple `geom_` on top of each other. For instance, we can combine the two plots above, to show both the curves and the essential statistics in the boxplot. The following code uses two `geom_`([Check out `geom_violin` for more](https://ggplot2.tidyverse.org/reference/geom_violin.html)), and introduces several new arguments for fine-tuning the cosmetics.
 
 -   `trim = FALSE`: If TRUE (default), trim the tails of the violins to the range of the data. If FALSE, don't trim the tails and show the complete distribution.
 -   `alpha = 0.5`: the transparency of the plotting area.
@@ -288,7 +288,7 @@ There seems to be a slight decrease of slope as we move from left to right along
 
 ```{r}
 #| class-source: "numberLines" 
-#| source-line-numbers: "3,5" 
+#| source-line-numbers: "4,6" 
 ozs |>    
   mutate(pctnonwhite = 1 - pctwhite) |> 
   ggplot(aes(x = pctnonwhite, y = medhhincome,
@@ -348,9 +348,9 @@ ozs |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-The `geom` function you should use here is `geom_col()`.
+Try replicating the bar chart in the image. The `geom` function you should use here is `geom_col()`.
 
-Once you have got the basic bar plot, think about how to polish it up. How can you modify your code to replicate the bar chart in the image? Try adjusting your code to answer the following questions.
+Once you have got the basic bar plot, think about how to polish it up. You can consider adjusting your code by responding to the following questions.
 
 1.  The bars in the image are not stacking on top of one another. If you don't want a stacked bar chart, you can adjust the `position` argument in `geom_col()`.
 
@@ -360,7 +360,7 @@ Once you have got the basic bar plot, think about how to polish it up. How can y
 
 4.  Please add the title, subtitle, x- and y-axis labels, and the data source annotation to your bar chart.
 
-Feel free to consult the [R Graph Gallery](#0) and [Aesthetic specifications](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) for additional resources. If there is anything else you want to experiment, like changing the color scheme or the theme template, go for it.
+Feel free to consult the [R Graph Gallery](https://r-graph-gallery.com/) and [Aesthetic specifications](https://ggplot2.tidyverse.org/articles/ggplot2-specs.html) for additional resources. If there is anything else you want to experiment, like changing the color scheme or the theme template, go for it.
 
 ## Exercise 2
 
@@ -379,7 +379,7 @@ ozs |>
 
 From here, your tasks are:
 
-1.  Use function `mutate()` to add one new column, so that it show the **difference in income** between designated and not designated tracts. Save this table as a new variable. (If you see NAs, talk about where it comes from and how you would handle it).
+1.  Use function `mutate()` to add one new column, so that it shows the **difference in income** between designated and not designated tracts. Save this table as a new variable. (If you see NAs, talk about where it comes from, and how you would handle it).
 
 2.  Arrange the counties in descending order of the difference. Which county has the greatest disparity in median household income between designated and non-designated tracts?
 
@@ -387,16 +387,16 @@ From here, your tasks are:
 
 We have been exploring `medhhincome` in the tutorial, now let's investigate the `PovertyRate` variable, the other economic variable involved in OZ eligibility.
 
-1.  Using `PovertyRate`, create a graphical representation that compares its distribution between designated Opportunity Zone tracts and undesignated tracts in Massachusetts. Your visualization should make it easy to see whether the two groups differ in their poverty-rate distributions.
+1.  Using `PovertyRate`, create one graphical representation that compares its distribution between designated Opportunity Zone tracts and undesignated tracts in Massachusetts. Your visualization should make it easy to see whether the two groups differ in their poverty-rate distributions.
 
 2.  Choose **one demographic variable** from the table, then create a graphical representation showing how it relates to `PovertyRate`. Describe whether the two variables appear to be related or unrelated, and identify the direction of the observed relationship.
 
 3.  **Connect your analysis to the broader discussion of Opportunity Zones.**\
-    There is a broader discussion about how OZs have been and should be designated. A clean "more distressed tracts got picked" story might not hold up everywhere. Designation can happen due to geography, adjacency to other investment, political considerations, or growth potential (e.g., tracts near universities or transit).
+    There is a broader discussion about how OZs have been and should be designated. A clean "more distressed tracts got picked" story might not hold up everywhere ([Urban Institute, 2018](https://www.urban.org/sites/default/files/publication/98445/did_states_maximize_their_opportunity_zone_selections_7.pdf)). Designation can happen due to geography, adjacency to other investment, political considerations, or growth potential (e.g., tracts near universities or transit).
 
     Critics also argue that the designation directs subsidies toward areas that are already attracting investment, rather than toward the most distressed communities. ([CRS/OBBBA reform reporting, 2026](https://www.congress.gov/crs-product/R48952)). Others point out that investment in some zones actually translates into displacement rather than improvement for existing residents, a pattern especially strong in places like Washington, D.C. ([Brookings, 2026](https://www.brookings.edu/articles/opportunity-zones-impacts-and-how-to-improve-them/)).
 
-    In this lab, we have only touched on a small piece of OZ discussions. Based on your results so far, suggest 1-2 questions you would want to explore further. For each, conceptually describe what additional data or information you would need to investigate it.
+    In this lab, we have only touched on a small piece of OZ discussions. Based on your results so far, suggest 1-2 questions you might be interested to explore further. For each, conceptually describe what additional data or information would be helpful for you to investigate it.
 
 # Lab Report
 

@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-09-14">
+<meta name="dcterms.date" content="2026-09-15">
 
 <title>Exploratory Data Analysis with  – Applied Data Science for Cities</title>
 <style>
@@ -155,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#read-data" id="toc-read-data" class="nav-link" data-scroll-target="#read-data">Read Data</a></li>
   <li><a href="#explore-the-table" id="toc-explore-the-table" class="nav-link" data-scroll-target="#explore-the-table">Explore the Table</a>
   <ul class="collapse">
-  <li><a href="#modify-values" id="toc-modify-values" class="nav-link" data-scroll-target="#modify-values">Modify Values</a></li>
+  <li><a href="#clean-up-values" id="toc-clean-up-values" class="nav-link" data-scroll-target="#clean-up-values">Clean Up Values</a></li>
   <li><a href="#check-completeness" id="toc-check-completeness" class="nav-link" data-scroll-target="#check-completeness">Check Completeness</a></li>
   <li><a href="#quick-data-checks" id="toc-quick-data-checks" class="nav-link" data-scroll-target="#quick-data-checks">Quick Data Checks</a></li>
   </ul></li>
@@ -199,7 +199,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 14, 2026</p>
+      <p class="date">September 15, 2026</p>
     </div>
   </div>
   
@@ -213,7 +213,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="background" class="level1">
 <h1>Background</h1>
-<p>The 2017 <a href="https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf">Tax Cuts and Jobs Act</a> created a federal incentive to encourage investment in low-income and undercapitalized communities. States were allowed to select specific census tracts as <a href="https://www.hud.gov/opportunity-zones">Opportunity Zones</a>, where investors could receive tax benefits on eligible investments.</p>
+<p>The 2017 <a href="https://www.congress.gov/115/bills/hr1/BILLS-115hr1enr.pdf">Tax Cuts and Jobs Act</a> created a federal incentive to encourage investment in low-income and undercapitalized communities. States were allowed to select specific census tracts as <a href="https://www.hud.gov/opportunity-zones">Opportunity Zones</a> (OZs), where investors could receive tax benefits on eligible investments.</p>
 <p>The motivation was: the US recovery after 2008 was extremely lopsided. A handful of metros captured most of the new jobs and business formation, while thousands of neighborhoods struggled to come back. The policy aims to steer private capital toward the places it had abandoned.</p>
 <p>The unit of designation is the <a href="https://www.census.gov/programs-surveys/geography/about/glossary.html#par_textimage_13">census tract</a>, a neighborhood-sized area of roughly 1,200-8,000 people. Selection of opportunity zones happened in two steps:</p>
 <ol type="1">
@@ -221,13 +221,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><strong>Designation.</strong> Each state’s governor nominated tracts, capped at 25% of the state’s eligible tracts, and the Treasury Secretary certified them.</p></li>
 </ol>
 <p>In 2018 this produced 8,764 opportunity zones nationwide.</p>
-<p>The 2025 tax law made Opportunity Zones (OZ) permanent and reset the map. The original designations expire on December 31, 2028, and states are nominating a new round as we speak. New zones are expected to take effect January 1, 2027. Re-designation will happen every 10 years after that.</p>
-<p><a href="https://opportunityzones.com/map/">Check out OZ maps</a> | <a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf">Read about the new rules for OZ2.0 eligibility</a></p>
+<p>The 2025 tax law made Opportunity Zones permanent and reset the map. The original designations expire on December 31, 2028, and states are nominating a new round as we speak. New zones are expected to take effect January 1, 2027. Re-designation will happen every 10 years after that.</p>
+<p><a href="https://opportunityzones.com/map/">Check out 2018 OZ maps</a> | <a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf">Read about the new rules for OZ2.0 eligibility</a></p>
 <p><a href="https://opportunityzones.com/oz2-tracker/">Track the OZ2.0 nomination progress</a></p>
 </section>
 <section id="what-we-will-do-today" class="level1">
 <h1>What We Will Do Today</h1>
-<p>The main factors used to determine OZ eligibility are median household income and poverty rate, both drawn from Census data. In this exercise, we will take a look at these census economic variables across all tracts. The selection logic indicates a hierarchy: <strong>designated tracts, tracts that were eligible but not designated, and tracts that never entered the eligibility pool</strong>. It will be an empirical question to see how they look economically different from one another.</p>
+<p>The main factors used to determine OZ eligibility are median household income and poverty rate, both drawn from Census data. In this exercise, we will take a look at these economic variables across census tracts. The selection logic indicates a hierarchy: <strong>designated tracts, tracts that were eligible but not designated, and tracts that never entered the eligibility pool</strong>. It will be an empirical question to see how they look economically different from one another.</p>
 <p>This approach can be generalized to, for example, comparing parcels inside versus outside a floodplain, districts in and out of an historic redlining zone, schools above and below a funding cutoff, etc.</p>
 </section>
 <section id="project-management-data-and-packages" class="level1">
@@ -235,7 +235,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>I recommend creating a separate folder for each assignment. For today, open RStudio and navigate to <strong>File &gt; New Project…</strong> When the dialog box appears, choose <strong>New Directory</strong>, then <strong>New Project</strong>. Proceed to create a “Lab 1” folder as your working directory.</p>
 <p>While we wait to see what OZ 2.0 looks like, the 2018 data gives us plenty to work with. Urban Institute has been doing <a href="https://www.urban.org/tags/opportunity-zones">a series of research</a> on opportunity zones and have originally compiled nationwide tract-level OZ data. For today’s analysis, we will use data for all tracts in Massachusetts.</p>
 <p><a href="https://www.dropbox.com/scl/fi/botumduheu6vnk8gv5b95/oz_analysis.csv?rlkey=nsvrusbhqxqkeu5776g0d675p&amp;st=dlegqh6k&amp;dl=0">Data download link</a></p>
-<p>Download the data and save it to a “data” folder in your Lab 1 project folder.</p>
+<p>Download the data and <strong>save it to a “data” folder in your Lab 1 project folder</strong>.</p>
 <p>You do not need to start a Quarto Document right now. Instead, you can open a plain R script to type, test, and run the code as your read through the tutorial. When you get to the exercises at the end of the tutorial, you will be asked to start a Quarto document.</p>
 <p>To stay organized, let’s load packages at the beginning of our script. These are the two packages we are going to use today. <em>You may want to run <code>install.packages()</code> on <code>DataExplorer</code> if it’s the first time you use it.</em></p>
 <div class="cell">
@@ -245,9 +245,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="read-data" class="level1">
 <h1>Read Data</h1>
-<p>We can use <code>read_csv</code> provided by <code>tidyverse</code> packages to read this file.</p>
+<p>We can use <code>read_csv</code> provided by <code>readr</code> packages to read this file.</p>
 <p><code>data &lt;- read_csv("data/oz_analysis.csv")</code></p>
-<p>This data lists all 1,478 <strong>census tracts</strong> in Massachusetts. You can view the dataset dimensions in the <code>Environment</code> panel, or use <code>View(data)</code>, <code>glimpse(data)</code>, or <code>nrow(data)</code> to observe its structure.</p>
+<p>This data lists all 1,478 census tracts in Massachusetts. You can view the dataset dimensions in the <code>Environment</code> panel, or use <code>View(data)</code>, <code>glimpse(data)</code>, or <code>nrow(data)</code> to observe its structure.</p>
 <p>The column <code>Type</code> indicates OZ <strong>eligibility</strong>: Those marked as “Low-Income Community” and “Non-LIC Contiguous” are eligible tracts.</p>
 <p>And the column <code>DesignatedOZ</code> indicates <strong>designation</strong> results: Those marked by 1 are tracts ended up designed as OZ in the 2018 round.</p>
 <p>The table also contains many Census economic and demographic data that describe these tracts:</p>
@@ -272,8 +272,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="explore-the-table" class="level1">
 <h1>Explore the Table</h1>
-<section id="modify-values" class="level2">
-<h2 class="anchored" data-anchor-id="modify-values">Modify Values</h2>
+<section id="clean-up-values" class="level2">
+<h2 class="anchored" data-anchor-id="clean-up-values">Clean Up Values</h2>
 <p>The Urban Institute has coded the <strong>DesignatedOZ</strong> variable as either taking a value of 1 when designated, or <em>NA</em> when not. Since the <em>NA</em> and 1 here have no mathematical meaning, it would be easier to read if the column simply showed text like “Designated” or “Not Designated.” In the following code, we are updating the column <code>DesignatedOZ</code>.</p>
 <p>The <code>mutate</code> function in <code>dplyr</code> allows you to modify your dataset by either adding new columns, or updating values in existing columns.</p>
 <div class="cell">
@@ -283,7 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="st">"Not Designated"</span>, <span class="st">"Designated"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Within <code>mutate()</code>, the <code>DesignatedOZ =</code> is taking new values. The <code>ifelse(condition, "Not Designated", "Designated")</code> is used to set the value of <code>DesignatedOZ</code> based on the condition: If NA, it assigns the text “Not Designated”. Otherwise, it assigns “Designated”.</p>
-<p>After the modification, we can make a quick count of both types of tracts.</p>
+<p>You can browse the dataset again. After the modification, we can make a quick count of both types of tracts.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(DesignatedOZ) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -376,21 +376,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="ot">&lt;-</span> data <span class="sc">|&gt;</span> </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Type <span class="sc">!=</span> <span class="st">"Not Eligible"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>List a few summary statistics that we might be interested in for the two groups:</p>
+<p>The <code>summarise</code> function is very helpful for generating multiple statistics of interest for the two groups, all in one step:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span> </span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(medhhincome)) <span class="sc">|&gt;</span> </span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(DesignatedOZ) <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">median =</span> <span class="fu">median</span>(medhhincome),</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">IQR =</span> <span class="fu">IQR</span>(medhhincome),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean =</span> <span class="fu">mean</span>(medhhincome),</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(medhhincome),</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">min =</span> <span class="fu">min</span>(medhhincome),</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">max =</span> <span class="fu">max</span>(medhhincome))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code># A tibble: 2 × 5
-  DesignatedOZ   median   IQR   min    max
-  &lt;chr&gt;           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
-1 Designated      39875 20479 12628 102171
-2 Not Designated  52163 25607 13469 122264</code></pre>
+  DesignatedOZ     mean     sd   min    max
+  &lt;chr&gt;           &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+1 Designated     40870. 16140. 12628 102171
+2 Not Designated 52920. 18901. 13469 122264</code></pre>
 </div>
 </div>
 <section id="distribution-of-one-variable" class="level2">
@@ -402,9 +402,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><code>ozs |&gt; ggplot()</code>: This is the main plotting function. <code>ozs</code> is your dataset we use.</li>
 <li><code>geom_density()</code>: Recall that geometric layers are called <strong>geoms_*</strong>. It tells R what kind of geometry you want to use visualize the data.</li>
-<li><code>aes(x = medhhincome)</code>: The <code>aes()</code> function is where you tell <code>ggplot</code> which variable goes on the x or y axis. Density plot does not require a y.</li>
+<li><code>aes(x = medhhincome)</code>: The <code>aes()</code> function is where you tell <code>ggplot</code> which variable goes on the x or y axis. A one-variable plot does not require a y.</li>
 <li>The next aesthetic element is <code>fill</code>, which indicates the filled color of the areas. Why we are not using <code>color</code>? <code>fill</code> controls the color of the <strong>inside</strong> of a shape, <code>color</code> controls the <strong>outline</strong>.</li>
-<li>We used a new function <code>scale_x_continuous</code> to specify x axis properties. Here we are setting the income values are labeled as <strong>dollar</strong>. (Without this line, they will by default show as decimal numbers).</li>
+<li>We used a new function <code>scale_x_continuous</code> to specify x axis properties. Here we are setting the income values are labeled as <strong>dollar</strong>, so that they are better formatted. (Without this line, they will by default show as decimal numbers).</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
@@ -426,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="boxplot">Boxplot</h3>
 <p>The code below creates a <strong>boxplot</strong> to contrast the distribution of <strong>median household income</strong> between designated tracts and undesignated tracts.&nbsp;</p>
 <ul>
-<li>Here we have <code>aes(x = DesignatedOZ, y = medhhincome)</code>, to tell <code>ggplot</code> that we will have two types of tracts on the x axis side by side, and the y axis will show the income.</li>
+<li>Here we have <code>aes(x = DesignatedOZ, y = medhhincome)</code>, to tell <code>ggplot</code> that we will put the two types of tracts on the x axis side by side, and the y axis will show the income.</li>
 </ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>ozs <span class="sc">|&gt;</span>    </span>
@@ -444,11 +444,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>This boxplot confirms Designated tracts have a lower median income (~$40k). The Not Designated group shows a few more high-income outliers, which ties back to the eligibility logic: tracts adjacent to low-income tracts could qualify for designation even if their own income was relatively high.</p>
+<p>This boxplot confirms Designated tracts have a lower median income (~$40k). The Not Designated group shows more high-income outliers, which ties back to the eligibility logic: tracts adjacent to low-income tracts could qualify for designation even if their own income was relatively high.</p>
 </section>
 <section id="combine-basic-graphs-to-create-composite-views" class="level3">
 <h3 class="anchored" data-anchor-id="combine-basic-graphs-to-create-composite-views">Combine basic graphs to create composite views</h3>
-<p>One of the coolest thing about <code>ggplot</code> is that we can plot multiple <code>geom_</code> on top of each other. For instance, we can combine the two plots above, to show both the curves and the essential statistics in the boxplot. The following code uses two <code>geom_</code>(<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">Check out <code>geom_violin</code> for more</a>), and introduces several new arguments for fine-tuning the cosmetics.</p>
+<p><code>ggplot</code> provides the option to plot multiple <code>geom_</code> on top of each other. For instance, we can combine the two plots above, to show both the curves and the essential statistics in the boxplot. The following code uses two <code>geom_</code>(<a href="https://ggplot2.tidyverse.org/reference/geom_violin.html">Check out <code>geom_violin</code> for more</a>), and introduces several new arguments for fine-tuning the cosmetics.</p>
 <ul>
 <li><code>trim = FALSE</code>: If TRUE (default), trim the tails of the violins to the range of the data. If FALSE, don’t trim the tails and show the complete distribution.</li>
 <li><code>alpha = 0.5</code>: the transparency of the plotting area.</li>
@@ -502,8 +502,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>There seems to be a slight decrease of slope as we move from left to right along the x-axis. But we can make it more explicit by adding a linear trend (<code>geom_smooth</code>), and distinguish between the two groups (add the <code>color</code> argument in <code>aes()</code>).</p>
-<div class="cell" data-source-line-numbers="3,5">
-<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="3,5" data-code-line-numbers="3,5"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>ozs <span class="sc">|&gt;</span>    </span>
+<div class="cell" data-source-line-numbers="4,6">
+<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="4,6" data-code-line-numbers="4,6"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>ozs <span class="sc">|&gt;</span>    </span>
 <span id="cb19-2"><a href="#cb19-2"></a>  <span class="fu">mutate</span>(<span class="at">pctnonwhite =</span> <span class="dv">1</span> <span class="sc">-</span> pctwhite) <span class="sc">|&gt;</span> </span>
 <span id="cb19-3"><a href="#cb19-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> pctnonwhite, <span class="at">y =</span> medhhincome,</span>
 <span id="cb19-4"><a href="#cb19-4"></a>             <span class="at">color =</span> DesignatedOZ)) <span class="sc">+</span>   </span>
@@ -571,15 +571,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>The <code>geom</code> function you should use here is <code>geom_col()</code>.</p>
-<p>Once you have got the basic bar plot, think about how to polish it up. How can you modify your code to replicate the bar chart in the image? Try adjusting your code to answer the following questions.</p>
+<p>Try replicating the bar chart in the image. The <code>geom</code> function you should use here is <code>geom_col()</code>.</p>
+<p>Once you have got the basic bar plot, think about how to polish it up. You can consider adjusting your code by responding to the following questions.</p>
 <ol type="1">
 <li><p>The bars in the image are not stacking on top of one another. If you don’t want a stacked bar chart, you can adjust the <code>position</code> argument in <code>geom_col()</code>.</p></li>
 <li><p>The x-axis labels are titled to 45 degrees. How can I achieve this? (Hint: adjust <a href="https://ggplot2.tidyverse.org/articles/faq-axes.html">theme</a>, <code>axis.text.x</code>)</p></li>
 <li><p>The counties are not arranged alphabetically, but rather by values mapped to the y-axis, starting from large to small. How to achieve this? (<a href="https://www.rpubs.com/dvdunne/reorder_ggplot_barchart_axis">Hint</a>: reorder x based on y).</p></li>
 <li><p>Please add the title, subtitle, x- and y-axis labels, and the data source annotation to your bar chart.</p></li>
 </ol>
-<p>Feel free to consult the&nbsp;<a href="#0">R Graph Gallery</a> and <a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">Aesthetic specifications</a> for additional resources. If there is anything else you want to experiment, like changing the color scheme or the theme template, go for it.</p>
+<p>Feel free to consult the&nbsp;<a href="https://r-graph-gallery.com/">R Graph Gallery</a> and <a href="https://ggplot2.tidyverse.org/articles/ggplot2-specs.html">Aesthetic specifications</a> for additional resources. If there is anything else you want to experiment, like changing the color scheme or the theme template, go for it.</p>
 </section>
 <section id="exercise-2" class="level2">
 <h2 class="anchored" data-anchor-id="exercise-2">Exercise 2</h2>
@@ -612,7 +612,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>From here, your tasks are:</p>
 <ol type="1">
-<li><p>Use function <code>mutate()</code> to add one new column, so that it show the <strong>difference in income</strong> between designated and not designated tracts. Save this table as a new variable. (If you see NAs, talk about where it comes from and how you would handle it).</p></li>
+<li><p>Use function <code>mutate()</code> to add one new column, so that it shows the <strong>difference in income</strong> between designated and not designated tracts. Save this table as a new variable. (If you see NAs, talk about where it comes from, and how you would handle it).</p></li>
 <li><p>Arrange the counties in descending order of the difference. Which county has the greatest disparity in median household income between designated and non-designated tracts?</p></li>
 </ol>
 </section>
@@ -620,12 +620,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="exercise-3">Exercise 3</h2>
 <p>We have been exploring <code>medhhincome</code> in the tutorial, now let’s investigate the <code>PovertyRate</code> variable, the other economic variable involved in OZ eligibility.</p>
 <ol type="1">
-<li><p>Using <code>PovertyRate</code>, create a graphical representation that compares its distribution between designated Opportunity Zone tracts and undesignated tracts in Massachusetts. Your visualization should make it easy to see whether the two groups differ in their poverty-rate distributions.</p></li>
+<li><p>Using <code>PovertyRate</code>, create one graphical representation that compares its distribution between designated Opportunity Zone tracts and undesignated tracts in Massachusetts. Your visualization should make it easy to see whether the two groups differ in their poverty-rate distributions.</p></li>
 <li><p>Choose <strong>one demographic variable</strong> from the table, then create a graphical representation showing how it relates to <code>PovertyRate</code>. Describe whether the two variables appear to be related or unrelated, and identify the direction of the observed relationship.</p></li>
 <li><p><strong>Connect your analysis to the broader discussion of Opportunity Zones.</strong><br>
-There is a broader discussion about how OZs have been and should be designated. A clean “more distressed tracts got picked” story might not hold up everywhere. Designation can happen due to geography, adjacency to other investment, political considerations, or growth potential (e.g., tracts near universities or transit).</p>
+There is a broader discussion about how OZs have been and should be designated. A clean “more distressed tracts got picked” story might not hold up everywhere (<a href="https://www.urban.org/sites/default/files/publication/98445/did_states_maximize_their_opportunity_zone_selections_7.pdf">Urban Institute, 2018</a>). Designation can happen due to geography, adjacency to other investment, political considerations, or growth potential (e.g., tracts near universities or transit).</p>
 <p>Critics also argue that the designation directs subsidies toward areas that are already attracting investment, rather than toward the most distressed communities. (<a href="https://www.congress.gov/crs-product/R48952">CRS/OBBBA reform reporting, 2026</a>). Others point out that investment in some zones actually translates into displacement rather than improvement for existing residents, a pattern especially strong in places like Washington, D.C. (<a href="https://www.brookings.edu/articles/opportunity-zones-impacts-and-how-to-improve-them/">Brookings, 2026</a>).</p>
-<p>In this lab, we have only touched on a small piece of OZ discussions. Based on your results so far, suggest 1-2 questions you would want to explore further. For each, conceptually describe what additional data or information you would need to investigate it.</p></li>
+<p>In this lab, we have only touched on a small piece of OZ discussions. Based on your results so far, suggest 1-2 questions you might be interested to explore further. For each, conceptually describe what additional data or information would be helpful for you to investigate it.</p></li>
 </ol>
 </section>
 </section>
@@ -641,7 +641,7 @@ There is a broader discussion about how OZs have been and should be designated. 
 <div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
 <ol>
-<li id="fn1"><p><a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf" class="uri">https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Department of the treasury office of tax analysis. March 2026. Eligibility criteria for determining census tracts eligible to be nominated as 2027 qualified opportunity zones. <a href="https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf" class="uri">https://home.treasury.gov/system/files/131/OZ2-Eligibility-Criteria-Data-Transparency-03232026.pdf</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
