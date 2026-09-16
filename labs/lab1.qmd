@@ -194,6 +194,8 @@ ozs |>
             max = max(medhhincome))
 ```
 
+# Create Statistical Plots
+
 ## Distribution of one variable
 
 ### Density plot
