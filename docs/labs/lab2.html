@@ -182,8 +182,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#add-table-shading-with-gt" id="toc-add-table-shading-with-gt" class="nav-link" data-scroll-target="#add-table-shading-with-gt">Add Table Shading with <code>gt()</code></a></li>
   </ul></li>
   <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
-  <li><a href="#find-resources-and-learn-more" id="toc-find-resources-and-learn-more" class="nav-link" data-scroll-target="#find-resources-and-learn-more">Find Resources and Learn More</a></li>
   <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  <li><a href="#find-resources-and-learn-more" id="toc-find-resources-and-learn-more" class="nav-link" data-scroll-target="#find-resources-and-learn-more">Find Resources and Learn More</a></li>
   </ul>
 </nav>
     </div>
@@ -484,14 +484,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Then we can use this <code>highlight</code> column as <code>fill =</code> .</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">highlight =</span> <span class="fu">if_else</span>(bucket <span class="sc">==</span> <span class="st">"29-30"</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> highlight)) <span class="sc">+</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-source-line-numbers="3-7">
+<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="3-7" data-code-line-numbers="3-7"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a>minstay_table <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2"></a>  <span class="fu">mutate</span>(<span class="at">highlight =</span> <span class="fu">if_else</span>(bucket <span class="sc">==</span> <span class="st">"29-30"</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> highlight)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4"></a>    <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5"></a>    <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb20-6"><a href="#cb20-6"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -507,22 +507,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Use <code>labs()</code> to add a meaningful title.</li>
 <li><code>theme(legend.position = "none")</code> removes the legend, since the highlighted color already makes its own point without one.</li>
 </ul>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket <span class="sc">==</span> <span class="st">"29-30"</span>)) <span class="sc">+</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"30% of Boston's listings require a minimum stay of 29 or 30 days"</span>,</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"They sit just past Boston's 28-day short-term-rental threshold"</span>,</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">""</span>,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Listings"</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-source-line-numbers="7-13">
+<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="7-13" data-code-line-numbers="7-13"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1"></a>minstay_table <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket <span class="sc">==</span> <span class="st">"29-30"</span>)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb21-5"><a href="#cb21-5"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6"></a>  ) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8"></a>  <span class="fu">labs</span>(</span>
+<span id="cb21-9"><a href="#cb21-9"></a>    <span class="at">title =</span> <span class="st">"30% of Boston's listings require a minimum stay of 29 or 30 days"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10"></a>    <span class="at">subtitle =</span> <span class="st">"They sit just past Boston's 28-day short-term-rental threshold"</span>,</span>
+<span id="cb21-11"><a href="#cb21-11"></a>    <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb21-12"><a href="#cb21-12"></a>    <span class="at">y =</span> <span class="st">"Number of Listings"</span>)<span class="sc">+</span></span>
+<span id="cb21-13"><a href="#cb21-13"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb21-14"><a href="#cb21-14"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -531,14 +530,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>We will stop modifying this graph here. Of course, you can keep going: show percentages instead of raw counts, adjust the x-axis ticks, or critique my grouping logic, apply your own metrics and so on. But for this section, we have demonstrated how to create groups and control colors. These are useful techniques that you will likely use quite often when creating plots and maps.</p>
+<p>We are going to stop modifying this graph here. Of course, you can keep going: show percentages instead of raw counts, adjust the x-axis ticks, or critique my grouping logic, apply your own metrics and so on. But for this section, we have demonstrated how to create groups and control colors. These are useful techniques that you will likely use quite often when creating plots and maps.</p>
 </section>
 </section>
 <section id="quick-interactive-graphs-and-tables" class="level1">
 <h1>Quick Interactive Graphs and Tables</h1>
 <section id="add-hovering-tooltips-with-plotly" class="level2">
 <h2 class="anchored" data-anchor-id="add-hovering-tooltips-with-plotly">Add Hovering Tooltips with <code>plotly</code></h2>
-<p>As we mentioned in class, many ggplot graphs can be easily transformed into interactive plotly graphs with tooltips. Let’s use <code>minstay_table</code> to demonstrate that.</p>
+<p>As we mentioned in class, many <code>ggplot</code> graphs can be easily transformed into interactive <code>plotly</code> graphs with tooltips. Let’s use <code>minstay_table</code> to demonstrate that.</p>
 <p>You will first need to complete your ggplot graph. Set up everything you need, including the colors, line widths, title, and so on.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
@@ -567,8 +566,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>graph <span class="sc">|&gt;</span> <span class="fu">ggplotly</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="plotly html-widget html-fill-item" id="htmlwidget-22168b78ab9f169cca31" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-22168b78ab9f169cca31">{"x":{"data":[{"orientation":"v","width":[0.5,0.5,0.5,0.5,0.5,0.5,0.5],"base":[0,0,0,0,0,0,0],"x":[1,2,3,4,5,6,7],"y":[1937,389,127,91,53,1345,472],"text":["bucket: 1 night<br />count: 1937","bucket: 2<br />count:  389","bucket: 3<br />count:  127","bucket: 4-7<br />count:   91","bucket: 8-28<br />count:   53","bucket: 29-30<br />count: 1345","bucket: 31+<br />count:  472"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(173,216,230,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283104,"r":7.3059360730593621,"b":40.182648401826491,"l":48.949771689497723},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,7.5999999999999996],"tickmode":"array","ticktext":["1 night","2","3","4-7","8-28","29-30","31+"],"tickvals":[1,2,3,4.0000000000000009,5,6,7],"categoryorder":"array","categoryarray":["1 night","2","3","4-7","8-28","29-30","31+"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Mininum Stay","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-96.850000000000009,2033.8499999999999],"tickmode":"array","ticktext":["0","500","1000","1500","2000"],"tickvals":[0,500,999.99999999999989,1500,2000],"categoryorder":"array","categoryarray":["0","500","1000","1500","2000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Number of Properties","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"1e941e17cb":{"x":{},"y":{},"type":"bar"}},"cur_data":"1e941e17cb","visdat":{"1e941e17cb":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<div class="plotly html-widget html-fill-item" id="htmlwidget-1b6924c94f476ebc86b8" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-1b6924c94f476ebc86b8">{"x":{"data":[{"orientation":"v","width":[0.5,0.5,0.5,0.5,0.5,0.5,0.5],"base":[0,0,0,0,0,0,0],"x":[1,2,3,4,5,6,7],"y":[1937,389,127,91,53,1345,472],"text":["bucket: 1 night<br />count: 1937","bucket: 2<br />count:  389","bucket: 3<br />count:  127","bucket: 4-7<br />count:   91","bucket: 8-28<br />count:   53","bucket: 29-30<br />count: 1345","bucket: 31+<br />count:  472"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(173,216,230,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283104,"r":7.3059360730593621,"b":40.182648401826491,"l":48.949771689497723},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,7.5999999999999996],"tickmode":"array","ticktext":["1 night","2","3","4-7","8-28","29-30","31+"],"tickvals":[1,2,3,4.0000000000000009,5,6,7],"categoryorder":"array","categoryarray":["1 night","2","3","4-7","8-28","29-30","31+"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Mininum Stay","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-96.850000000000009,2033.8499999999999],"tickmode":"array","ticktext":["0","500","1000","1500","2000"],"tickvals":[0,500,999.99999999999989,1500,2000],"categoryorder":"array","categoryarray":["0","500","1000","1500","2000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Number of Properties","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"6c1c531f200c":{"x":{},"y":{},"type":"bar"}},"cur_data":"6c1c531f200c","visdat":{"6c1c531f200c":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
@@ -579,23 +578,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="loktlclgyl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#loktlclgyl table {
+<div id="zonvxlsmzw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zonvxlsmzw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#loktlclgyl thead, #loktlclgyl tbody, #loktlclgyl tfoot, #loktlclgyl tr, #loktlclgyl td, #loktlclgyl th {
+#zonvxlsmzw thead, #zonvxlsmzw tbody, #zonvxlsmzw tfoot, #zonvxlsmzw tr, #zonvxlsmzw td, #zonvxlsmzw th {
   border-style: none;
 }
 
-#loktlclgyl p {
+#zonvxlsmzw p {
   margin: 0;
   padding: 0;
 }
 
-#loktlclgyl .gt_table {
+#zonvxlsmzw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -621,12 +620,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_caption {
+#zonvxlsmzw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#loktlclgyl .gt_title {
+#zonvxlsmzw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -638,7 +637,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#loktlclgyl .gt_subtitle {
+#zonvxlsmzw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -650,7 +649,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#loktlclgyl .gt_heading {
+#zonvxlsmzw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -662,13 +661,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_bottom_border {
+#zonvxlsmzw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_col_headings {
+#zonvxlsmzw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -683,7 +682,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_col_heading {
+#zonvxlsmzw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -703,7 +702,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#loktlclgyl .gt_column_spanner_outer {
+#zonvxlsmzw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -715,15 +714,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#loktlclgyl .gt_column_spanner_outer:first-child {
+#zonvxlsmzw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#loktlclgyl .gt_column_spanner_outer:last-child {
+#zonvxlsmzw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#loktlclgyl .gt_column_spanner {
+#zonvxlsmzw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -735,11 +734,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#loktlclgyl .gt_spanner_row {
+#zonvxlsmzw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#loktlclgyl .gt_group_heading {
+#zonvxlsmzw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -765,7 +764,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#loktlclgyl .gt_empty_group_heading {
+#zonvxlsmzw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -780,15 +779,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#loktlclgyl .gt_from_md > :first-child {
+#zonvxlsmzw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#loktlclgyl .gt_from_md > :last-child {
+#zonvxlsmzw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#loktlclgyl .gt_row {
+#zonvxlsmzw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -807,7 +806,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#loktlclgyl .gt_stub {
+#zonvxlsmzw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -820,7 +819,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#loktlclgyl .gt_stub_row_group {
+#zonvxlsmzw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -834,15 +833,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#loktlclgyl .gt_row_group_first td {
+#zonvxlsmzw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#loktlclgyl .gt_row_group_first th {
+#zonvxlsmzw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#loktlclgyl .gt_summary_row {
+#zonvxlsmzw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -852,16 +851,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#loktlclgyl .gt_first_summary_row {
+#zonvxlsmzw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_first_summary_row.thick {
+#zonvxlsmzw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#loktlclgyl .gt_last_summary_row {
+#zonvxlsmzw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -871,7 +870,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_grand_summary_row {
+#zonvxlsmzw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -881,7 +880,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#loktlclgyl .gt_first_grand_summary_row {
+#zonvxlsmzw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -891,7 +890,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_last_grand_summary_row_top {
+#zonvxlsmzw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -901,11 +900,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_striped {
+#zonvxlsmzw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#loktlclgyl .gt_table_body {
+#zonvxlsmzw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -914,7 +913,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_footnotes {
+#zonvxlsmzw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -928,7 +927,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_footnote {
+#zonvxlsmzw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -937,7 +936,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#loktlclgyl .gt_sourcenotes {
+#zonvxlsmzw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -951,7 +950,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#loktlclgyl .gt_sourcenote {
+#zonvxlsmzw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -959,72 +958,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#loktlclgyl .gt_left {
+#zonvxlsmzw .gt_left {
   text-align: left;
 }
 
-#loktlclgyl .gt_center {
+#zonvxlsmzw .gt_center {
   text-align: center;
 }
 
-#loktlclgyl .gt_right {
+#zonvxlsmzw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#loktlclgyl .gt_font_normal {
+#zonvxlsmzw .gt_font_normal {
   font-weight: normal;
 }
 
-#loktlclgyl .gt_font_bold {
+#zonvxlsmzw .gt_font_bold {
   font-weight: bold;
 }
 
-#loktlclgyl .gt_font_italic {
+#zonvxlsmzw .gt_font_italic {
   font-style: italic;
 }
 
-#loktlclgyl .gt_super {
+#zonvxlsmzw .gt_super {
   font-size: 65%;
 }
 
-#loktlclgyl .gt_footnote_marks {
+#zonvxlsmzw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#loktlclgyl .gt_asterisk {
+#zonvxlsmzw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#loktlclgyl .gt_indent_1 {
+#zonvxlsmzw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#loktlclgyl .gt_indent_2 {
+#zonvxlsmzw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#loktlclgyl .gt_indent_3 {
+#zonvxlsmzw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#loktlclgyl .gt_indent_4 {
+#zonvxlsmzw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#loktlclgyl .gt_indent_5 {
+#zonvxlsmzw .gt_indent_5 {
   text-indent: 25px;
 }
 
-#loktlclgyl .katex-display {
+#zonvxlsmzw .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#loktlclgyl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#zonvxlsmzw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1109,23 +1108,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">domain  =</span> <span class="fu">range</span>(minstay_table<span class="sc">$</span>percentage)</span>
 <span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>    )) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="xpnbmpkrct" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xpnbmpkrct table {
+<div id="pneljsvpbr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pneljsvpbr table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#xpnbmpkrct thead, #xpnbmpkrct tbody, #xpnbmpkrct tfoot, #xpnbmpkrct tr, #xpnbmpkrct td, #xpnbmpkrct th {
+#pneljsvpbr thead, #pneljsvpbr tbody, #pneljsvpbr tfoot, #pneljsvpbr tr, #pneljsvpbr td, #pneljsvpbr th {
   border-style: none;
 }
 
-#xpnbmpkrct p {
+#pneljsvpbr p {
   margin: 0;
   padding: 0;
 }
 
-#xpnbmpkrct .gt_table {
+#pneljsvpbr .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1151,12 +1150,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_caption {
+#pneljsvpbr .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#xpnbmpkrct .gt_title {
+#pneljsvpbr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1168,7 +1167,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#xpnbmpkrct .gt_subtitle {
+#pneljsvpbr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1180,7 +1179,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#xpnbmpkrct .gt_heading {
+#pneljsvpbr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1192,13 +1191,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_bottom_border {
+#pneljsvpbr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_col_headings {
+#pneljsvpbr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1213,7 +1212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_col_heading {
+#pneljsvpbr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1233,7 +1232,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#xpnbmpkrct .gt_column_spanner_outer {
+#pneljsvpbr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1245,15 +1244,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#xpnbmpkrct .gt_column_spanner_outer:first-child {
+#pneljsvpbr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#xpnbmpkrct .gt_column_spanner_outer:last-child {
+#pneljsvpbr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#xpnbmpkrct .gt_column_spanner {
+#pneljsvpbr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1265,11 +1264,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#xpnbmpkrct .gt_spanner_row {
+#pneljsvpbr .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#xpnbmpkrct .gt_group_heading {
+#pneljsvpbr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1295,7 +1294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#xpnbmpkrct .gt_empty_group_heading {
+#pneljsvpbr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1310,15 +1309,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#xpnbmpkrct .gt_from_md > :first-child {
+#pneljsvpbr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#xpnbmpkrct .gt_from_md > :last-child {
+#pneljsvpbr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#xpnbmpkrct .gt_row {
+#pneljsvpbr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1337,7 +1336,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#xpnbmpkrct .gt_stub {
+#pneljsvpbr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1350,7 +1349,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#xpnbmpkrct .gt_stub_row_group {
+#pneljsvpbr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1364,15 +1363,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#xpnbmpkrct .gt_row_group_first td {
+#pneljsvpbr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#xpnbmpkrct .gt_row_group_first th {
+#pneljsvpbr .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#xpnbmpkrct .gt_summary_row {
+#pneljsvpbr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1382,16 +1381,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#xpnbmpkrct .gt_first_summary_row {
+#pneljsvpbr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_first_summary_row.thick {
+#pneljsvpbr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#xpnbmpkrct .gt_last_summary_row {
+#pneljsvpbr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1401,7 +1400,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_grand_summary_row {
+#pneljsvpbr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1411,7 +1410,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#xpnbmpkrct .gt_first_grand_summary_row {
+#pneljsvpbr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1421,7 +1420,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_last_grand_summary_row_top {
+#pneljsvpbr .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1431,11 +1430,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_striped {
+#pneljsvpbr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#xpnbmpkrct .gt_table_body {
+#pneljsvpbr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1444,7 +1443,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_footnotes {
+#pneljsvpbr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1458,7 +1457,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_footnote {
+#pneljsvpbr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1467,7 +1466,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#xpnbmpkrct .gt_sourcenotes {
+#pneljsvpbr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1481,7 +1480,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#xpnbmpkrct .gt_sourcenote {
+#pneljsvpbr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1489,72 +1488,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#xpnbmpkrct .gt_left {
+#pneljsvpbr .gt_left {
   text-align: left;
 }
 
-#xpnbmpkrct .gt_center {
+#pneljsvpbr .gt_center {
   text-align: center;
 }
 
-#xpnbmpkrct .gt_right {
+#pneljsvpbr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#xpnbmpkrct .gt_font_normal {
+#pneljsvpbr .gt_font_normal {
   font-weight: normal;
 }
 
-#xpnbmpkrct .gt_font_bold {
+#pneljsvpbr .gt_font_bold {
   font-weight: bold;
 }
 
-#xpnbmpkrct .gt_font_italic {
+#pneljsvpbr .gt_font_italic {
   font-style: italic;
 }
 
-#xpnbmpkrct .gt_super {
+#pneljsvpbr .gt_super {
   font-size: 65%;
 }
 
-#xpnbmpkrct .gt_footnote_marks {
+#pneljsvpbr .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#xpnbmpkrct .gt_asterisk {
+#pneljsvpbr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#xpnbmpkrct .gt_indent_1 {
+#pneljsvpbr .gt_indent_1 {
   text-indent: 5px;
 }
 
-#xpnbmpkrct .gt_indent_2 {
+#pneljsvpbr .gt_indent_2 {
   text-indent: 10px;
 }
 
-#xpnbmpkrct .gt_indent_3 {
+#pneljsvpbr .gt_indent_3 {
   text-indent: 15px;
 }
 
-#xpnbmpkrct .gt_indent_4 {
+#pneljsvpbr .gt_indent_4 {
   text-indent: 20px;
 }
 
-#xpnbmpkrct .gt_indent_5 {
+#pneljsvpbr .gt_indent_5 {
   text-indent: 25px;
 }
 
-#xpnbmpkrct .katex-display {
+#pneljsvpbr .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#xpnbmpkrct div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#pneljsvpbr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -1619,8 +1618,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exercise" class="level1">
 <h1>Exercise</h1>
-<p>It’s your turn now. This time, you will do a mini self-directed visualization project using the Inside Airbnb dataset. We want to see <strong>two thoughtful visualizations</strong> from you, and for each, tell us what you looked at, and why.</p>
-<p>Here are a few ideas to get you started:</p>
+<p>It’s your turn now. This time, you will do a mini self-directed visualization project using <strong>Boston’s Inside Airbnb dataset</strong>. We want to see <strong>two thoughtful visualizations</strong> from you, and for each, tell us what you looked at, and why.</p>
+<p>Feel free to explore all the other columns we haven’t touched yet. Here are a few ideas to get you started:</p>
 <ul>
 <li><p><em>Listing type:</em> Inside Airbnb notes that “the majority of Airbnb listings in most cities are”entire homes”, many of which are rented all year round, disrupting housing and communities”. How many properties in Boston are entire homes and are rented all year round in this dataset?</p></li>
 <li><p><em>Activity and income:</em> Availability, price, and number of reviews can be used to estimate nights booked in the past 12 months. How many listings are rented frequently, and does Airbnb revenue encourage short-term rentals over long-term housing?</p></li>
@@ -1629,12 +1628,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
 <blockquote class="blockquote">
 <p>You will probably work through this in two phases:</p>
-<p>Phase 1: Explore the dataset. There are a number of columns we haven’t touched yet. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.</p>
+<p>Phase 1: Explore the dataset. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.</p>
 <p>Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles.</p>
 </blockquote>
-<p><strong>In your lab report, please submit your complete code and output for your two final graphs.</strong> <strong>For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.</strong> If you think additional supporting plots would help explain your analysis, please include them as well.</p>
 <p>Don’t worry if what you can currently do doesn’t yet get you exactly where your mind wants to go. <strong>Make your graphs in R anyway.</strong> The goal is to apply what we have practiced, adapt code to new problems, and show your thinking and intention around a topic.</p>
 <p>You may work in an R script while you are developing your analysis. Once you are satisfied with your results, use a Quarto Documenet to prepare and submit your lab report.</p>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p><strong>In your lab report, please submit your complete code and output for your two final graphs.</strong> <strong>For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.</strong> If you think additional supporting plots would help explain your analysis, please include them as well.</p>
+<p>Please complete your <strong>Quarto document</strong> and upload your <strong>rendered HTML file</strong> to Canvas by <strong>9am, Wednesday, Sep 30.</strong></p>
 </section>
 <section id="find-resources-and-learn-more" class="level1">
 <h1>Find Resources and Learn More</h1>
@@ -1646,10 +1649,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p><em>Your own experience.</em> Everything you have done so far counts as a resource. The time you have spent to make your code work all build into your personal knowledge and intuition.</p></li>
 <li><p><em>Community examples and published code snippets.</em> If you come across someone else’s work that serves as a good example, take time to study the code, understand how it works, and consider how you might adapt it for your own project.</p></li>
 </ul>
-</section>
-<section id="lab-report" class="level1">
-<h1>Lab Report</h1>
-<p>Please complete your <strong>Quarto document</strong> and upload your <strong>rendered HTML file</strong> to Canvas by <strong>9am, Wednesday, Sep 30.</strong></p>
 
 
 </section>

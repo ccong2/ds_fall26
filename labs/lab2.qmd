@@ -256,6 +256,8 @@ minstay_table |>
 Then we can use this `highlight` column as `fill =` .
 
 ```{r}
+#| class-source: "numberLines" 
+#| source-line-numbers: "3-7"
 minstay_table |>
   mutate(highlight = if_else(bucket == "29-30", "yes", "no")) |> 
   ggplot(aes(x = bucket, y = count, fill = highlight)) +
@@ -273,6 +275,8 @@ Suppose I'm satisfied with this graph setting now. I'll clean it up and add some
 -   `theme(legend.position = "none")` removes the legend, since the highlighted color already makes its own point without one.
 
 ```{r}
+#| class-source: "numberLines" 
+#| source-line-numbers: "7-13"
 minstay_table |>
   ggplot(aes(x = bucket, y = count, fill = bucket == "29-30")) +
   geom_col(width = 0.5) +
@@ -284,19 +288,18 @@ minstay_table |>
     title = "30% of Boston's listings require a minimum stay of 29 or 30 days",
     subtitle = "They sit just past Boston's 28-day short-term-rental threshold",
     x = "",
-    y = "Number of Listings"
-  )+
+    y = "Number of Listings")+
   theme_minimal() + 
   theme(legend.position = "none")
 ```
 
-We will stop modifying this graph here. Of course, you can keep going: show percentages instead of raw counts, adjust the x-axis ticks, or critique my grouping logic, apply your own metrics and so on. But for this section, we have demonstrated how to create groups and control colors. These are useful techniques that you will likely use quite often when creating plots and maps.
+We are going to stop modifying this graph here. Of course, you can keep going: show percentages instead of raw counts, adjust the x-axis ticks, or critique my grouping logic, apply your own metrics and so on. But for this section, we have demonstrated how to create groups and control colors. These are useful techniques that you will likely use quite often when creating plots and maps.
 
 # Quick Interactive Graphs and Tables
 
 ## Add Hovering Tooltips with `plotly`
 
-As we mentioned in class, many ggplot graphs can be easily transformed into interactive plotly graphs with tooltips. Let's use `minstay_table` to demonstrate that.
+As we mentioned in class, many `ggplot` graphs can be easily transformed into interactive `plotly` graphs with tooltips. Let's use `minstay_table` to demonstrate that.
 
 You will first need to complete your ggplot graph. Set up everything you need, including the colors, line widths, title, and so on.
 
@@ -372,9 +375,9 @@ minstay_table |>
 
 # Exercise
 
-It's your turn now. This time, you will do a mini self-directed visualization project using the Inside Airbnb dataset. We want to see **two thoughtful visualizations** from you, and for each, tell us what you looked at, and why.
+It's your turn now. This time, you will do a mini self-directed visualization project using **Boston's Inside Airbnb dataset**. We want to see **two thoughtful visualizations** from you, and for each, tell us what you looked at, and why.
 
-Here are a few ideas to get you started:
+Feel free to explore all the other columns we haven't touched yet. Here are a few ideas to get you started:
 
 -   *Listing type:* Inside Airbnb notes that "the majority of Airbnb listings in most cities are "entire homes", many of which are rented all year round, disrupting housing and communities". How many properties in Boston are entire homes and are rented all year round in this dataset?
 
@@ -386,15 +389,19 @@ Here are a few ideas to get you started:
 
 > You will probably work through this in two phases:
 >
-> Phase 1: Explore the dataset. There are a number of columns we haven't touched yet. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.
+> Phase 1: Explore the dataset. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.
 >
 > Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles.
-
-**In your lab report, please submit your complete code and output for your two final graphs.** **For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.** If you think additional supporting plots would help explain your analysis, please include them as well.
 
 Don't worry if what you can currently do doesn't yet get you exactly where your mind wants to go. **Make your graphs in R anyway.** The goal is to apply what we have practiced, adapt code to new problems, and show your thinking and intention around a topic.
 
 You may work in an R script while you are developing your analysis. Once you are satisfied with your results, use a Quarto Documenet to prepare and submit your lab report.
+
+# Lab Report
+
+**In your lab report, please submit your complete code and output for your two final graphs.** **For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.** If you think additional supporting plots would help explain your analysis, please include them as well.
+
+Please complete your **Quarto document** and upload your **rendered HTML file** to Canvas by **9am, Wednesday, Sep 30.**
 
 # Find Resources and Learn More
 
@@ -409,7 +416,3 @@ You may work in an R script while you are developing your analysis. Once you are
 -   *Your own experience.* Everything you have done so far counts as a resource. The time you have spent to make your code work all build into your personal knowledge and intuition.
 
 -   *Community examples and published code snippets.* If you come across someone else’s work that serves as a good example, take time to study the code, understand how it works, and consider how you might adapt it for your own project.
-
-# Lab Report
-
-Please complete your **Quarto document** and upload your **rendered HTML file** to Canvas by **9am, Wednesday, Sep 30.**
