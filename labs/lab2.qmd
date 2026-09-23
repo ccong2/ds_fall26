@@ -391,7 +391,7 @@ Feel free to explore all the other columns we haven't touched yet. Here are a fe
 >
 > Phase 1: Explore the dataset. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.
 >
-> Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles.
+> Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles. Think about the message your audience should take away, and make your graph as self-explanatory as possible.
 
 Don't worry if what you can currently do doesn't yet get you exactly where your mind wants to go. **Make your graphs in R anyway.** The goal is to apply what we have practiced, adapt code to new problems, and show your thinking and intention around a topic.
 
