@@ -399,7 +399,7 @@ You may work in an R script while you are developing your analysis. Once you are
 
 # Lab Report
 
-**In your lab report, please submit your complete code and output for your two final graphs.** **For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.** If you think additional supporting plots would help explain your analysis, please include them as well.
+**In your lab report, please submit your complete code and output for your two final graphs.** **For each graph, write a short passage explaining what you found, and what decisions you made while creating this graph.** If you think additional supporting plots would help explain your analysis, please include them as well.
 
 Please complete your **Quarto document** and upload your **rendered HTML file** to Canvas by **9am, Wednesday, Sep 30.**
 
