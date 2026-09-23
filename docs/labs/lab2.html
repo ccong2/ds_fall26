@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-09-22">
 
-<title>lab2 – Applied Data Science for Cities</title>
+<title>Visual Description of Data  – Applied Data Science for Cities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -40,6 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,6 +103,24 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<script src="../site_libs/plotly-binding-4.11.0/plotly.js"></script>
+
+<script src="../site_libs/typedarray-0.1/typedarray.min.js"></script>
+
+<script src="../site_libs/jquery-3.5.1/jquery.min.js"></script>
+
+<link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
+<link href="../site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet">
+
+<script src="../site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -108,17 +162,1497 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#background" id="toc-background" class="nav-link" data-scroll-target="#background">Background</a></li>
+  <li><a href="#the-data-we-use-today" id="toc-the-data-we-use-today" class="nav-link" data-scroll-target="#the-data-we-use-today">The Data We Use Today</a></li>
+  <li><a href="#understand-the-data" id="toc-understand-the-data" class="nav-link" data-scroll-target="#understand-the-data">Understand the data</a></li>
+  <li><a href="#refine-my-graph" id="toc-refine-my-graph" class="nav-link" data-scroll-target="#refine-my-graph">Refine My Graph</a>
+  <ul class="collapse">
+  <li><a href="#create-groups-for-values" id="toc-create-groups-for-values" class="nav-link" data-scroll-target="#create-groups-for-values">Create Groups for Values</a></li>
+  <li><a href="#map-colors-with-palettes" id="toc-map-colors-with-palettes" class="nav-link" data-scroll-target="#map-colors-with-palettes">Map Colors with Palettes</a></li>
+  </ul></li>
+  <li><a href="#quick-interactive-graphs-and-tables" id="toc-quick-interactive-graphs-and-tables" class="nav-link" data-scroll-target="#quick-interactive-graphs-and-tables">Quick Interactive Graphs and Tables</a>
+  <ul class="collapse">
+  <li><a href="#add-hovering-tooltips-with-plotly" id="toc-add-hovering-tooltips-with-plotly" class="nav-link" data-scroll-target="#add-hovering-tooltips-with-plotly">Add Hovering Tooltips with <code>plotly</code></a></li>
+  <li><a href="#add-table-shading-with-gt" id="toc-add-table-shading-with-gt" class="nav-link" data-scroll-target="#add-table-shading-with-gt">Add Table Shading with <code>gt()</code></a></li>
+  </ul></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  <li><a href="#find-resources-and-learn-more" id="toc-find-resources-and-learn-more" class="nav-link" data-scroll-target="#find-resources-and-learn-more">Find Resources and Learn More</a></li>
+  <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Visual Description of Data <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+<p class="subtitle lead"><span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span></p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 22, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Today’s tutorial will walk you through the process of exploring a dataset, gradually developing findings, and turning one of those findings into a presentable graph. Along the way, we will look at how plots can help us diagnose patterns in the data, as well as how we can use them to communicate our findings. We will also go over some practical techniques for modifying a dataset and adjusting colors.</p>
+</section>
+<section id="background" class="level1">
+<h1>Background</h1>
+<p><a href="https://insideairbnb.com/">Inside Airbnb</a> is a publicly available dataset built by scraping Airbnb’s platform. Airbnb is best known for short-term rentals, and <a href="https://insideairbnb.com/about/">a group of housing activists</a> created the site to bring transparency to how those rentals affect cities around the world. They scraped and compiled multiple attributes of Airbnb properties: listings, hosts, prices, availability, reviews, etc.</p>
+<p>The motivation of compiling this resource is the tension between short-term rental platforms and the long-term housing market. Advocates argue that when homes are repurposed for short-term rentals, it practically reduces the availability of affordable housing, while also driving up rental costs and adding displacement pressure on local communities.</p>
+<p>Many cities respond with rules. <strong>In Boston,</strong> for example, <a href="https://www.boston.gov/departments/inspectional-services/short-term-rentals">rentals under 28 days are regulated</a>. If you want to operate your property as a short-term Airbnb rental (under 28 days), you have to be the primary resident of the unit, limit your guest count, and follow city registration, annual fees, fire safety postings, etc. Basically, the city wants residential housing to benefit tenants, not be turned into full-time hotels.</p>
+</section>
+<section id="the-data-we-use-today" class="level1">
+<h1>The Data We Use Today</h1>
+<p>As with previous labs, start by creating a working folder for <strong>Lab 2</strong> and setting up a new <strong>R Project</strong> inside it.</p>
+<p>Use a regular R script to experiment with your code first. Later, in the Exercise section, you will create a Quarto document to compile your report.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Go to the <a href="https://insideairbnb.com/get-the-data/">Get the Data</a> page on Inside Airbnb and <strong>search for Boston</strong>. Under “Boston, Massachusetts, United States” you will see a list of files with descriptions.</p>
+<p>Download <strong><code>listings.csv</code>,</strong> described as “Summary information and metrics for listings in Boston (good for visualizations).” It’s already cleaned up, so it’s an easy way to start.</p>
+<p><img src="..\img/lab2-downloadlistings.PNG" class="img-fluid"></p>
+<p><em>Note: Skip the <code>.gz</code> version, which is the raw data scraped directly from Airbnb. We won’t use it today.</em></p>
+<p>Read the data into R.</p>
+<div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>airbnb &lt;- read_csv("data/listings.csv")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The file has 19 variables. Before plotting, skim the <a href="https://docs.google.com/spreadsheets/d/1iWCNJcSutYqpULSQHlNyGInUvHg2BoUGoNRIGa6Szc4/edit?gid=1938308660#gid=1938308660">Data Dictionary</a> to understand what each one means and what it tells you about a property.</p>
+</section>
+<section id="understand-the-data" class="level1">
+<h1>Understand the data</h1>
+<p>Here we first make some quick plots of any variables that catch our eye, looking for patterns.</p>
+<p>For example, I’m interested in <strong>minimum nights</strong>, which is the minimum length of stay required if you want to book this property. When browsing this column, I see a variety of values, so I make a quick histogram to see the distribution of these values.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>airbnb <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> minimum_nights)) <span class="sc">+</span> </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Stays of 1-2 days seem to be the most common, and stays over 200 days are rare. But there is something going on under 100 days. There are a couple of humps that, at this scale, I can’t see clearly, so I’m going to take a closer look at this part.</p>
+<p>In the following code:</p>
+<ul>
+<li><code>filter(minimum_nights &lt; 100)</code>: recall that within <code>filter</code>, the argument is a condition, so this subsets the data to rows that satisfy it. I want to find all listings with a minimum night requirement less than 100, in other words, zoom in to the range I’m interested in.</li>
+<li><code>scale_x_continuous(breaks = seq(0, 100, 5))</code>: this adjusts the axis tick breaks. As I zoom in, I want more precise numbers to show on the axis. Here, <code>seq(0, 100, 5)</code> reads: start at 0, end at 100, in steps of 5.</li>
+</ul>
+<div class="cell" data-source-line-numbers="2,5">
+<div class="sourceCode cell-code" id="cb4" data-source-line-numbers="2,5" data-code-line-numbers="2,5"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>airbnb <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">filter</span>(minimum_nights <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> minimum_nights)) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>    <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5"></a>    <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>After zooming in on the 0-100 day range, there are some listings clustered right around 90 days (3 months), but there is a second, bigger cluster right around 30 days. From my background knowledge, this is where the 28-day rules matter. So I zoom in again to take a closer look at this cluster.</p>
+<div class="cell" data-source-line-numbers="2,5">
+<div class="sourceCode cell-code" id="cb5" data-source-line-numbers="2,5" data-code-line-numbers="2,5"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>airbnb <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="fu">filter</span>(minimum_nights <span class="sc">&gt;</span> <span class="dv">25</span> <span class="sc">&amp;</span> minimum_nights <span class="sc">&lt;</span> <span class="dv">35</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> minimum_nights)) <span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">35</span>, <span class="at">by =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Many properties set their minimum stay at 29 days. Does that just reflect travel needs, or is it a way to avoid regulation?</p>
+<p>I found that interesting, and I want to show this to my audience.</p>
+</section>
+<section id="refine-my-graph" class="level1">
+<h1>Refine My Graph</h1>
+<p>There can be many ways to show this message. As a simple example, we could polish our graph by adding a vertical line and annotation to the histogram we created earlier.</p>
+<div class="cell" data-source-line-numbers="6-13">
+<div class="sourceCode cell-code" id="cb6" data-source-line-numbers="6-13" data-code-line-numbers="6-13"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>airbnb <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>  <span class="fu">filter</span>(minimum_nights <span class="sc">&lt;</span> <span class="dv">100</span>) <span class="sc">|&gt;</span>  <span class="co"># zoom in to minimum stay less than 100 days</span></span>
+<span id="cb6-3"><a href="#cb6-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> minimum_nights)) <span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">5</span>)) <span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">28</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>) <span class="sc">+</span></span>
+<span id="cb6-7"><a href="#cb6-7"></a>  <span class="fu">annotate</span>(</span>
+<span id="cb6-8"><a href="#cb6-8"></a>    <span class="st">"text"</span>,</span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="at">x =</span> <span class="dv">25</span>,</span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="at">y =</span> <span class="dv">800</span>,</span>
+<span id="cb6-11"><a href="#cb6-11"></a>    <span class="at">angle =</span> <span class="dv">90</span>,</span>
+<span id="cb6-12"><a href="#cb6-12"></a>    <span class="at">label =</span> <span class="st">"Short Term Rental Threshold"</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>But we left a lot of empty spaces on the graph, and there is still room to improve the clarity.</p>
+<section id="create-groups-for-values" class="level2">
+<h2 class="anchored" data-anchor-id="create-groups-for-values">Create Groups for Values</h2>
+<p>Because there are several clusters with wide gaps in between, I don’t want to show the entire histogram. What I want to say is: although there are a lot of 1-day minimums, a lot of 2-day minimums, there is also a notable cluster just above the 28-day short-term rental line. I can group my values in this way and compare.</p>
+<p><code>cut()</code> is usually used to take a series of values and put them into buckets.</p>
+<p>The <code>breaks</code> argument in <code>cut()</code>controls the breaking points, or how the values are separated. For example, <code>cut(seq(0, 10), breaks = 5)</code> creates 5 equal-interval buckets, putting each value from 1 to 10 into a bucket with an interval of 2.</p>
+<p>We can also define our own breakpoints, to sort values into custom, user-defined buckets:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>minstay <span class="ot">&lt;-</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  airbnb <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">bucket =</span> <span class="fu">cut</span>(minimum_nights,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">7</span>, <span class="dv">28</span>, <span class="dv">30</span>, <span class="cn">Inf</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"1 night"</span>, <span class="st">"2"</span>, <span class="st">"3"</span>, <span class="st">"4-7"</span>, <span class="st">"8-28"</span>, <span class="st">"29-30"</span>, <span class="st">"31+"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>In the newly created variable <code>minstay</code>, at the very right, you see a column called <code>bucket</code>. We have sorted the properties into different groups based on their set minimum stay.</p>
+<p>This new column enables us to count:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>minstay <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bucket) <span class="sc">|&gt;</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 7 × 2
+  bucket  count
+  &lt;fct&gt;   &lt;int&gt;
+1 1 night  1937
+2 2         389
+3 3         127
+4 4-7        91
+5 8-28       53
+6 29-30    1345
+7 31+       472</code></pre>
+</div>
+</div>
+<p>or generate some percentages:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>minstay <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(bucket) <span class="sc">|&gt;</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">percentage =</span> count <span class="sc">/</span> <span class="fu">sum</span>(count) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 7 × 3
+  bucket  count percentage
+  &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt;
+1 1 night  1937      43.9 
+2 2         389       8.81
+3 3         127       2.88
+4 4-7        91       2.06
+5 8-28       53       1.20
+6 29-30    1345      30.5 
+7 31+       472      10.7 </code></pre>
+</div>
+</div>
+<p>Looks good, so I will <strong>save</strong> this summary table, and prepare drafting my visualizations from it.</p>
+<div class="cell" data-source-line-numbers="1">
+<div class="sourceCode cell-code" id="cb12" data-source-line-numbers="1" data-code-line-numbers="1"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>minstay_table <span class="ot">&lt;-</span> </span>
+<span id="cb12-2"><a href="#cb12-2"></a>  minstay <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3"></a>    <span class="fu">group_by</span>(bucket) <span class="sc">|&gt;</span> </span>
+<span id="cb12-4"><a href="#cb12-4"></a>    <span class="fu">summarise</span>(<span class="at">count =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb12-5"><a href="#cb12-5"></a>    <span class="fu">mutate</span>(<span class="at">percentage =</span> <span class="fu">round</span>(count <span class="sc">/</span> <span class="fu">sum</span>(count), <span class="dv">3</span>) <span class="sc">*</span> <span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="map-colors-with-palettes" class="level2">
+<h2 class="anchored" data-anchor-id="map-colors-with-palettes">Map Colors with Palettes</h2>
+<p>Here is a basic bar chart, putting buckets of minimum stays on the x-axis, and the number of properties on the y-axis.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count)) <span class="sc">+</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>ggplot</code> provides several ways to modify colors. First we add a <code>fill</code> argument, it starts to deploy default colors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket)) <span class="sc">+</span> </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>But we can certainly decide the color ramp we want to use. Color adjustments in <code>ggplot</code> are handled through a <code>scale_fill_xxx()</code> function (or <code>scale_color_xxx()</code> for points/lines).</p>
+<p>For example, <code>scale_fill_manual()</code> allows us to manually specify colors:</p>
+<div class="cell" data-source-line-numbers="4">
+<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="4" data-code-line-numbers="4"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket)) <span class="sc">+</span> </span>
+<span id="cb15-3"><a href="#cb15-3"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"#990000"</span>, <span class="st">"#D7301F"</span>, <span class="st">"#EF6548"</span>, <span class="st">"#FC8D59"</span>,  <span class="st">"#FDBB84"</span>, <span class="st">"#FDD49E"</span>, <span class="st">"#FEE8C8"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>That’s painful to type them all out. So there’s no need to. Most often, we use an existing palette to pick colors from.</p>
+<p><code>scale_fill_brewer()</code> draws from <strong>R ColorBrewer</strong>. You can find the complete list of <a href="https://r-graph-gallery.com/38-rcolorbrewers-palettes.html">palette names</a> here. Pick one and plug its name in:</p>
+<div class="cell" data-source-line-numbers="4">
+<div class="sourceCode cell-code" id="cb16" data-source-line-numbers="4" data-code-line-numbers="4"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket)) <span class="sc">+</span> </span>
+<span id="cb16-3"><a href="#cb16-3"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"YlOrRd"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Another good option is <strong>Viridis</strong>, a set of palettes designed to be colorblind-friendly. You can find the list of <a href="https://sjmgarnier.github.io/viridisLite/reference/viridis.html">palette names</a> here. Note: I used <code>scale_fill_viridis_d()</code> since your bucket variable is <strong>d</strong>iscrete.</p>
+<div class="cell" data-source-line-numbers="4">
+<div class="sourceCode cell-code" id="cb17" data-source-line-numbers="4" data-code-line-numbers="4"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb17-2"><a href="#cb17-2"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket)) <span class="sc">+</span> </span>
+<span id="cb17-3"><a href="#cb17-3"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb17-4"><a href="#cb17-4"></a>  <span class="fu">scale_fill_viridis_d</span>(<span class="at">option =</span> <span class="st">"magma"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Color can be used to carry meanings: a monochromatic ramp works for values that move along a single continuous scale, a diverging palette works when there’s a meaningful midpoint, dark, saturated colors draw the eye, light colors recede into the background, etc. So if an existing color palette doesn’t fully satisfy you, you can modify the graph to point to what matters.</p>
+<p>For instance, we can change the color of our graph like this.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I will show you one way to do this. Let’s create a new column (and call it <code>highlight</code>) in <code>minstay_table</code> .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">highlight =</span> <span class="fu">if_else</span>(bucket <span class="sc">==</span> <span class="st">"29-30"</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 7 × 4
+  bucket  count percentage highlight
+  &lt;fct&gt;   &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;    
+1 1 night  1937       43.9 no       
+2 2         389        8.8 no       
+3 3         127        2.9 no       
+4 4-7        91        2.1 no       
+5 8-28       53        1.2 no       
+6 29-30    1345       30.5 yes      
+7 31+       472       10.7 no       </code></pre>
+</div>
+</div>
+<p>Then we can use this <code>highlight</code> column as <code>fill =</code> .</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">highlight =</span> <span class="fu">if_else</span>(bucket <span class="sc">==</span> <span class="st">"29-30"</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> highlight)) <span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Suppose I’m satisfied with this graph setting now. I’ll clean it up and add some final details. In the code below:</p>
+<ul>
+<li><code>theme_minimal()</code> strips away “non-data ink”, like gridlines and background shading</li>
+<li><code>coord_flip()</code> flips the axes, which makes the bucket labels easier to read.</li>
+<li>Use <code>labs()</code> to add a meaningful title.</li>
+<li><code>theme(legend.position = "none")</code> removes the legend, since the highlighted color already makes its own point without one.</li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count, <span class="at">fill =</span> bucket <span class="sc">==</span> <span class="st">"29-30"</span>)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey70"</span>, <span class="st">"#c0392b"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"30% of Boston's listings require a minimum stay of 29 or 30 days"</span>,</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"They sit just past Boston's 28-day short-term-rental threshold"</span>,</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">""</span>,</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of Listings"</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  )<span class="sc">+</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span> </span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We will stop modifying this graph here. Of course, you can keep going: show percentages instead of raw counts, adjust the x-axis ticks, or critique my grouping logic, apply your own metrics and so on. But for this section, we have demonstrated how to create groups and control colors. These are useful techniques that you will likely use quite often when creating plots and maps.</p>
+</section>
+</section>
+<section id="quick-interactive-graphs-and-tables" class="level1">
+<h1>Quick Interactive Graphs and Tables</h1>
+<section id="add-hovering-tooltips-with-plotly" class="level2">
+<h2 class="anchored" data-anchor-id="add-hovering-tooltips-with-plotly">Add Hovering Tooltips with <code>plotly</code></h2>
+<p>As we mentioned in class, many ggplot graphs can be easily transformed into interactive plotly graphs with tooltips. Let’s use <code>minstay_table</code> to demonstrate that.</p>
+<p>You will first need to complete your ggplot graph. Set up everything you need, including the colors, line widths, title, and so on.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count)) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mininum Stay"</span>, <span class="at">y =</span> <span class="st">"Number of Properties"</span>) <span class="sc">+</span> </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab2_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Then save the graph to a variable:</p>
+<div class="cell" data-source-line-numbers="1">
+<div class="sourceCode cell-code" id="cb23" data-source-line-numbers="1" data-code-line-numbers="1"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a>graph <span class="ot">&lt;-</span> </span>
+<span id="cb23-2"><a href="#cb23-2"></a>  minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb23-3"><a href="#cb23-3"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> bucket, <span class="at">y =</span> count)) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4"></a>    <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"lightblue"</span>, <span class="at">width =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb23-5"><a href="#cb23-5"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Mininum Stay"</span>, <span class="at">y =</span> <span class="st">"Number of Properties"</span>) <span class="sc">+</span> </span>
+<span id="cb23-6"><a href="#cb23-6"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then send this variable to <code>ggplotly()</code></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>graph <span class="sc">|&gt;</span> <span class="fu">ggplotly</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="plotly html-widget html-fill-item" id="htmlwidget-1ab2a8745fc2b792d9e3" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-1ab2a8745fc2b792d9e3">{"x":{"data":[{"orientation":"v","width":[0.5,0.5,0.5,0.5,0.5,0.5,0.5],"base":[0,0,0,0,0,0,0],"x":[1,2,3,4,5,6,7],"y":[1937,389,127,91,53,1345,472],"text":["bucket: 1 night<br />count: 1937","bucket: 2<br />count:  389","bucket: 3<br />count:  127","bucket: 4-7<br />count:   91","bucket: 8-28<br />count:   53","bucket: 29-30<br />count: 1345","bucket: 31+<br />count:  472"],"type":"bar","textposition":"none","marker":{"autocolorscale":false,"color":"rgba(173,216,230,1)","line":{"width":1.8897637795275593,"color":"transparent"}},"showlegend":false,"xaxis":"x","yaxis":"y","hoverinfo":"text","frame":null}],"layout":{"margin":{"t":26.228310502283104,"r":7.3059360730593621,"b":40.182648401826491,"l":48.949771689497723},"font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724},"xaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[0.40000000000000002,7.5999999999999996],"tickmode":"array","ticktext":["1 night","2","3","4-7","8-28","29-30","31+"],"tickvals":[1,2,3,4.0000000000000009,5,6,7],"categoryorder":"array","categoryarray":["1 night","2","3","4-7","8-28","29-30","31+"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"y","title":{"text":"Mininum Stay","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"yaxis":{"domain":[0,1],"automargin":true,"type":"linear","autorange":false,"range":[-96.850000000000009,2033.8499999999999],"tickmode":"array","ticktext":["0","500","1000","1500","2000"],"tickvals":[0,500,999.99999999999989,1500,2000],"categoryorder":"array","categoryarray":["0","500","1000","1500","2000"],"nticks":null,"ticks":"","tickcolor":null,"ticklen":3.6529680365296811,"tickwidth":0,"showticklabels":true,"tickfont":{"color":"rgba(77,77,77,1)","family":"","size":11.68949771689498},"tickangle":-0,"showline":false,"linecolor":null,"linewidth":0,"showgrid":true,"gridcolor":"rgba(235,235,235,1)","gridwidth":0.66417600664176002,"zeroline":false,"anchor":"x","title":{"text":"Number of Properties","font":{"color":"rgba(0,0,0,1)","family":"","size":14.611872146118724}},"hoverformat":".2f"},"shapes":[{"type":"rect","fillcolor":null,"line":{"color":null,"width":0,"linetype":[]},"yref":"paper","xref":"paper","layer":"below","x0":0,"x1":1,"y0":0,"y1":1}],"showlegend":false,"legend":{"bgcolor":null,"bordercolor":null,"borderwidth":0,"font":{"color":"rgba(0,0,0,1)","family":"","size":11.68949771689498}},"hovermode":"closest","barmode":"relative"},"config":{"doubleClick":"reset","modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"source":"A","attrs":{"3aa044d6662a":{"x":{},"y":{},"type":"bar"}},"cur_data":"3aa044d6662a","visdat":{"3aa044d6662a":["function (y) ","x"]},"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.20000000000000001,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="add-table-shading-with-gt" class="level2">
+<h2 class="anchored" data-anchor-id="add-table-shading-with-gt">Add Table Shading with <code>gt()</code></h2>
+<p><a href="https://r-graph-gallery.com/table.html">Several R packages</a> can help you create professional and stylish <strong>tables</strong>. <code>gt</code> is one of them, and it integrates very well with <code>tidyverse</code> syntax.</p>
+<p>Just like <code>ggplotly()</code>, <code>gt</code> is also one line away from turning a raw table output to a formatted table:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="bkcyyhbxjp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bkcyyhbxjp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#bkcyyhbxjp thead, #bkcyyhbxjp tbody, #bkcyyhbxjp tfoot, #bkcyyhbxjp tr, #bkcyyhbxjp td, #bkcyyhbxjp th {
+  border-style: none;
+}
+
+#bkcyyhbxjp p {
+  margin: 0;
+  padding: 0;
+}
+
+#bkcyyhbxjp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#bkcyyhbxjp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bkcyyhbxjp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bkcyyhbxjp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bkcyyhbxjp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bkcyyhbxjp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bkcyyhbxjp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bkcyyhbxjp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bkcyyhbxjp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#bkcyyhbxjp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#bkcyyhbxjp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bkcyyhbxjp .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bkcyyhbxjp .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bkcyyhbxjp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bkcyyhbxjp .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bkcyyhbxjp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#bkcyyhbxjp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#bkcyyhbxjp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#bkcyyhbxjp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bkcyyhbxjp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#bkcyyhbxjp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bkcyyhbxjp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bkcyyhbxjp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bkcyyhbxjp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bkcyyhbxjp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bkcyyhbxjp .gt_left {
+  text-align: left;
+}
+
+#bkcyyhbxjp .gt_center {
+  text-align: center;
+}
+
+#bkcyyhbxjp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bkcyyhbxjp .gt_font_normal {
+  font-weight: normal;
+}
+
+#bkcyyhbxjp .gt_font_bold {
+  font-weight: bold;
+}
+
+#bkcyyhbxjp .gt_font_italic {
+  font-style: italic;
+}
+
+#bkcyyhbxjp .gt_super {
+  font-size: 65%;
+}
+
+#bkcyyhbxjp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#bkcyyhbxjp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#bkcyyhbxjp .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#bkcyyhbxjp .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#bkcyyhbxjp .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#bkcyyhbxjp .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#bkcyyhbxjp .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#bkcyyhbxjp .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#bkcyyhbxjp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_col_headings header">
+<th id="bucket" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">bucket</th>
+<th id="count" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">count</th>
+<th id="percentage" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">percentage</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="bucket">1 night</td>
+<td class="gt_row gt_right" headers="count">1937</td>
+<td class="gt_row gt_right" headers="percentage">43.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="bucket">2</td>
+<td class="gt_row gt_right" headers="count">389</td>
+<td class="gt_row gt_right" headers="percentage">8.8</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="bucket">3</td>
+<td class="gt_row gt_right" headers="count">127</td>
+<td class="gt_row gt_right" headers="percentage">2.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="bucket">4-7</td>
+<td class="gt_row gt_right" headers="count">91</td>
+<td class="gt_row gt_right" headers="percentage">2.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="bucket">8-28</td>
+<td class="gt_row gt_right" headers="count">53</td>
+<td class="gt_row gt_right" headers="percentage">1.2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="bucket">29-30</td>
+<td class="gt_row gt_right" headers="count">1345</td>
+<td class="gt_row gt_right" headers="percentage">30.5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="bucket">31+</td>
+<td class="gt_row gt_right" headers="count">472</td>
+<td class="gt_row gt_right" headers="percentage">10.7</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>We can take this further and style this table like below. For now, just take a look at what each part does, and pick the pieces you need when you need them.</p>
+<p>We first rename the columns for presentation (<code>rename</code>), then pass the result to <code>gt()</code>, set the table title and subtitle (<code>tab_header</code>), bold the column headers (<code>tab_style</code>), and apply a color scale to the “Percent” column. Steps are chained together using <code>|&gt;</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>minstay_table <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># rename the columns</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Minimum Stay</span><span class="st">`</span> <span class="ot">=</span> bucket,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Number of Properties</span><span class="st">`</span> <span class="ot">=</span> count,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Percent</span><span class="st">`</span> <span class="ot">=</span> percentage) <span class="sc">|&gt;</span> </span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># pass the result to gt()</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set up table title and subtitles</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Minimum Stay Requirements Cluster Just Above Boston's Short-Term Rental Threshold"</span>,</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Boston Airbnb Listings"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Bold the column headers</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_style</span>(<span class="fu">cell_text</span>(<span class="at">weight =</span> <span class="st">"bold"</span>),</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">locations =</span> <span class="fu">cells_column_labels</span>(<span class="fu">everything</span>())) <span class="sc">|&gt;</span> </span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Apply a color scale</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">data_color</span>(</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">columns =</span> Percent,</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">fn =</span> scales<span class="sc">::</span><span class="fu">col_numeric</span>(</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>      <span class="at">palette =</span> <span class="fu">c</span>(<span class="st">"white"</span>, <span class="st">"red"</span>),</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>      <span class="at">domain  =</span> <span class="fu">range</span>(minstay_table<span class="sc">$</span>percentage)</span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>    )) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fqghoulbgm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fqghoulbgm table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#fqghoulbgm thead, #fqghoulbgm tbody, #fqghoulbgm tfoot, #fqghoulbgm tr, #fqghoulbgm td, #fqghoulbgm th {
+  border-style: none;
+}
+
+#fqghoulbgm p {
+  margin: 0;
+  padding: 0;
+}
+
+#fqghoulbgm .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#fqghoulbgm .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#fqghoulbgm .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#fqghoulbgm .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#fqghoulbgm .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#fqghoulbgm .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#fqghoulbgm .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#fqghoulbgm .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#fqghoulbgm .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#fqghoulbgm .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#fqghoulbgm .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#fqghoulbgm .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#fqghoulbgm .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#fqghoulbgm .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#fqghoulbgm .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqghoulbgm .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#fqghoulbgm .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#fqghoulbgm .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#fqghoulbgm .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqghoulbgm .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#fqghoulbgm .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqghoulbgm .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#fqghoulbgm .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqghoulbgm .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#fqghoulbgm .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#fqghoulbgm .gt_left {
+  text-align: left;
+}
+
+#fqghoulbgm .gt_center {
+  text-align: center;
+}
+
+#fqghoulbgm .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#fqghoulbgm .gt_font_normal {
+  font-weight: normal;
+}
+
+#fqghoulbgm .gt_font_bold {
+  font-weight: bold;
+}
+
+#fqghoulbgm .gt_font_italic {
+  font-style: italic;
+}
+
+#fqghoulbgm .gt_super {
+  font-size: 65%;
+}
+
+#fqghoulbgm .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#fqghoulbgm .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#fqghoulbgm .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#fqghoulbgm .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#fqghoulbgm .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#fqghoulbgm .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#fqghoulbgm .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#fqghoulbgm .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#fqghoulbgm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<th colspan="3" class="gt_heading gt_title gt_font_normal">Minimum Stay Requirements Cluster Just Above Boston's Short-Term Rental Threshold</th>
+</tr>
+<tr class="gt_heading even">
+<th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border">Boston Airbnb Listings</th>
+</tr>
+<tr class="gt_col_headings header">
+<th id="Minimum-Stay" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">Minimum Stay</th>
+<th id="Number-of-Properties" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">Number of Properties</th>
+<th id="Percent" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="font-weight: bold" scope="col">Percent</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="Minimum Stay">1 night</td>
+<td class="gt_row gt_right" headers="Number of Properties">1937</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FF0000; color: #FFFFFF">43.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="Minimum Stay">2</td>
+<td class="gt_row gt_right" headers="Number of Properties">389</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FFDDD1; color: #000000">8.8</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="Minimum Stay">3</td>
+<td class="gt_row gt_right" headers="Number of Properties">127</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FFF7F5; color: #000000">2.9</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="Minimum Stay">4-7</td>
+<td class="gt_row gt_right" headers="Number of Properties">91</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FFFBF9; color: #000000">2.1</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="Minimum Stay">8-28</td>
+<td class="gt_row gt_right" headers="Number of Properties">53</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FFFFFF; color: #000000">1.2</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="Minimum Stay">29-30</td>
+<td class="gt_row gt_right" headers="Number of Properties">1345</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FF7655; color: #FFFFFF">30.5</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="Minimum Stay">31+</td>
+<td class="gt_row gt_right" headers="Number of Properties">472</td>
+<td class="gt_row gt_right" headers="Percent" style="background-color: #FFD4C6; color: #000000">10.7</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>It’s your turn now. This time, you will do a mini self-directed visualization project using the Inside Airbnb dataset. We want to see <strong>two thoughtful visualizations</strong> from you, and for each, tell us what you looked at, and why.</p>
+<p>Here are a few ideas to get you started:</p>
+<ul>
+<li><p><em>Listing type:</em> Inside Airbnb notes that “the majority of Airbnb listings in most cities are”entire homes”, many of which are rented all year round, disrupting housing and communities”. How many properties in Boston are entire homes and are rented all year round in this dataset?</p></li>
+<li><p><em>Activity and income:</em> Availability, price, and number of reviews can be used to estimate nights booked in the past 12 months. How many listings are rented frequently, and does Airbnb revenue encourage short-term rentals over long-term housing?</p></li>
+<li><p><em>Multiple listings per host:</em> Some hosts manage multiple listings, but they are more likely to run a business, may not live in the property, and could be skirting short-term rental rules meant to protect housing. <a href="https://www.urban.org/urban-wire/abundance-short-term-rentals-who-wins-and-who-loses">A report</a> shows on average, 64% of Airbnb hosts hold multiple local listings. How is the multiple listing situation in Boston?</p></li>
+<li><p>Or, if you’re still interested in <em>short-term rental regulations</em> and want to see how it plays out elsewhere, go back to the <a href="https://insideairbnb.com/get-the-data/">Get the Data</a> page, where you will find a long list of cities to choose from. Do a bit of research on another city, and replicate the minimum-stay analysis we did before.</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>You will probably work through this in two phases:</p>
+<p>Phase 1: Explore the dataset. There are a number of columns we haven’t touched yet. Feel free to make quick, rough, and plentiful exploratory plots. Jot down what interests you. Use these plots to narrow down your question and move toward a finding.</p>
+<p>Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles.</p>
+</blockquote>
+<p><strong>In your lab report, please submit your code and output for your two final graphs.</strong> <strong>For each graph, write a short passage explaining what you tried, why, and what you found, along with all other visualizations you feel necessary to include.</strong></p>
+<p>Don’t worry if what you can currently do doesn’t yet get you exactly where your mind wants to go. <strong>Make your graphs in R anyway.</strong> The goal is to apply what we have practiced, adapt code to new problems, and show your thinking and intention around a topic.</p>
+<p>You may work in an R script while you are developing your analysis. Once you are satisfied with your results, use a Quarto Documenet to prepare and submit your lab report.</p>
+</section>
+<section id="find-resources-and-learn-more" class="level1">
+<h1>Find Resources and Learn More</h1>
+<ul>
+<li><p><a href="https://r4ds.hadley.nz/"><em>R for Data Science (2e)</em></a><em>.</em> Free online book by Hadley Wickham &amp; Garrett Grolemund. The classic intro book for R tidyverse workflow.</p></li>
+<li><p><em>R Cheatsheet.</em> One or two-page visual references for ggplot2, dplyr, tidyr, and more. Extremely handy for quick reference.</p></li>
+<li><p><em>Graphing libraries and galleries</em>. Packages like <a href="https://r-graph-gallery.com/">ggplot2</a> and <a href="https://plotly.com/ggplot2/">plotly</a> come with galleries of examples, complete with code. By now, you might already be able to read and modify much of this code.</p></li>
+<li><p><em>R help functions and documentation.</em> Don’t forget that R has built-in help. Use <code>?</code>function_name to get details on any function.</p></li>
+<li><p><em>Your own experience.</em> Everything you have done so far counts as a resource. The time you have spent to make your code work all build into your personal knowledge and intuition.</p></li>
+<li><p><em>Community examples and published code snippets.</em> If you come across someone else’s work that serves as a good example, take time to study the code, understand how it works, and consider how you might adapt it for your own project.</p></li>
+</ul>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p>Please complete your <strong>Quarto document</strong> and upload your <strong>rendered HTML file</strong> to Canvas by <strong>9am, Wednesday, Sep 30.</strong></p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -556,4 +2090,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
 </body></html>
