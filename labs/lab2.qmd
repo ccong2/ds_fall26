@@ -126,9 +126,9 @@ airbnb |>
 
 But we left a lot of empty spaces on the graph, and there is still room to improve the clarity.
 
-## Create Groups for Values
+## Create Groups for Continuous Values
 
-Because there are several clusters with wide gaps in between, I don't want to show the entire histogram. What I want to say is: although there are a lot of 1-day minimums, a lot of 2-day minimums, there is also a notable cluster just above the 28-day short-term rental line. I can group my values in this way and compare.
+Because there are several clusters with wide gaps in between, I don't want to show the entire histogram. What I want to say is: although there are a lot of 1-day minimums, a lot of 2-3 day minimums, there is less in the 4-28 groups, but a notable cluster just above the 28-day short-term rental line. It would be great if I could group my values in this way and compare.
 
 `cut()` is usually used to take a series of values and put them into buckets.
 
@@ -195,7 +195,7 @@ minstay_table |>
 
 But we can certainly decide the color ramp we want to use. Color adjustments in `ggplot` are handled through a `scale_fill_xxx()` function (or `scale_color_xxx()` for points/lines).
 
-For example, `scale_fill_manual()` allows us to manually specify colors:
+For example, `scale_fill_manual()` allows us to manually specify colors. You can type in either [color names](https://r-graph-gallery.com/42-colors-names.html) or hex codes.
 
 ```{r}
 #| class-source: "numberLines" 
@@ -390,7 +390,7 @@ Here are a few ideas to get you started:
 >
 > Phase 2: Settle on two specific questions you will answer with a graph. Choose the graph type that best answers each question, then refine it, add color, adjust scales, filter or subset the data, add titles.
 
-**In your lab report, please submit your code and output for your two final graphs.** **For each graph, write a short passage explaining what you tried, why, and what you found, along with all other visualizations you feel necessary to include.**
+**In your lab report, please submit your complete code and output for your two final graphs.** **For each graph, write a short passage explaining what you tried, what you found, and what decisions you made while creating this graph.** If you think additional supporting plots would help explain your analysis, please include them as well.
 
 Don't worry if what you can currently do doesn't yet get you exactly where your mind wants to go. **Make your graphs in R anyway.** The goal is to apply what we have practiced, adapt code to new problems, and show your thinking and intention around a topic.
 
