@@ -1,5 +1,61 @@
 [
   {
+    "objectID": "labs/lab3.html",
+    "href": "labs/lab3.html",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "",
+    "text": "Planners are often interested in understanding and improving neighborhood environment, whether that means expanding access to transit, housing, or green space.\n\nOne of the most cited goals is creating a walkable built environment. Urban factors such as the presence of walking facilities, the density and variety of businesses, and streetscape elements like benches, storefronts, shade, and parks all influence the extent and nature of walkable areas (Lai & Kontokosta, 2018; Frank et al., 2006; Owen et al., 2007; Ewing & Cervero, 2010).\nMeasuring these factors has become much easier with the growth of open spatial data. Cities publish street networks, sidewalk inventories, and park boundaries, while crowdsourced platforms such as OpenStreetMap provide points of interest (POIs) that describe where businesses and amenities are located.\nIn this lab, we will gather, combine, and analyze spatial data from multiple sources using R. We will mainly use sf package to process spatial data. We will develop three indicators to measure the walkable environment in a Boston neighborhoods: sidewalk density, open space coverage, and the concentration of restaurants.\nTo get ready, create a working folder for Lab 3 and set up a new R Project inside it.\n\nlibrary(sf)\nlibrary(tidyverse)\n# you might need to install the following three\nlibrary(osmdata)\nlibrary(DT)\nlibrary(scales)"
+  },
+  {
+    "objectID": "labs/lab3.html#check-data-crs",
+    "href": "labs/lab3.html#check-data-crs",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "Check Data CRS",
+    "text": "Check Data CRS\nGo to Sidewalk Centerline data. This time, try the geojson format. Download the .geojson file to your data folder, use st_read() to read it into R and assign it to a variable (named e.g. “sidewalk”).\nsidewalk &lt;- st_read(\"data/Sidewalk_Centerline.geojson\")\nFrom the message while you are reading, you can already see information like:\nBounding box: xmin: -71.1822, ymin: 42.2306, xmax: -70.92445, ymax: 42.39663; Geodetic CRS: WGS 84.\nThis shows the geometry is measured in degrees. The file was created in the Geographic Coordinate Reference System (CRS) EPSG:4326 (WGS 84), which is an “unprojected” system.\n\nst_crs(sidewalk)$epsg   \n\n[1] 4326\n\nst_crs(sidewalk)$input\n\n[1] \"WGS 84\"\n\n\nThe neighborhood file we have just read in has the same CRS.\n\nst_crs(neighborhood)$epsg\n\n[1] 4326"
+  },
+  {
+    "objectID": "labs/lab3.html#spatial-intersection",
+    "href": "labs/lab3.html#spatial-intersection",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "Spatial Intersection",
+    "text": "Spatial Intersection\nThe two spatial data have the same projection (i.e. they spatially line up), so we can perform a spatial intersection on them. st_intersection() finds the shared part of two spatial objects. If we overlay sidewalks with the entire neighborhood, it splits sidewalks at neighborhood boundaries. Each split segment is linked to the attributes of the neighborhood it falls within.\n\nsidewalk_data &lt;- \n  st_intersection(sidewalk, neighborhood)\n\nIt takes a minute to run (110,000+ rows), but once finished, sidewalks are split into more rows, neighborhood names are attached on each row, and you can then calculate the length of each segment.\nNote: if you see “warning: attribute variables are assumed to be spatially constant throughout all geometries”, it can be safely ignored. It’s R telling you existing road attributes will be automatically applied to all segments after the split."
+  },
+  {
+    "objectID": "labs/lab3.html#calculate-feature-length",
+    "href": "labs/lab3.html#calculate-feature-length",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "Calculate Feature Length",
+    "text": "Calculate Feature Length\nIn order to calculate geometry length, we need to project the data into a CRS that uses linear units, such as EPSG:2249 (Massachusetts State Plane). State Plane projections are “Projected” CRS, and x and y coordinates are measured in feet.\n\nsidewalk_data &lt;- st_transform(sidewalk_data, 2249)\n\nThen we will be able to directly calculate all the feature length using st_length(). It will return 110,000+ length values. Take the first 5 values to see what the result will look like:\n\nsidewalk_data |&gt; st_length(geometry) |&gt; head(5)\n\nUnits: [US_survey_foot]\n[1] 64.02920 48.94189 27.00345 50.11344 33.14498\n\n\nCreate a new column to store the lengths:\n\nsidewalk_data &lt;- \n  sidewalk_data |&gt; \n  mutate(length = st_length(geometry)) \n\nWith neighborhood names here in the table, we can now group_by() neighborhood and summarise() the total sidewalk length in each neighborhood.\n\nsidewalk_data &lt;- \n  sidewalk_data |&gt; \n  group_by(nbh_name) |&gt; \n  summarise(sidewalk_length = sum(length)) |&gt; \n  st_drop_geometry()\n\nI’ve dropped the geometry so we have a plain table, which will make it easier to join in later steps. When it’s finished, you can View(sidewalk_data) . It has 24 rows, showing the total sidewalk length (in feet) in each neighborhood."
+  },
+  {
+    "objectID": "labs/lab3.html#the-bounding-box",
+    "href": "labs/lab3.html#the-bounding-box",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "The bounding box",
+    "text": "The bounding box\nA bounding box is like a window of where you want to clip a piece of map. You can define it manually by specifying the x-y coordinates of the window’s lower-left and upper-right corners, or you can take it from an existing shapefile, whose extent becomes the window.\n\n# A bounding box for Boston\nbbox &lt;- st_bbox(neighborhood)"
+  },
+  {
+    "objectID": "labs/lab3.html#the-key-value-pairs",
+    "href": "labs/lab3.html#the-key-value-pairs",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "The key-value pairs",
+    "text": "The key-value pairs\nAn overpass query opq starts with engaging with the bounding box like this:\nq &lt;- opq(bbox)\nFollowing the initial opq(bbox) call, we will build queries by adding one or more features (add_osm_feature()). Features are defined by key-value pairs. Here is a complete list of key-value pairs on OSM.\nFor example, restaurants are categorized in OSM under key=amenity, and value=restaurant.\nA query of all restaurants within the bounding box of Boston will be constructed as follows:\n\nrestaurants &lt;- opq(bbox)|&gt;   \n  add_osm_feature(key = \"amenity\", value = \"restaurant\") |&gt;  \n  osmdata_sf()\n\nThe retrieved object restaurants is a large list with many attributes; What we need is one named osm_points nested in this list. The following code extracts osm_ponits, and selects only the name attribute and the associated geometry.\n\nrestaurants &lt;- \n  restaurants$osm_points |&gt; \n  select(name)\n\nrestaurants contain all restaurant locations. When viewing it, you might notice many missing values (NAs) in the names, scroll down to find more typical entries of restaurant names. This is a common issue with crowdsourced data like OSM, information can be incomplete.\n\nNote: if you want to have a quick visual check of your result, install the mapview package, and run mapview(restaurants, map.types = \"OpenStreetMap\", legend = FALSE)\n\nBelow I am repeating the “download, extract, and transform” process. You can repeat it on any other OSM data, such as grocery stores, fast food places, and other amenities, only by changing the corresponding key-value pairs.\n\n# bbox = st_bbox(neighborhood)\n# restaurants &lt;- \n#   opq(bbox)|&gt;   \n#   add_osm_feature(key = \"amenity\", value = \"restaurant\") |&gt;  \n#   osmdata_sf() |&gt; \n#   pluck(\"osm_points\") |&gt; \n#   select(name)"
+  },
+  {
+    "objectID": "labs/lab3.html#calculate-the-number-of-pois-by-neighborhood",
+    "href": "labs/lab3.html#calculate-the-number-of-pois-by-neighborhood",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "Calculate the number of POIs by neighborhood",
+    "text": "Calculate the number of POIs by neighborhood\nWe now have a point shapefile (restaurants) and a polygon shapefile (neighborhood), and we want to count the number of points that fall within each polygon. The same process applies: intersection, and then count by neighborhood.\n\nrestaurant_data &lt;- \n  st_intersection(restaurants, neighborhood) |&gt; \n  count(nbh_name, \n        name = \"restaurant\") |&gt;   # modify the default name n\n  st_drop_geometry()"
+  },
+  {
+    "objectID": "labs/lab3.html#final-notes",
+    "href": "labs/lab3.html#final-notes",
+    "title": "Describe Neighborhood Environment with ",
+    "section": "Final Notes",
+    "text": "Final Notes\nHarbor Island has a census population of 0, so its restaurant density is invalid. Keeping it would not change our rescaled scores (it turns to NA and ignored), but it is a scope decision worth making upfront. This area can be treated as a recreational area rather than a residential neighborhood and left out. To do that, apply filter(population &gt; 0) to the neighborhood data.\nOSM restaurant counts are very low for a few neighborhoods (1 in Mattapan, 3 in Longwood). These may be true, but OSM coverage is uneven, so it is better to cross-check them against a second source such as Google Maps, Yelp, or city business licenses. If a second source is available, we can use it to supplement the OSM counts."
+  },
+  {
     "objectID": "labs/lab1.html",
     "href": "labs/lab1.html",
     "title": "Exploratory Data Analysis: Opportunity Zones ",

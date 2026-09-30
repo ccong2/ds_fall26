@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-09-29">
 
-<title>lab3 – Applied Data Science for Cities</title>
+<title>Describe Neighborhood Environment with  – Applied Data Science for Cities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -40,6 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,6 +103,26 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<link href="../site_libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+
+<script src="../site_libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+
+<link href="../site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
+
+<script src="../site_libs/datatables-binding-0.33/datatables.js"></script>
+
+<script src="../site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+
+<link href="../site_libs/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
+
+<script src="../site_libs/dt-core-1.13.6/js/jquery.dataTables.min.js"></script>
+
+<link href="../site_libs/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
+
+<script src="../site_libs/crosstalk-1.2.1/js/crosstalk.min.js"></script>
+
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -108,17 +164,519 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#boston-neighborhoods" id="toc-boston-neighborhoods" class="nav-link" data-scroll-target="#boston-neighborhoods">Boston Neighborhoods</a></li>
+  <li><a href="#strategize-our-task" id="toc-strategize-our-task" class="nav-link" data-scroll-target="#strategize-our-task">Strategize Our Task</a></li>
+  <li><a href="#sidewalk-density" id="toc-sidewalk-density" class="nav-link" data-scroll-target="#sidewalk-density">Sidewalk Density</a>
+  <ul class="collapse">
+  <li><a href="#check-data-crs" id="toc-check-data-crs" class="nav-link" data-scroll-target="#check-data-crs">Check Data CRS</a></li>
+  <li><a href="#spatial-intersection" id="toc-spatial-intersection" class="nav-link" data-scroll-target="#spatial-intersection">Spatial Intersection</a></li>
+  <li><a href="#calculate-feature-length" id="toc-calculate-feature-length" class="nav-link" data-scroll-target="#calculate-feature-length">Calculate Feature Length</a></li>
+  </ul></li>
+  <li><a href="#open-space-coverage" id="toc-open-space-coverage" class="nav-link" data-scroll-target="#open-space-coverage">Open Space Coverage</a></li>
+  <li><a href="#obtain-and-process-osm-data" id="toc-obtain-and-process-osm-data" class="nav-link" data-scroll-target="#obtain-and-process-osm-data">Obtain and Process OSM data</a>
+  <ul class="collapse">
+  <li><a href="#the-bounding-box" id="toc-the-bounding-box" class="nav-link" data-scroll-target="#the-bounding-box">The bounding box</a></li>
+  <li><a href="#the-key-value-pairs" id="toc-the-key-value-pairs" class="nav-link" data-scroll-target="#the-key-value-pairs">The key-value pairs</a></li>
+  <li><a href="#calculate-the-number-of-pois-by-neighborhood" id="toc-calculate-the-number-of-pois-by-neighborhood" class="nav-link" data-scroll-target="#calculate-the-number-of-pois-by-neighborhood">Calculate the number of POIs by neighborhood</a></li>
+  </ul></li>
+  <li><a href="#assemble-results" id="toc-assemble-results" class="nav-link" data-scroll-target="#assemble-results">Assemble Results</a>
+  <ul class="collapse">
+  <li><a href="#join-the-tables" id="toc-join-the-tables" class="nav-link" data-scroll-target="#join-the-tables">Join the tables</a></li>
+  <li><a href="#calculate-ratios" id="toc-calculate-ratios" class="nav-link" data-scroll-target="#calculate-ratios">Calculate Ratios</a></li>
+  </ul></li>
+  <li><a href="#present-our-result" id="toc-present-our-result" class="nav-link" data-scroll-target="#present-our-result">Present our Result</a>
+  <ul class="collapse">
+  <li><a href="#table" id="toc-table" class="nav-link" data-scroll-target="#table">Table</a></li>
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map">Map</a></li>
+  <li><a href="#radar-chart" id="toc-radar-chart" class="nav-link" data-scroll-target="#radar-chart">Radar Chart</a></li>
+  <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
+  </ul></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Describe Neighborhood Environment with <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+<p class="subtitle lead"><span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span></p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 29, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Planners are often interested in understanding and improving neighborhood environment, whether that means expanding access to transit, housing, or green space.</p>
+<p><img src="../img/lab3_quantify_place.gif" class="img-fluid"></p>
+<p>One of the most cited goals is creating a <strong>walkable built environment</strong>. Urban factors such as the presence of walking facilities, the density and variety of businesses, and streetscape elements like benches, storefronts, shade, and parks all influence the extent and nature of walkable areas (<a href="https://www.sciencedirect.com/science/article/pii/S0169204618308491">Lai &amp; Kontokosta, 2018</a>; <a href="10.1080/01944360608976725">Frank et al., 2006</a>; <a href="10.1016/j.amepre.2007.07.025">Owen et al., 2007</a>; <a href="https://doi.org/10.1080/01944361003766766">Ewing &amp; Cervero, 2010</a>).</p>
+<p>Measuring these factors has become much easier with the growth of open spatial data. Cities publish street networks, sidewalk inventories, and park boundaries, while crowdsourced platforms such as OpenStreetMap provide points of interest (POIs) that describe where businesses and amenities are located.</p>
+<p>In this lab, we will gather, combine, and analyze spatial data from multiple sources using R. We will mainly use <code>sf</code> package to process spatial data. We will develop three indicators to measure the walkable environment in a Boston neighborhoods: <strong>sidewalk density, open space coverage, and the concentration of restaurants</strong>.</p>
+<p><strong>To get ready, create a working folder for Lab 3 and set up a new R Project inside it.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># you might need to install the following three</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(osmdata)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="boston-neighborhoods" class="level1">
+<h1>Boston Neighborhoods</h1>
+<p>The data for this lab comes from Analyze Boston (data.boston.gov), the City of Boston’s municipal open data portal. Let’s first navigate to the <a href="https://data.boston.gov/dataset/boston-neighborhood-boundaries-approximated-by-2020-census-block-groups1">Boston neighborhood boundaries</a> page. Find the <strong>shapefile</strong> format, click Download. Save the zipped file to your data folder and then Unzip it.</p>
+<p>We will look here to find the <strong>“.shp”</strong> file to read, but all other unzipped files need to be in the same folder to make a complete shapefile.</p>
+<p>Use <code>st_read()</code> in the <code>sf</code> package to read in the shapefile. You may want to apply the correct path on your end.</p>
+<div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>neighborhood &lt;- st_read("data/Boston_Neighborhood_Boundaries_approximated_by_2020_Census_Block_Groups.shp")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This shapefile shows Boston neighborhood boundaries and census demographic data, approximated using 2020 census block groups. See the data download page for details on how it was created.</p>
+<p>It includes a wide range of demographic variables at the neighborhood level, but we only need two of them today: neighborhood names and population. We will <strong>select</strong> these columns and <strong>rename</strong> them to something clearer to work with.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>neighborhood <span class="ot">&lt;-</span> neighborhood <span class="sc">|&gt;</span>       </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">nbh_name =</span> blockgr202, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">population =</span> tot_pop_al)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Note that <strong>selection does not remove the <code>geometry</code></strong> column. Geometries are “sticky,” meaning this column will stay attached to your table unless you explicitly remove them using <code>st_drop_geometry()</code>.</p>
+</section>
+<section id="strategize-our-task" class="level1">
+<h1>Strategize Our Task</h1>
+<p>Eventually we aim to have a table where each row represents a neighborhood, and each column provides the values of a specific indicator, such as:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 24%">
+<col style="width: 28%">
+<col style="width: 28%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Neighborhood</th>
+<th>Sidewalk Density</th>
+<th>Open Space Coverage</th>
+<th>Restaurants Density</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Allston</td>
+<td>xx</td>
+<td>xx</td>
+<td>xx</td>
+</tr>
+<tr class="even">
+<td>Back Bay</td>
+<td>xx</td>
+<td>xx</td>
+<td>xx</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>We have <a href="https://data.boston.gov/dataset/sidewalk-centerline">line data for sidewalks</a>. But we need to split sidewalks at neighborhood boundaries (<code>st_intersection</code>), and calculate the total sidewalk length within each neighborhood.</p></li>
+<li><p>We also have <a href="https://data.boston.gov/dataset/open-space">open space data</a>, the areas for parks, squares, and recreational spaces. Using it, we can find out the total area of open space within each neighborhood, based on their spatial overlap (<code>st_intersection</code>).</p></li>
+<li><p>We will obtain restaurant location data from OpenStreetMap. These are point data, so we will count the number of restaurant points within each neighborhood.</p></li>
+<li><p>Then these three tables will be joined together to create the table we want.</p></li>
+</ul>
+</section>
+<section id="sidewalk-density" class="level1">
+<h1>Sidewalk Density</h1>
+<section id="check-data-crs" class="level2">
+<h2 class="anchored" data-anchor-id="check-data-crs">Check Data CRS</h2>
+<p>Go to <a href="https://data.boston.gov/dataset/sidewalk-centerline">Sidewalk Centerline</a> data. This time, try the <strong>geojson</strong> format. Download the .geojson file to your data folder, use <code>st_read()</code> to read it into R and assign it to a variable (named e.g.&nbsp;“sidewalk”).</p>
+<div class="sourceCode" id="cb4" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sidewalk &lt;- st_read("data/Sidewalk_Centerline.geojson")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>From the message while you are reading, you can already see information like:<br>
+<em>Bounding box: xmin: -71.1822, ymin: 42.2306, xmax: -70.92445, ymax: 42.39663; Geodetic CRS: WGS 84.</em></p>
+<p>This shows the geometry is measured in degrees. The file was created in the Geographic Coordinate Reference System (CRS) EPSG:4326 (WGS 84), which is an “unprojected” system.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(sidewalk)<span class="sc">$</span>epsg   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 4326</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(sidewalk)<span class="sc">$</span>input</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] "WGS 84"</code></pre>
+</div>
+</div>
+<p>The <strong>neighborhood</strong> file we have just read in has the same CRS.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(neighborhood)<span class="sc">$</span>epsg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 4326</code></pre>
+</div>
+</div>
+</section>
+<section id="spatial-intersection" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-intersection">Spatial Intersection</h2>
+<p>The two spatial data have the same projection (i.e.&nbsp;they spatially line up), so we can perform a spatial intersection on them. <code>st_intersection()</code> finds the shared part of two spatial objects. If we overlay <code>sidewalks</code> with the entire <code>neighborhood</code>, it splits sidewalks at neighborhood boundaries. Each split segment is linked to the attributes of the neighborhood it falls within.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>sidewalk_data <span class="ot">&lt;-</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersection</span>(sidewalk, neighborhood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It takes a minute to run (110,000+ rows), but once finished, sidewalks are split into more rows, neighborhood names are attached on each row, and you can then calculate the length of each segment.</p>
+<p><em>Note: if you see “warning: attribute variables are assumed to be spatially constant throughout all geometries”, it can be safely ignored. It’s R telling you existing road attributes will be automatically applied to all segments after the split.</em></p>
+</section>
+<section id="calculate-feature-length" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-feature-length">Calculate Feature Length</h2>
+<p>In order to calculate geometry length, we need to project the data into a CRS that uses linear units, such as EPSG:2249 (Massachusetts State Plane). State Plane projections are “Projected” CRS, and x and y coordinates are measured in feet.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sidewalk_data <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(sidewalk_data, <span class="dv">2249</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then we will be able to directly calculate all the feature length using <code>st_length()</code>. It will return 110,000+ length values. Take the first 5 values to see what the result will look like:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>sidewalk_data <span class="sc">|&gt;</span> <span class="fu">st_length</span>(geometry) <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Units: [US_survey_foot]
+[1] 64.02920 48.94189 27.00345 50.11344 33.14498</code></pre>
+</div>
+</div>
+<p>Create a new column to store the lengths:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sidewalk_data <span class="ot">&lt;-</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  sidewalk_data <span class="sc">|&gt;</span> </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">length =</span> <span class="fu">st_length</span>(geometry)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>With neighborhood names here in the table, we can now <code>group_by()</code> neighborhood and <code>summarise()</code> the total sidewalk length in each neighborhood.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>sidewalk_data <span class="ot">&lt;-</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  sidewalk_data <span class="sc">|&gt;</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nbh_name) <span class="sc">|&gt;</span> </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">sidewalk_length =</span> <span class="fu">sum</span>(length)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>I’ve dropped the geometry so we have a plain table, which will make it easier to join in later steps. When it’s finished, you can <code>View(sidewalk_data)</code> . It has 24 rows, showing the total sidewalk length (in feet) in each neighborhood.</p>
+</section>
+</section>
+<section id="open-space-coverage" class="level1">
+<h1>Open Space Coverage</h1>
+<p>We have open space property data maintained by the Boston Parks and Recreation Department. It provides shapes, names, ownership, and type of each property. You can check the <a href="https://data.boston.gov/dataset/open-space">open space data download page</a> and metadata on the linked page.</p>
+<p>Let’s download and read this file as <code>parks</code>.</p>
+<p>Open spaces are polygon data. As usual, check what each column means and the CRS. This data also uses EPSG: 4326.</p>
+<div class="sourceCode" id="cb17" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>parks &lt;- st_read("data/Open_Space.shp") </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Similar to the sidewalk data, we will first use <code>st_intersection()</code> to get the part of open space contained within each neighborhood.</p>
+<div class="sourceCode" id="cb18" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>park_data &lt;- </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  st_intersection(parks, neighborhood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><em>Here you will see “Error in wk_handle.wk_wkb(wkb, s2_geography_writer(oriented = oriented, : Loop 0 is not valid: Edge 0 has duplicate vertex with edge 10”.</em> This is not uncommon for complicated real-world polygon data. They are not entirely “clean”: vertices may be duplicated, rings may not be completely closed, or edges may cross or touch themselves. But GIS tools are smart enough to repair the geometry. Here in R, we use <code>st_make_valid()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>park_data <span class="ot">&lt;-</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersection</span>(<span class="fu">st_make_valid</span>(parks), neighborhood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To calculate areas, we need to use <code>st_transform()</code> to convert it to the same projection as the sidewalks, EPSG: 2249.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>park_data <span class="ot">&lt;-</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  park_data <span class="sc">|&gt;</span> <span class="fu">st_transform</span>(<span class="dv">2249</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Once we have that, use <code>st_area()</code> to calculate the overlapping areas (in sq.ft.), and then summarize the total areas by neighborhood. In the following code, we chained these two steps together.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>park_data <span class="ot">&lt;-</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  park_data <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">st_area</span>(park_data)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(nbh_name) <span class="sc">|&gt;</span> </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">park_area =</span> <span class="fu">sum</span>(area)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When it’s finished, you will have a <code>park_data</code> that has 24 rows.</p>
+<p>We have done two. Next we are going to collect restaurant locations from OpenStreetMap (OSM). Before the transition, we can delete a few intermediate objects in the R environment that are no longer needed to free up memory:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(sidewalk, parks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="obtain-and-process-osm-data" class="level1">
+<h1>Obtain and Process OSM data</h1>
+<p>OSM is a collaborative mapping platform that allows users to contribute to its database and offers convenient options for downloading data through its free <a href="https://overpass-turbo.eu/#">Overpass API</a>. In this lab, we will use the <a href="https://cran.r-project.org/web/packages/osmdata/vignettes/osmdata.html"><code>osmdata</code> package</a>, which simplifies API download queries without much understanding of the overpass syntax.</p>
+<p>In order to obtain data from OSM, you will need to specify:</p>
+<ul>
+<li>a bounding box</li>
+<li>key-value pairs</li>
+</ul>
+<section id="the-bounding-box" class="level2">
+<h2 class="anchored" data-anchor-id="the-bounding-box">The bounding box</h2>
+<p>A bounding box is like a window of where you want to clip a piece of map. You can define it manually by specifying the x-y coordinates of the window’s lower-left and upper-right corners, or you can take it from an existing shapefile, whose extent becomes the window.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A bounding box for Boston</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>bbox <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(neighborhood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-key-value-pairs" class="level2">
+<h2 class="anchored" data-anchor-id="the-key-value-pairs">The key-value pairs</h2>
+<p>An overpass query <code>opq</code> starts with engaging with the bounding box like this:</p>
+<p><code>q &lt;- opq(bbox)</code></p>
+<p>Following the initial <code>opq(bbox)</code> call, we will build queries by adding one or more features (<code>add_osm_feature()</code>). Features are defined by <strong><em>key-value pairs</em></strong>. Here is <a href="https://wiki.openstreetmap.org/wiki/Map_Features">a complete list of key-value pairs on OSM</a>.</p>
+<p>For example, restaurants are categorized in OSM under <code>key=amenity</code>, and <code>value=restaurant</code>.</p>
+<p>A query of all restaurants within the bounding box of Boston will be constructed as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>restaurants <span class="ot">&lt;-</span> <span class="fu">opq</span>(bbox)<span class="sc">|&gt;</span>   </span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_osm_feature</span>(<span class="at">key =</span> <span class="st">"amenity"</span>, <span class="at">value =</span> <span class="st">"restaurant"</span>) <span class="sc">|&gt;</span>  </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">osmdata_sf</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The retrieved object <code>restaurants</code> is a large list with many attributes; What we need is one named <code>osm_points</code> nested in this list. The following code extracts <code>osm_ponits</code>, and selects only the <code>name</code> attribute and the associated geometry.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>restaurants <span class="ot">&lt;-</span> </span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  restaurants<span class="sc">$</span>osm_points <span class="sc">|&gt;</span> </span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(name)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>restaurants</code> contain all restaurant locations. When viewing it, you might notice many missing values (NAs) in the names, scroll down to find more typical entries of restaurant names. This is a common issue with crowdsourced data like OSM, information can be incomplete.</p>
+<blockquote class="blockquote">
+<p>Note: if you want to have a quick visual check of your result, install the <code>mapview</code> package, and run <code>mapview(restaurants, map.types = "OpenStreetMap", legend = FALSE)</code></p>
+</blockquote>
+<p>Below I am repeating the “download, extract, and transform” process. You can repeat it on any other OSM data, such as grocery stores, fast food places, and other amenities, only by changing the corresponding key-value pairs.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bbox = st_bbox(neighborhood)</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co"># restaurants &lt;- </span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#   opq(bbox)|&gt;   </span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">#   add_osm_feature(key = "amenity", value = "restaurant") |&gt;  </span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   osmdata_sf() |&gt; </span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="co">#   pluck("osm_points") |&gt; </span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">#   select(name)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculate-the-number-of-pois-by-neighborhood" class="level2">
+<h2 class="anchored" data-anchor-id="calculate-the-number-of-pois-by-neighborhood">Calculate the number of POIs by neighborhood</h2>
+<p>We now have a point shapefile (<code>restaurants</code>) and a polygon shapefile (<code>neighborhood</code>), and we want to count the number of points that fall within each polygon. The same process applies: intersection, and then count by neighborhood.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>restaurant_data <span class="ot">&lt;-</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersection</span>(restaurants, neighborhood) <span class="sc">|&gt;</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(nbh_name, </span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">name =</span> <span class="st">"restaurant"</span>) <span class="sc">|&gt;</span>   <span class="co"># modify the default name n</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="assemble-results" class="level1">
+<h1>Assemble Results</h1>
+<p>After calculating the three elements separately, we now have the following tables for each neighborhood:</p>
+<ul>
+<li><code>sidewalk_data</code>: Total sidewalk length in feet.</li>
+<li><code>park_data</code>: Total area of open space in square feet.</li>
+<li><code>restaurant_data</code>: Number of POIs for restaurants.</li>
+</ul>
+<p>To create comparable metrics, we’ll normalize the raw data by calculating:</p>
+<ul>
+<li><strong>Sidewalk density:</strong> total sidewalk length divided by neighborhood area (ft/sq.ft)</li>
+<li><strong>Open space coverage:</strong> total open space area divided by neighborhood area (sq.ft/sq.ft)</li>
+<li><strong>POI per capita:</strong> total restaurant POIs divided by neighborhood population</li>
+</ul>
+<p>Do we have the population and area of the neighborhoods? Check out the <code>neighborhood</code> shapefile, yes, population is there (although Harbor Island has a population of 0).</p>
+<p>So we just need to calculate the area.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>neighborhood <span class="ot">&lt;-</span> </span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  neighborhood <span class="sc">|&gt;</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">2249</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area =</span> <span class="fu">st_area</span>(neighborhood))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="join-the-tables" class="level3">
+<h3 class="anchored" data-anchor-id="join-the-tables">Join the tables</h3>
+<p>Up to this step we have four datasets. A polygon data <code>neighborhood</code>, and three plain tables <code>sidewalk_data</code>, <code>tree_data</code>, and <code>restaurant_data</code>, all sharing the key column <code>nbh_name</code>.</p>
+<p>We can do <code>left_join()</code>, which merges two datasets by keeping all rows from the left and adding matching rows from the right based on a specified key column(s). If nothing is matched, will fill in NA.</p>
+<p>Here we need to <strong>keep <code>neighborhood</code> on the left.</strong> When <code>left_join()</code> receives an <code>sf</code> object as its first argument, the result stays an <code>sf</code> object, so it keeps its geometry column and CRS.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  neighborhood <span class="sc">|&gt;</span> </span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(sidewalk_data, <span class="at">by =</span> <span class="st">"nbh_name"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(park_data, <span class="at">by =</span> <span class="st">"nbh_name"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(restaurant_data, <span class="at">by =</span> <span class="st">"nbh_name"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="calculate-ratios" class="level3">
+<h3 class="anchored" data-anchor-id="calculate-ratios">Calculate Ratios</h3>
+<p>Normalization can be done with a series of <code>mutate()</code> functions as shown below, calculating each ratio by dividing the corresponding columns. Here we wrap each ratio in <code>as.numeric()</code> to drop the units, for the convenience of having plain numbers in the rest of the analysis. Following that, we <code>select()</code> only the final output columns:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">|&gt;</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sidewalk_density =</span> <span class="fu">as.numeric</span>(sidewalk_length<span class="sc">/</span>area), </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">park_coverage =</span> <span class="fu">as.numeric</span>(park_area<span class="sc">/</span>area),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">restaurant_density =</span> <span class="fu">as.numeric</span>(restaurant<span class="sc">/</span>population)) <span class="sc">|&gt;</span> </span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(nbh_name, sidewalk_density<span class="sc">:</span>restaurant_density) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here we’ve got our final, summary table.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>Simple feature collection with 24 features and 4 fields
+Geometry type: MULTIPOLYGON
+Dimension:     XY
+Bounding box:  xmin: 739715.8 ymin: 2908294 xmax: 812981.4 ymax: 2970217
+Projected CRS: NAD83 / Massachusetts Mainland (ftUS)
+First 10 features:
+      nbh_name sidewalk_density park_coverage restaurant_density
+1      Allston       0.02814296   0.041907531       0.0052059676
+2     Back Bay       0.04730331   0.049444170       0.0041351848
+3  Beacon Hill       0.05208831   0.394871668       0.0018209083
+4     Brighton       0.02993613   0.126992070       0.0027105318
+5  Charlestown       0.02578077   0.056067289       0.0020397490
+6    Chinatown       0.04540828   0.009800296       0.0064398712
+7   Dorchester       0.02863317   0.097908025       0.0007120001
+8     Downtown       0.03576677   0.073480226       0.0107055238
+9  East Boston       0.01157975   0.064294930       0.0046440347
+10      Fenway       0.02457439   0.186526121       0.0029947261
+                         geometry
+1  MULTIPOLYGON (((758525.8 29...
+2  MULTIPOLYGON (((771539.2 29...
+3  MULTIPOLYGON (((774297.4 29...
+4  MULTIPOLYGON (((754177.9 29...
+5  MULTIPOLYGON (((773132.5 29...
+6  MULTIPOLYGON (((775639 2953...
+7  MULTIPOLYGON (((775867.2 29...
+8  MULTIPOLYGON (((773867.7 29...
+9  MULTIPOLYGON (((790148.5 29...
+10 MULTIPOLYGON (((756955.2 29...</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="present-our-result" class="level1">
+<h1>Present our Result</h1>
+<section id="table" class="level3">
+<h3 class="anchored" data-anchor-id="table">Table</h3>
+<p>Previously, we have used <code>gt</code> for presenting nicer tables. Today we are going to try <code>DT</code> (for <strong>D</strong>ata<strong>T</strong>ables). It provides some interactive functions such as sorting and “show more”.</p>
+<p>Pass the attribute table to <code>datatable()</code>.</p>
+<div class="sourceCode" id="cb33" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>result |&gt; </span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  st_drop_geometry() |&gt; </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  datatable()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The calculated values are small, and are measured on different scales. But we can <code>rescale()</code> them to a range of 1-100 (min-max) to put them on a common scale, then a number of “70” means the same relative standing on every measure.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> result <span class="sc">|&gt;</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    sidewalk_density<span class="sc">:</span>restaurant_density,</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> <span class="fu">rescale</span>(., <span class="at">to =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">100</span>)) <span class="sc">|&gt;</span> <span class="fu">round</span>(<span class="dv">1</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  ))</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>scores <span class="sc">|&gt;</span> </span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">datatable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-ef79a97dc244ec249510" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-ef79a97dc244ec249510">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24"],["Allston","Back Bay","Beacon Hill","Brighton","Charlestown","Chinatown","Dorchester","Downtown","East Boston","Fenway","Harbor Islands","Hyde Park","Jamaica Plain","Longwood","Mattapan","Mission Hill","North End","Roslindale","Roxbury","South Boston","South Boston Waterfront","South End","West End","West Roxbury"],[51.9,90.40000000000001,100,55.5,47.1,86.59999999999999,52.9,67.2,18.6,44.7,1,31.8,44.9,73.09999999999999,45,82.59999999999999,63,50.5,63,52.4,22,94.59999999999999,57.5,36.4],[9.300000000000001,11.2,100,31.2,12.9,1.1,23.7,17.4,15.1,46.5,47.6,78.2,86.7,3.6,42.6,16,15.9,35.9,66.5,30.7,1,10.5,8,62.8],[48.9,39,17.5,25.8,19.5,60.4,7.2,100,43.7,28.4,null,4.8,10.1,7.4,1,4.2,45.3,3.5,4.3,8.699999999999999,78.8,29.4,15.1,5.9]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>nbh_name<\/th>\n      <th>sidewalk_density<\/th>\n      <th>park_coverage<\/th>\n      <th>restaurant_density<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3,4]},{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"nbh_name","targets":1},{"name":"sidewalk_density","targets":2},{"name":"park_coverage","targets":3},{"name":"restaurant_density","targets":4}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<hr>
+</section>
+<section id="map" class="level3">
+<h3 class="anchored" data-anchor-id="map">Map</h3>
+<p>Because our result contains spatial information, we can also see how the scores vary across Boston by putting them on a map. Shading each neighborhood by its value in this way gives us what is known as a choropleth map.</p>
+<p>In the following code, note how we <code>pivot_longer</code> the data table so that we have an <code>indicators</code> column to use for <strong>faceting.</strong> The three metrics we created are stacked into this single <code>indicators</code> column (with their values in <code>score</code>), and we feed it to <code>facet_wrap()</code> to make one map for each indicator.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>scores <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> sidewalk_density<span class="sc">:</span>restaurant_density,</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"indicators"</span>, <span class="at">values_to =</span> <span class="st">"score"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>()<span class="sc">+</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> score))<span class="sc">+</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> indicators)<span class="sc">+</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_viridis_c</span>()<span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab3_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<hr>
+</section>
+<section id="radar-chart" class="level3">
+<h3 class="anchored" data-anchor-id="radar-chart">Radar Chart</h3>
+<p>We can also make some <a href="https://r-graph-gallery.com/143-spider-chart-with-saveral-individuals.html">radar charts</a> to show these scores:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>my_neighborhood <span class="ot">&lt;-</span> <span class="st">"Downtown"</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages("fmsb")</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fmsb)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a table in the format required by the radar chart</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a><span class="co"># including rows for maximum and minimum values to set the chart scale</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>chart <span class="ot">&lt;-</span> <span class="fu">rbind</span>(</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">100</span>, <span class="dv">100</span>),  <span class="co"># Max values</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>),        <span class="co"># Min values</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  scores <span class="sc">|&gt;</span> </span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(nbh_name <span class="sc">==</span> my_neighborhood) <span class="sc">|&gt;</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(sidewalk_density<span class="sc">:</span>restaurant_density)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plot a radar chart, using the basic setting:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">radarchart</span>(chart, <span class="at">title =</span> my_neighborhood)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab3_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Check out the linked page for how to customize your radar charts. You can also use <code>?radarchart</code> for for details on all options.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">radarchart</span>(chart,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">axistype =</span> <span class="dv">1</span>,</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">#custom polygon</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">pcol =</span> <span class="fu">rgb</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>),</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pfcol =</span> <span class="fu">rgb</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.3</span>),</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">plwd =</span> <span class="dv">3</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">#custom the grid</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">cglcol =</span> <span class="st">"lightgrey"</span>,</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">cglty =</span> <span class="dv">1</span>,</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">cglwd =</span> <span class="fl">0.8</span>,</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">#custom labels</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">axislabcol =</span> <span class="st">"darkgrey"</span>,</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">caxislabels =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">20</span>),</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">vlcex =</span> <span class="fl">0.8</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab3_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="final-notes" class="level2">
+<h2 class="anchored" data-anchor-id="final-notes">Final Notes</h2>
+<p>Harbor Island has a census population of 0, so its restaurant density is invalid. Keeping it would not change our rescaled scores (it turns to NA and ignored), but it is a scope decision worth making upfront. This area can be treated as a recreational area rather than a residential neighborhood and left out. To do that, apply <code>filter(population &gt; 0)</code> to the neighborhood data.</p>
+<p>OSM restaurant counts are very low for a few neighborhoods (1 in Mattapan, 3 in Longwood). These may be true, but OSM coverage is uneven, so it is better to cross-check them against a second source such as Google Maps, Yelp, or city business licenses. If a second source is available, we can use it to supplement the OSM counts.</p>
+</section>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>Beyond the three indicators we just built, what else could describe the environment of a Boston neighborhood? For this exercise, please continue exploring Boston neighborhoods by replicating and expanding on the process we walked through.</p>
+<p>You might look at transit supply, such as the number of <a href="https://gis.data.mass.gov/datasets/massgis::mbta-bus-stops-3/explore?location=42.346124%2C-71.067200%2C10.03">bus stops</a>, <a href="https://www.mass.gov/info-details/massgis-data-mbta-rapid-transit">rail stops</a>, <a href="https://data.boston.gov/dataset/existing-bike-network-2024">bicycle network</a> or <a href="https://bluebikes.com/system-data">Bluebike stations</a>. You could also consider business activity, such as <a href="https://wiki.openstreetmap.org/wiki/Map_features">supermarkets, cafes</a> on OSM, or look at the <a href="https://data.boston.gov/dataset/bprd-trees">trees</a>, <a href="https://data.boston.gov/dataset/public-schools">public schools</a>, <a href="https://data.boston.gov/dataset/pedestrian-ramp-inventory">pedestrian ramps</a>,or one specific type of <a href="https://data.boston.gov/dataset/open-space">open space</a> across the city.</p>
+<p>Start with a topic that interests you, then choose 2-3 indicators that feel meaningful for it and think about how each one could be calculated. Keep in mind to operationalize your metrics in a manageable way, so you can focus on working through the spatial analysis. Feel free to adapt any of the code provided earlier that you find helpful.</p>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p>For this exercise, please submit a rendered Quarto report that describes your topic and your 2–3 indicators, and walk through the code you used to calculate them.</p>
+<p>Present your results in both a table and a side-by-side choropleth map. If other visualizations help support you narrative, please include them as well. Finish with a short conclusion summarizing what you found and noting any limitations of your analysis.</p>
+<p>A reminder that you should include <code>embed-resources: true</code> in your YAML header, this is to help preserve all your pictures in your HTML.</p>
+<p><img src="..\img/lab3-html.PNG" class="img-fluid" width="424"></p>
+<p>Please <strong>upload your rendered HTML file to Canvas</strong> <strong>by 9am, Wednesday, Oct 7.</strong></p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -556,4 +1114,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
 </body></html>
