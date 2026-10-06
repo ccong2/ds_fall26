@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-10-06">
 
-<title>lab4 – Applied Data Science for Cities</title>
+<title>Download and Analyze Census Data with  – Applied Data Science for Cities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -40,6 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -108,17 +173,547 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#background" id="toc-background" class="nav-link active" data-scroll-target="#background">Background</a></li>
+  <li><a href="#nyc-floodplain" id="toc-nyc-floodplain" class="nav-link" data-scroll-target="#nyc-floodplain">NYC Floodplain</a></li>
+  <li><a href="#collect-us-census-data-using-tidycensus" id="toc-collect-us-census-data-using-tidycensus" class="nav-link" data-scroll-target="#collect-us-census-data-using-tidycensus">Collect US Census Data using tidycensus</a>
+  <ul class="collapse">
+  <li><a href="#a-review-of-tidycensus-key-steps" id="toc-a-review-of-tidycensus-key-steps" class="nav-link" data-scroll-target="#a-review-of-tidycensus-key-steps">A review of <code>tidycensus</code> key steps</a></li>
+  <li><a href="#how-to-find-table-ids-and-variable-ids" id="toc-how-to-find-table-ids-and-variable-ids" class="nav-link" data-scroll-target="#how-to-find-table-ids-and-variable-ids">How to find table IDs and variable IDs</a></li>
+  <li><a href="#download-data" id="toc-download-data" class="nav-link" data-scroll-target="#download-data">Download data</a>
+  <ul class="collapse">
+  <li><a href="#table-1-poverty-status" id="toc-table-1-poverty-status" class="nav-link" data-scroll-target="#table-1-poverty-status">Table 1: Poverty status</a></li>
+  <li><a href="#table-2-sex-by-age" id="toc-table-2-sex-by-age" class="nav-link" data-scroll-target="#table-2-sex-by-age">Table 2: Sex by age</a></li>
+  <li><a href="#join-the-tables" id="toc-join-the-tables" class="nav-link" data-scroll-target="#join-the-tables">Join the tables</a></li>
+  </ul></li>
+  <li><a href="#spatial-analysis" id="toc-spatial-analysis" class="nav-link" data-scroll-target="#spatial-analysis">Spatial Analysis</a></li>
+  <li><a href="#check-the-coordinate-reference-systems" id="toc-check-the-coordinate-reference-systems" class="nav-link" data-scroll-target="#check-the-coordinate-reference-systems">Check the coordinate reference systems</a></li>
+  <li><a href="#find-tracts-that-intersect-the-floodplain" id="toc-find-tracts-that-intersect-the-floodplain" class="nav-link" data-scroll-target="#find-tracts-that-intersect-the-floodplain">Find tracts that intersect the floodplain</a></li>
+  </ul></li>
+  <li><a href="#mapping-exposure-and-vulnerability" id="toc-mapping-exposure-and-vulnerability" class="nav-link" data-scroll-target="#mapping-exposure-and-vulnerability">Mapping Exposure and Vulnerability</a></li>
+  <li><a href="#construct-a-composite-index" id="toc-construct-a-composite-index" class="nav-link" data-scroll-target="#construct-a-composite-index">Construct a Composite Index</a>
+  <ul class="collapse">
+  <li><a href="#step-1-percentile-rank-each-variable" id="toc-step-1-percentile-rank-each-variable" class="nav-link" data-scroll-target="#step-1-percentile-rank-each-variable">Step 1: Percentile rank each variable</a></li>
+  <li><a href="#step-2-add-up-the-ranks-and-rank-again" id="toc-step-2-add-up-the-ranks-and-rank-again" class="nav-link" data-scroll-target="#step-2-add-up-the-ranks-and-rank-again">Step 2: Add up the ranks, and rank again</a></li>
+  <li><a href="#step-3-set-a-threshold-and-overlay-with-exposure" id="toc-step-3-set-a-threshold-and-overlay-with-exposure" class="nav-link" data-scroll-target="#step-3-set-a-threshold-and-overlay-with-exposure">Step 3: Set a threshold and overlay with exposure</a></li>
+  <li><a href="#other-ways-to-build-a-composite-index" id="toc-other-ways-to-build-a-composite-index" class="nav-link" data-scroll-target="#other-ways-to-build-a-composite-index">Other ways to build a composite index</a></li>
+  </ul></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Download and Analyze Census Data with <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+<p class="subtitle lead"><span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span></p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 6, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="background" class="level1">
+<h1>Background</h1>
+<p>Planners are paying more and more attention to <strong>climate risk</strong>: extreme heat, flooding, sea level rise. These hazards do not affect everyone equally. Whether a community is at risk depends on two things (<a href="https://www.tandfonline.com/doi/full/10.1080/09640568.2018.1462475">Wilson &amp; Chakraborty, 2017</a>; <a href="https://www.ipcc.ch/site/assets/uploads/2018/03/SREX-Chap2_FINAL-1.pdf">Cardona et al.&nbsp;2012</a>):</p>
+<ul>
+<li><strong>Exposure</strong>: is the place physically at risk? For example, is a neighborhood inside a flooding zone, or is it a hot spot during a heat wave?</li>
+<li><strong>Social vulnerability</strong>: how well can the people who live there prepare, evacuate, and recover? Households with lower incomes, older adults, young children, people without a car, or people with limited English often have a harder time doing so.</li>
+</ul>
+<p>Exposure can be measured with environmental data (flood maps, temperature, elevation, etc.). Social vulnerability is usually measured with <strong>Census data</strong>. A well-known example is the CDC’s <a href="https://www.atsdr.cdc.gov/place-health/php/svi/index.html">Social Vulnerability Index (SVI)</a>, which combines 16 Census variables to rank every census tract in the US by how vulnerable its residents are. <strong>The places of greatest concern are where high exposure and high social vulnerability overlap.</strong></p>
+<p>In this tutorial we will:</p>
+<ol type="1">
+<li>Load New York City’s projected <strong>2050s floodplain</strong> (exposure).</li>
+<li>Download <strong>American Community Survey (ACS)</strong> data with <code>tidycensus</code> (social vulnerability).</li>
+<li>Map where exposure and vulnerability overlap.</li>
+<li>Build a simple <strong>composite vulnerability index</strong>, following the CDC’s ranking method.</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># You may need to install the package tidycensus first: install.packages("tidycensus")</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidycensus)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="nyc-floodplain" class="level1">
+<h1>NYC Floodplain</h1>
+<p>New York City is frequently hit by storm surge, and the city has been very active in climate resilience planning. The <strong>100-Year Floodplain for the 2050s</strong> shows the area that has a 1% chance of flooding in any given year, under a projected scenario of 2.5 feet of sea level rise by the 2050s.</p>
+<p>Download the <a href="https://data.cityofnewyork.us/Environment/Future-Floodplain-2050s/27ya-gqtm/about_data">Future Floodplain 2050s</a> dataset from <a href="https://opendata.cityofnewyork.us/">NYC OpenData</a> (choose the GeoJSON format). Save it in your <code>data</code> folder. Below we use <code>st_read()</code> to read the file and name it <code>floodplain</code>.</p>
+<div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>floodplain &lt;- st_read("data/Future_Floodplain_2050s_20261005.geojson")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The floodplain data has a column <code>fld_zone</code> with codes such as <code>"AE"</code>, <code>"VE"</code>, and <code>"AO"</code>. These are FEMA Flood Insurance Rate Map (FIRM) zone designations:</p>
+<ul>
+<li><strong>A, AE, AO</strong> zones are <em>Special Flood Hazard Areas</em>, the high-risk zones.</li>
+<li><strong>VE</strong> zones are even higher risk, because on top of flooding they also face wave action along the coast.</li>
+</ul>
+<p>Some polygons have an empty zone code. We filter them out and keep only valid flood zones.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>floodplain <span class="ot">&lt;-</span> floodplain <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(fld_zone <span class="sc">!=</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s make a quick map to check that the data looks right.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>floodplain <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab4_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>You should see the outline of the NYC coastline: the floodplain hugs the waterfront of all five boroughs, with large areas around Jamaica Bay.</p>
+</section>
+<section id="collect-us-census-data-using-tidycensus" class="level1">
+<h1>Collect US Census Data using tidycensus</h1>
+<section id="a-review-of-tidycensus-key-steps" class="level2">
+<h2 class="anchored" data-anchor-id="a-review-of-tidycensus-key-steps">A review of <code>tidycensus</code> key steps</h2>
+<p>To download data with <code>tidycensus</code>, you will need the following:</p>
+<ul>
+<li><p><strong>A Census API key.</strong> You can <a href="https://api.census.gov/data/key_signup.html">request one here</a>; it is free and arrives by email.</p>
+<p>Run the following line once to install the API key (that is, save it in your R environment). Including <code>install = TRUE</code> means R remembers the key, so you won’t need to enter it again next time. You should not share your key or leave it in documents you submit.</p></li>
+</ul>
+<div class="sourceCode" id="cb5" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>census_api_key("YOUR KEY HERE", install = TRUE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>A <strong>geography</strong> to look up (e.g., tract or block group).</li>
+<li>The <strong>variables</strong> we want. Each ACS variable has an ID made of a table ID plus a 3-digit variable number, e.g.&nbsp;<code>B17001_002</code>. You can also browse all variables inside R with <code>load_variables()</code>.</li>
+<li>The <strong>state</strong> and <strong>county</strong> that define your study region.</li>
+<li>The <strong>survey</strong> you’d like to use (e.g., Decennial Census, ACS 1-year, or ACS 5-year).</li>
+<li>The <strong>year</strong> you want data for (e.g., the most recent 5-year data).</li>
+</ul>
+<p>Two more arguments are usually included, because they make the results easy to use in our R workflow:</p>
+<ul>
+<li><code>output = "wide"</code> gives each variable its own columns, which makes column-wise calculations (like dividing one variable by another) simple. Each variable gets two columns: one ending in <code>E</code> (the <strong>estimate</strong>) and one ending in <code>M</code> (the <strong>margin of error</strong>).</li>
+<li><code>geometry = TRUE</code> returns a <a href="https://r-spatial.github.io/sf/articles/sf1.html">simple features</a> (<code>sf</code>) object, with the boundary of each tract attached, so you can map the result right away.</li>
+</ul>
+</section>
+<section id="how-to-find-table-ids-and-variable-ids" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-find-table-ids-and-variable-ids">How to find table IDs and variable IDs</h2>
+<p><a href="https://censusreporter.org/">Census Reporter</a> is a friendly website for browsing ACS tables. Start from the list of <a href="https://censusreporter.org/topics/table-codes/">table codes by topic</a>. Under each topic you can see which tables are available and which survey questions were used to produce them. This helps you decide which table answers your question.</p>
+<p>Urban studies research frequently uses tables like these:</p>
+<ul>
+<li>B01001: Sex by age</li>
+<li>B02001: Race</li>
+<li>B03002: Hispanic or Latino origin by race</li>
+<li>B19013: Median household income</li>
+<li>B17001: Poverty status</li>
+<li>B25003: Housing tenure (owners and renters)</li>
+<li>B25106: Housing cost burden (housing costs as a percentage of household income)</li>
+<li>B25002: Occupancy status (occupied or vacant)</li>
+<li>C16002: Household language by limited English speaking status</li>
+</ul>
+<p>To find specific <strong>variable IDs</strong>, click into a table. For example, on the page for <a href="https://censusreporter.org/tables/B01001/">B01001: Sex by Age</a> you will see the table’s structure, its <strong>universe</strong> (who is being counted), and the list of variables. <strong>Hover your mouse over a row to see its variable ID</strong>.</p>
+</section>
+<section id="download-data" class="level2">
+<h2 class="anchored" data-anchor-id="download-data">Download data</h2>
+<p>When you pull several tables for the same place and year, it’s a good idea to set these values up once as <strong>constants</strong> (also called “global variables”). If you later want to change something for all tables, for example switch to block groups or a different year, you only need to edit these lines and rerun the code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>geography <span class="ot">&lt;-</span> <span class="st">"tract"</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>state <span class="ot">&lt;-</span> <span class="st">"NY"</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>county <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Bronx"</span>, <span class="st">"Kings"</span>, <span class="st">"New York"</span>, <span class="st">"Queens"</span>, <span class="st">"Richmond"</span>)  </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2024</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>survey <span class="ot">&lt;-</span> <span class="st">"acs5"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="table-1-poverty-status" class="level3">
+<h3 class="anchored" data-anchor-id="table-1-poverty-status">Table 1: Poverty status</h3>
+<p>Let’s start with <a href="https://censusreporter.org/tables/B17001/">B17001: Poverty Status</a>. We only need two variables from it:</p>
+<ul>
+<li><code>B17001_001</code>: the total population for whom poverty status is determined</li>
+<li><code>B17001_002</code>: the population with income below the poverty level</li>
+</ul>
+<p><em>A note on “universes”: different ACS tables count different “totals”. The universe for B17001 is not the total population. It excludes people for whom poverty status can’t be “determined” (for example, people living in college dorms or institutions).</em></p>
+<p>First, store the variable IDs in a vector.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># B17001: Poverty Status ----</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>B17001_Vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"B17001_001"</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B17001_002"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then make the API call. Since this is the first table, we ask for <code>geometry = TRUE</code>, so the tract boundaries come with it.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>B17001 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> geography,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> state,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> county,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> B17001_Vars,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">survey =</span> survey,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> year,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">"wide"</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">geometry =</span> <span class="cn">TRUE</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now clean up the table: calculate the <strong>poverty rate</strong> with <code>mutate()</code>, then use <code>select()</code> to keep only the columns we need, with clear names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>B17001_df <span class="ot">&lt;-</span> B17001 <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pov_rate =</span> B17001_002E <span class="sc">/</span> B17001_001E) <span class="sc">|&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, pov_rate)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>geometry</code> column stays even though we didn’t select it. Geometry in an <code>sf</code> object is “sticky”.</p>
+</section>
+<section id="table-2-sex-by-age" class="level3">
+<h3 class="anchored" data-anchor-id="table-2-sex-by-age">Table 2: Sex by age</h3>
+<p>Next, <a href="https://censusreporter.org/tables/B01001/">B01001: Sex by Age</a>. This table is useful for calculating the share of people <strong>under 18</strong> or <strong>over 65</strong>, two groups who usually need more help during an emergency.</p>
+<p>This table is different from the poverty table. It doesn’t have one variable for “under 18”. Instead, it splits the population into many small age groups, separately for males and females. So we need to read the variable list carefully and pick every age group that belongs to our two groups:</p>
+<ul>
+<li><strong>Under 18</strong>: male <code>003</code>–<code>006</code> (under 5, 5–9, 10–14, 15–17) and female <code>027</code>–<code>030</code></li>
+<li><strong>65 and over</strong>: male <code>020</code>–<code>025</code> (65–66, 67–69, 70–74, 75–79, 80–84, 85+) and female <code>044</code>–<code>049</code></li>
+<li><strong>Total population</strong>: <code>001</code></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># B01001: Sex by Age ----</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>B01001_Vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"B01001_001"</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_003"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_004"</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_005"</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_006"</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_020"</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_021"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_022"</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_023"</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_024"</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_025"</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_027"</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_028"</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_029"</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_030"</span>,</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_044"</span>,</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_045"</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_046"</span>,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_047"</span>,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_048"</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                 <span class="st">"B01001_049"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This time we leave out the geometry argument. We already have the tract boundaries from the first table, and we just need to join this table to it. Check out the result from the API call to see what the table looks like.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the API call</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>B01001 <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">geography =</span> geography,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">state =</span> state,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">county =</span> county,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">variables =</span> B01001_Vars,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">survey =</span> survey,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">year =</span> year,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> <span class="st">"wide"</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Add up the relevant age groups to get the number of people under 18 and over 65 in each tract.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>B01001_df <span class="ot">&lt;-</span> B01001 <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">under18_pop =</span> (</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      B01001_003E <span class="sc">+</span> B01001_004E <span class="sc">+</span> B01001_005E <span class="sc">+</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        B01001_006E <span class="sc">+</span> B01001_027E <span class="sc">+</span> B01001_028E <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        B01001_029E <span class="sc">+</span> B01001_030E),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">over65_pop =</span> (</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      B01001_020E <span class="sc">+</span> B01001_021E <span class="sc">+</span> B01001_022E <span class="sc">+</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        B01001_023E <span class="sc">+</span> B01001_024E <span class="sc">+</span> B01001_025E <span class="sc">+</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        B01001_044E <span class="sc">+</span> B01001_045E <span class="sc">+</span> B01001_046E <span class="sc">+</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        B01001_047E <span class="sc">+</span> B01001_048E <span class="sc">+</span> B01001_049E )</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then turn the counts into shares of the total population (the universe of this table is the total population, <code>B01001_001</code>), and keep only the columns we need.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>B01001_df <span class="ot">&lt;-</span> B01001_df <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">under18_ratio =</span> under18_pop <span class="sc">/</span> B01001_001E,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">over65_ratio =</span> over65_pop <span class="sc">/</span> B01001_001E) <span class="sc">|&gt;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, under18_ratio, over65_ratio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="join-the-tables" class="level3">
+<h3 class="anchored" data-anchor-id="join-the-tables">Join the tables</h3>
+<p>Join the age table to the poverty table using the shared <code>GEOID</code> column. Because <code>B17001_df</code> (the one with geometry) comes first, the result is still an <code>sf</code> object we can map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>acs_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(B17001_df, B01001_df, <span class="at">by =</span> <span class="st">"GEOID"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When you need more Census variables later, repeat the same four steps: <strong>set up the variables → make the API call → clean up the table → join</strong> it to <code>acs_data</code>.</p>
+</section>
+</section>
+<section id="spatial-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-analysis">Spatial Analysis</h2>
+<p>Now we want to do a kind of <strong>“select by location”</strong>: find the tracts that fully or partially overlap with the floodplain. These are the tracts <em>exposed</em> to flood risk.</p>
+</section>
+<section id="check-the-coordinate-reference-systems" class="level2">
+<h2 class="anchored" data-anchor-id="check-the-coordinate-reference-systems">Check the coordinate reference systems</h2>
+<p>Before any spatial operation, check that both layers use the same coordinate reference system (CRS).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(floodplain)<span class="sc">$</span>epsg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 4326</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_crs</span>(acs_data)<span class="sc">$</span>epsg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 4269</code></pre>
+</div>
+</div>
+<p>They are different (4326 for the floodplain and 4269 for the Census data), and both are <strong>geographic</strong> CRSs, measured in degrees. For potential need of calculating areas, we transform both layers into the same <strong>projected</strong> CRS, measured in feet. Here we use EPSG <strong>2263</strong>, the New York State Plane (Long Island zone), which is the standard projection for NYC.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>acs_data <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(acs_data, <span class="dv">2263</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>floodplain <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(floodplain, <span class="dv">2263</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="find-tracts-that-intersect-the-floodplain" class="level2">
+<h2 class="anchored" data-anchor-id="find-tracts-that-intersect-the-floodplain">Find tracts that intersect the floodplain</h2>
+<p>Last time, we used <code>st_intersection()</code>, which cuts the geometries and returns the actual overlapping pieces. This time we don’t want to cut anything. We only want to know whether they <em>“intersect”</em>. For that, we use <code>st_intersects()</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>exposed_tracts <span class="ot">&lt;-</span> <span class="fu">st_intersects</span>(acs_data, floodplain)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The result is a special kind of list with one element per tract. Each element contains the row numbers of the floodplain polygons that intersect that tract. If a tract doesn’t touch any floodplain polygon, its element is empty.</p>
+<p>This format makes it easy to create a TRUE/FALSE indicator. <code>lengths()</code> counts how many floodplain polygons each tract touches. If the count is greater than 0, the tract is in the floodplain. We will add this information back into <code>acs_data</code>.</p>
+<p><em>Note: <code>lengths()</code> sounds like measuring length, but this one is the same as <code>len()</code> in Python, it’s a base R function that returns the number of items in a vector.</em></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>acs_data <span class="ot">&lt;-</span> acs_data <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">in_floodplain =</span> <span class="fu">ifelse</span>(<span class="fu">lengths</span>(exposed_tracts) <span class="sc">&gt;</span> <span class="dv">0</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We now have a new column, <code>in_floodplain</code>, telling us whether each tract intersects the floodplain. Plot the exposed tracts together with the floodplain for a quick visual check:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> acs_data <span class="sc">|&gt;</span> <span class="fu">filter</span>(in_floodplain <span class="sc">==</span> <span class="cn">TRUE</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">color =</span> <span class="st">"gray60"</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> floodplain, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">fill =</span> <span class="cn">NA</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab4_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Before moving on, save the <code>acs_data</code> we have built so far in your <code>data</code> folder. That way you can continue working on it in the Exercise without downloading everything from the Census again.</p>
+<div class="sourceCode" id="cb23" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>saveRDS(acs_data, "data/acs_data.rds")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Next time when you need it, load it back using <code>readRDS()</code>. A <code>.rds</code> file is a compact format to save any data format as it is, so the data will come back as the same <code>sf</code> object we are using now.</p>
+</section>
+</section>
+<section id="mapping-exposure-and-vulnerability" class="level1">
+<h1>Mapping Exposure and Vulnerability</h1>
+<p>Our <code>acs_data</code> now looks similar to the Opportunity Zone dataset from the first lab: each tract has a yes/no column (in the floodplain or not) plus several demographic variables.</p>
+<p>Next, we overlay <strong>exposure</strong> with <strong>vulnerability</strong>. Let’s start with one variable: the share of residents <strong>65 and over</strong>. We will find the tracts in the <strong>top 25%</strong> for this share, meaning the quarter of NYC tracts with the highest proportion of older residents, and see which of them are also in the floodplain.</p>
+<p>First, <code>quantile()</code> finds the cut points that divide tracts into four equal groups, and <code>cut()</code> assigns each tract to a group. (<code>na.rm = TRUE</code> skips tracts with no population, such as parks and airports, where the ratio can’t be calculated.)</p>
+<p>Then <code>case_when()</code> creates four map categories. You can think of <code>case_when()</code> as an advanced version of <code>ifelse()</code>: instead of one condition with two outcomes, it checks several conditions in order: are you both top 25% and in floodplain? are you just top 25% but not in floodplain, etc.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> acs_data <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># cut over65 ratios into quantiles</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">over65_quartile =</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>           <span class="fu">cut</span>(over65_ratio,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">breaks =</span> <span class="fu">quantile</span>(over65_ratio, <span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.25</span>, <span class="fl">0.5</span>, <span class="fl">0.75</span>, <span class="dv">1</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Bottom 25%"</span>, <span class="st">"25–50%"</span>, <span class="st">"50–75%"</span>, <span class="st">"Top 25%"</span>),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">include.lowest =</span> <span class="cn">TRUE</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># combines the quartile with the floodplain indicator</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">vul_group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      over65_quartile <span class="sc">==</span> <span class="st">"Top 25%"</span> <span class="sc">&amp;</span> in_floodplain <span class="sc">~</span> <span class="st">"25% highest over-65, in floodplain"</span>,</span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>      over65_quartile <span class="sc">==</span> <span class="st">"Top 25%"</span>                 <span class="sc">~</span> <span class="st">"25% highest over-65, outside floodplain"</span>,</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>      in_floodplain                                <span class="sc">~</span> <span class="st">"Floodplain only"</span>,</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>      <span class="cn">TRUE</span>                                         <span class="sc">~</span> <span class="st">"Neither"</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Map our result and you will see what we were trying to do:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> vul_group), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"25% highest over-65, in floodplain"</span>       <span class="ot">=</span> <span class="st">"firebrick"</span>,</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"25% highest over-65, outside floodplain"</span> <span class="ot">=</span> <span class="st">"lightsalmon"</span>,</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Floodplain only"</span>                         <span class="ot">=</span> <span class="st">"grey80"</span>,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Neither"</span>                                 <span class="ot">=</span> <span class="st">"grey90"</span>)) <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="cn">NULL</span>,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Tracts in the top 25% for share of residents 65+, by floodplain status"</span>) <span class="sc">+</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab4_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The dark red tracts are where both conditions meet: a large share of older residents <strong>and</strong> exposure to future flooding. Places like the Rockaways, Coney Island, and parts of Staten Island’s shore stand out. These are where evacuation planning and outreach to older residents may matter most.</p>
+</section>
+<section id="construct-a-composite-index" class="level1">
+<h1>Construct a Composite Index</h1>
+<p>So far we have looked at <strong>one variable at a time</strong>. In reality, vulnerability comes from several factors together: a tract with many older residents <em>and</em> high poverty is likely more vulnerable than a tract with only one of the two. A <strong>composite index</strong> combines several variables into a single score.</p>
+<p>How to combine variables is a topic of its own. There are many methods, from simple to complicated, and each comes with its own assumptions and amount of statistics. Here we will replicate the method used by the <strong>CDC’s Social Vulnerability Index</strong>, which is based on <strong>percentile ranks</strong>. You can read the details in the <a href="https://www.atsdr.cdc.gov/place-health/php/svi/svi-data-documentation-download.html">SVI documentation</a>.</p>
+<section id="step-1-percentile-rank-each-variable" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-percentile-rank-each-variable">Step 1: Percentile rank each variable</h2>
+<p>The percentile rank is just asking, lining up everyone from the lowest to the highest, where do you rank:</p>
+<p><span class="math display">\[
+\text{percentile rank} = \frac{\text{rank} - 1}{N - 1}
+\]</span></p>
+<p>where <span class="math inline">\(N\)</span> is the number of tracts. The tract with the lowest value gets 0, the highest gets 1, and a tract with a percentile rank of 0.8 has a higher value than 80% of tracts. Tied values get the same (lowest) rank.</p>
+<p>Let’s see how this works on a small example with five numbers:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">20</span>, <span class="dv">20</span>, <span class="dv">40</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>(<span class="fu">rank</span>(x, <span class="at">ties.method =</span> <span class="st">"min"</span>) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> (<span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 0.00 1.00 0.25 0.25 0.75</code></pre>
+</div>
+</div>
+<p>The lowest value, 10, gets 0; the highest, 50, gets 1; the two 20s tie so they share 0.25. The <code>dplyr</code> function <code>percent_rank()</code> does exactly the same calculation, and it also handles missing values (<code>NA</code>) for us, so we’ll use it:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">percent_rank</span>(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>[1] 0.00 1.00 0.25 0.25 0.75</code></pre>
+</div>
+</div>
+<p>Why rank instead of using the raw values? Our variables are on different scales: a poverty rate of 0.30 and an over-65 share of 0.30 don’t mean the same thing. Ranking puts every variable on the same 0–1 scale, and it isn’t distorted by a few extreme values.</p>
+<p>Now apply it to two of our variables, <code>pov_rate</code> and <code>over65_ratio</code>. For both, a <strong>higher value means more vulnerable</strong>, so a higher rank means more vulnerable too.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>vul_data <span class="ot">&lt;-</span> acs_data <span class="sc">|&gt;</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">pov_rank =</span> <span class="fu">percent_rank</span>(pov_rate),</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">over65_rank =</span> <span class="fu">percent_rank</span>(over65_ratio))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If higher values of a variable mean <em>less</em> vulnerable, such as <strong>median household income</strong>, flip the rank so that it points in the same direction as the others: <code>1 - percent_rank(median_income)</code>. The CDC does the same for per capita income.</p>
+</div>
+</div>
+</section>
+<section id="step-2-add-up-the-ranks-and-rank-again" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-add-up-the-ranks-and-rank-again">Step 2: Add up the ranks, and rank again</h2>
+<p>When adding the two percentile ranks up, we can get a highest value of 2, (the more variables we use, the higher the sum will be). So we need to perform percentile rank on our sum one more time, to put the final index back on a 0–1 scale. <strong>And that’s our index</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>vul_data <span class="ot">&lt;-</span> vul_data <span class="sc">|&gt;</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">rank_sum =</span> pov_rank <span class="sc">+</span> over65_rank,</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">vul_index =</span> <span class="fu">percent_rank</span>(rank_sum))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Take a look at a few tracts to check the calculation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>vul_data <span class="sc">|&gt;</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(GEOID, pov_rate, over65_ratio, pov_rank, over65_rank, vul_index) <span class="sc">|&gt;</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>        GEOID  pov_rate over65_ratio  pov_rank over65_rank vul_index
+1 36005037600 0.2378251    0.1957447 0.7600536   0.6904550 0.8865058
+2 36005023502 0.3070627    0.1541203 0.8579088   0.4692239 0.8127793
+3 36005006400 0.4121855    0.1051502 0.9486148   0.2056200 0.6702413
+4 36005039100 0.3361442    0.2170977 0.8900804   0.7734166 0.9691689
+5 36005038000 0.4493401    0.1327892 0.9651475   0.3434434 0.8020554
+6 36005008900 0.2583076    0.2878942 0.7904379   0.9344335 0.9794459</code></pre>
+</div>
+</div>
+<p>Map the index, with the floodplain shaded on top:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> vul_data, <span class="fu">aes</span>(<span class="at">fill =</span> vul_index), <span class="at">color =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> floodplain, <span class="at">fill =</span> <span class="st">"steelblue"</span>, <span class="at">color =</span> <span class="cn">NA</span>, <span class="at">alpha =</span> <span class="fl">0.45</span>) <span class="sc">+</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"cornsilk"</span>, <span class="at">high =</span> <span class="st">"firebrick"</span>, <span class="at">na.value =</span> <span class="st">"grey90"</span>)<span class="sc">+</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Vulnerability</span><span class="sc">\n</span><span class="st">index (0–1)"</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Composite vulnerability index (poverty + age 65+)"</span>) <span class="sc">+</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab4_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3-set-a-threshold-and-overlay-with-exposure" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-set-a-threshold-and-overlay-with-exposure">Step 3: Set a threshold and overlay with exposure</h2>
+<p>The CDC maps tracts with an SVI of <strong>0.75 or higher</strong> as having the highest vulnerability (the top quarter). We’ll do the same, and combine it with floodplain exposure, just like the over-65 map above.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>vul_data <span class="ot">&lt;-</span> vul_data <span class="sc">|&gt;</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">high_vul =</span> vul_index <span class="sc">&gt;=</span> <span class="fl">0.75</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    high_vul <span class="sc">&amp;</span> in_floodplain <span class="sc">~</span> <span class="st">"High vulnerability, in floodplain"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    high_vul                 <span class="sc">~</span> <span class="st">"High vulnerability, outside floodplain"</span>,</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    in_floodplain             <span class="sc">~</span> <span class="st">"In Floodplain only"</span>,</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span>                      <span class="sc">~</span> <span class="st">"Neither"</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>vul_data <span class="sc">|&gt;</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> group), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"High vulnerability, in floodplain"</span>      <span class="ot">=</span> <span class="st">"firebrick"</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"High vulnerability, outside floodplain"</span> <span class="ot">=</span> <span class="st">"lightsalmon"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"In Floodplain only"</span>                        <span class="ot">=</span> <span class="st">"grey80"</span>,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Neither"</span>                                <span class="ot">=</span> <span class="st">"grey90"</span>)) <span class="sc">+</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="cn">NULL</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Tracts with a vulnerability index of 0.75+, by floodplain status"</span>) <span class="sc">+</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab4_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="other-ways-to-build-a-composite-index" class="level2">
+<h2 class="anchored" data-anchor-id="other-ways-to-build-a-composite-index">Other ways to build a composite index</h2>
+<p>Percentile ranking is not the only option of creating a composite index. Here are a few other common methods for your future reference:</p>
+<ul>
+<li><strong>Min-max scaling, then average.</strong> Rescale each variable to a common range (e.g., 0–1 or 0–100) using <code>(x - min) / (max - min)</code>, then take the average across variables. This is basically what we did in the last lab. Unlike ranking, it keeps the <em>distance</em> between values, so it’s much more sensitive to outliers.</li>
+<li><strong>Z-scores and a weighted sum.</strong> Standardize each variable to have a mean of 0 and a standard deviation of 1, then add them up, optionally giving more weight to the variables you think matter more. The weights are an assumption you need to justify.</li>
+<li><strong>Principal Component Analysis (PCA).</strong> Better suited when you have many variables (10+). PCA z-scores the variables and lets the data determine the weights, using the first principal component as the index. It helps when many variables are correlated (e.g., poverty, low income, and no vehicle often go together), so the same underlying factor isn’t counted several times.</li>
+</ul>
+<p>Whatever method you use, remember that a composite index is a simplification. It is useful for communicating results and making clear maps, but folding several variables into one number hides which factor is driving each tract’s score. The results also depend on your choices: which variables you include, how you weight them, and where you set the threshold can all change which tracts end up flagged. So always look at the individual variables too, and be transparent about the choices you made.</p>
+</section>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>Earlier we said vulnerability is about whether people can prepare, evacuate, and recover. So far we’ve only used poverty and elderly population. Your task is to add <strong>two new Census variables</strong> to this study.</p>
+<p>Read your stored <code>acs_data</code> back using <code>acs_data &lt;- readRDS("data/acs_data.rds")</code>.</p>
+<p>For practice, I’d recommend choosing from these:</p>
+<ul>
+<li><strong>B25106: Housing Cost Burden.</strong> The Department of Housing and Urban Development (HUD) considers households that spend more than 30% of their income on housing to be <em>cost-burdened</em>. These households have less money left for other needs, such as food, savings, or recovering after a disaster. <u>This table takes some time to read</u>, which makes it good practice for reading ACS tables and selecting the correct variables.</li>
+<li><strong>B25044: Tenure by Vehicles Available.</strong> Households with <strong>no vehicle</strong> may have a hard time evacuating. Note: the table splits “no vehicle available” into owner and renter households.</li>
+<li><strong>B19013: Median Household Income.</strong> This variable is slightly different: it is already a single value per tract, so you don’t need to calculate a percentage. Remember that <em>higher</em> income means <em>less</em> vulnerable when you rank it.</li>
+<li><strong>C16002: Household Language by Household Limited English Speaking Status.</strong> In limited English speaking households, emergency warnings and evacuation instructions may not reach residents.</li>
+</ul>
+<p>Building on our previous <code>acs_data</code> table (with geometry and the <code>in_floodplain</code> column), please:</p>
+<ol type="1">
+<li>Repeat the ACS download process to add <strong>two more variables</strong> to the table.</li>
+<li>Create a <strong>composite index</strong> of the four variables combined (the two used in this tutorial plus your two new ones), using the CDC percentile rank method.</li>
+<li>Define a <strong>threshold</strong>, and map the tracts with a composite index above this threshold, overlaid with floodplain exposure.</li>
+<li>Include a short <strong>write-up</strong> summarizing the choices you have made, along with what you observe from the results, and any critiques or thoughts. For example: Which areas stand out? How does the map change compared to using different thresholds? What does the index leave out?</li>
+</ol>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p>Create a Quarto document for this exercise and use it to document your work. You are welcome to reuse our code in this tutorial as a starting point.</p>
+<p><strong>Tip:</strong> <code>tidycensus</code> often prints messages and progress bars while running. To keep your document output clean, adjust your <a href="https://quarto.org/docs/computations/execution-options.html">code chunk options</a> to suppress them, for example <code>#| message: false</code> and <strong><code>#| results: hide</code>.</strong></p>
+<p>Also make sure you have included <code>embed-resources: true</code> in your YAML header, this is to help preserve all your pictures in your HTML.</p>
+<p><img src="..\img/lab3-html.PNG" class="img-fluid" width="424"></p>
+<p>When you are finished, please upload your report to Canvas by <strong>9AM on Wednesday, October 14</strong>.</p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -556,4 +1151,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
 </body></html>
