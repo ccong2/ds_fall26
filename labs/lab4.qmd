@@ -337,7 +337,7 @@ plot_data <- acs_data |>
   
   # combines the quartile with the floodplain indicator
   mutate(
-    vul_group = case_when(
+    group = case_when(
       over65_quartile == "Top 25%" & in_floodplain ~ "25% highest over-65, in floodplain",
       over65_quartile == "Top 25%"                 ~ "25% highest over-65, outside floodplain",
       in_floodplain                                ~ "Floodplain only",
@@ -350,7 +350,7 @@ Map our result and you will see what we were trying to do:
 ```{r}
 plot_data |>
   ggplot() +
-  geom_sf(aes(fill = vul_group), colour = "white", linewidth = 0.05) +
+  geom_sf(aes(fill = group), colour = "white", linewidth = 0.05) +
   scale_fill_manual(values = c("25% highest over-65, in floodplain"       = "firebrick",
                                "25% highest over-65, outside floodplain" = "lightsalmon",
                                "Floodplain only"                         = "grey80",
@@ -491,7 +491,7 @@ Building on our previous `acs_data` table (with geometry and the `in_floodplain`
 
 1.  Repeat the ACS download process to add **two more variables** to the table.
 2.  Create a **composite index** of the four variables combined (the two used in this tutorial plus your two new ones), using the CDC percentile rank method.
-3.  Define a **threshold**, and map the tracts with a composite index above this threshold, overlaid with floodplain exposure.
+3.  Define a threshold, and **map** the tracts with a composite index above this threshold, overlaid with floodplain exposure.
 4.  Include a short **write-up** summarizing the choices you have made, along with what you observe from the results, and any critiques or thoughts. For example: Which areas stand out? How does the map change compared to using different thresholds? What does the index leave out?
 
 # Lab Report

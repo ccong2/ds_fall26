@@ -523,7 +523,7 @@ window.Quarto = {
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># combines the quartile with the floodplain indicator</span></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">vul_group =</span> <span class="fu">case_when</span>(</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">case_when</span>(</span>
 <span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>      over65_quartile <span class="sc">==</span> <span class="st">"Top 25%"</span> <span class="sc">&amp;</span> in_floodplain <span class="sc">~</span> <span class="st">"25% highest over-65, in floodplain"</span>,</span>
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>      over65_quartile <span class="sc">==</span> <span class="st">"Top 25%"</span>                 <span class="sc">~</span> <span class="st">"25% highest over-65, outside floodplain"</span>,</span>
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>      in_floodplain                                <span class="sc">~</span> <span class="st">"Floodplain only"</span>,</span>
@@ -534,7 +534,7 @@ window.Quarto = {
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_data <span class="sc">|&gt;</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> vul_group), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="fu">aes</span>(<span class="at">fill =</span> group), <span class="at">colour =</span> <span class="st">"white"</span>, <span class="at">linewidth =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"25% highest over-65, in floodplain"</span>       <span class="ot">=</span> <span class="st">"firebrick"</span>,</span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"25% highest over-65, outside floodplain"</span> <span class="ot">=</span> <span class="st">"lightsalmon"</span>,</span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>                               <span class="st">"Floodplain only"</span>                         <span class="ot">=</span> <span class="st">"grey80"</span>,</span>
@@ -700,7 +700,7 @@ Note
 <ol type="1">
 <li>Repeat the ACS download process to add <strong>two more variables</strong> to the table.</li>
 <li>Create a <strong>composite index</strong> of the four variables combined (the two used in this tutorial plus your two new ones), using the CDC percentile rank method.</li>
-<li>Define a <strong>threshold</strong>, and map the tracts with a composite index above this threshold, overlaid with floodplain exposure.</li>
+<li>Define a threshold, and <strong>map</strong> the tracts with a composite index above this threshold, overlaid with floodplain exposure.</li>
 <li>Include a short <strong>write-up</strong> summarizing the choices you have made, along with what you observe from the results, and any critiques or thoughts. For example: Which areas stand out? How does the map change compared to using different thresholds? What does the index leave out?</li>
 </ol>
 </section>
