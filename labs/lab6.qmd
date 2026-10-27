@@ -96,7 +96,7 @@ summary(houses$dist_transit)
 
 # Model 1: Price and Distance to Downtown
 
-Let's first take a look at the relationship with a scatterplot. `geom_smooth(method = "lm")` draws the best-fitting straight line through the points, which is exactly what a simple linear regression does.
+Let's first take a look at the relationship with a scatter plot. `geom_smooth(method = "lm")` draws the best-fitting straight line through the points, which is exactly what a simple linear regression does.
 
 ```{r}
 houses |>
@@ -128,7 +128,7 @@ To get a better picture of the distance effect, we should compare houses that ar
 
 ## Choose controls with a correlation plot
 
-Before adding variables, it's a good habit to check how they relate to the outcome and to each other. A correlation matrix computes the correlation coefficient (from -1 to 1) for every pair of variables, and `corrplot()` turns it into a picture.
+Before adding variables, it's a good habit to check how they relate to the outcome and to each other. A **correlation matrix** computes the correlation coefficient (from -1 to 1) for every pair of variables, and `corrplot()` turns it into a picture.
 
 Let's first create one more variable: the `age` of the house, which is more intuitive than the year built.
 
@@ -137,7 +137,7 @@ houses <- houses |>
   mutate(age = 2026 - yr_built)
 ```
 
-Then select all numeric variables you are interested in, compute `cor()`, this gives us pairwise correlations.
+Then select all numeric variables you are interested in, compute `cor()`, this gives us a correlation matrix.
 
 ```{r}
 #| fig-width: 8
@@ -192,14 +192,14 @@ The `Estimate` tells us how each predictor is associated with `price`, **assumin
 -   `age`: each additional year of age is associated with about \$1,090 higher price. Older is not worse here: many of Boston's older houses are in desirable neighborhoods.
 -   `living_area`: if living area goes up by 1 sq.ft., the house price tends to increase by about \$208. Or, 100 sq.ft. more is about \$20,800.
 -   `full_bath`: one more full bathroom is associated with about \$95,000 higher price.
--   `bedrooms`: one more bedroom is associated with a price decrease of about \$105,500. Surprising? A opposite direction from what we might expect often indicates variable correlation. However, this is still interpretable, because remember it is *holding living area constant*. Adding a bedroom to a house of the same size means cutting the space into smaller rooms, which buys don't necessarily value.
+-   `bedrooms`: one more bedroom is associated with a price decrease. Surprising? A opposite direction from what we might expect often indicates variable correlation. However, this is still interpretable, because remember it is *holding living area constant*. Adding a bedroom to a house of the same size means cutting the space into smaller rooms, which buys don't necessarily value.
 
 ### Statistic values: significance
 
 The `Pr(>|t|)` (p-value) measure the extent to which a coefficient is "statistically significant". In other words, whether the relationship we see between that predictor and the outcome is likely to be real, or could have happened just by random chance. By convention, a p-value below 0.05 is considered significant (the lower the better), and R marks it with stars at the end of each row.
 
 -   `dist_downtown` has a p-value below 2e-16: very significant.
--   `dist_transit` has a p-value of 0.53: **not significant**. We also found in our descritive summary at the beginning that most houses in this data are already within walking distance of a station, so there is not much difference to explain. Once we know how far a house is from downtown and what the house is like, knowing its distance to the nearest rail station doesn't add much.
+-   `dist_transit` has a p-value of 0.53: **not significant**. We also found in our descriptive summary at the beginning that most houses in this data are already within walking distance of a station, so there is not much difference to explain. Once we know how far a house is from downtown and what the house is like, knowing its distance to the nearest rail station doesn't add much.
 
 ### Model fit
 
@@ -256,34 +256,11 @@ houses |>
     theme_minimal()
 ```
 
-This doesn't look like random noise. The points fan out to the right. The model makes much bigger errors for expensive houses than for cheap ones.
-
-Both point back to the outcome variable. So it's worth checking the distribution of `price`:
-
-```{r}
-houses |>
-  ggplot(aes(x = price)) +
-  geom_histogram(bins = 50) +
-  scale_x_continuous(labels = scales::dollar) +
-  theme_minimal()
-```
-
-As expected, housing prices are right-skewed. A common fix is to take the logarithmic transformation of Y. This does not change the values themselves, but it changes the scale[^1] and can help a straight line fit the data better. Here is the same histogram with taking a log-transformation on price. After the log transformation, the distribution is much more symmetric.
-
-[^1]: On a regular axis, each equal step adds the same amount. On a $\log_{10}$ axis, each step is ×10.
-
-```{r}
-houses |>
-  ggplot(aes(x = log(price))) +
-  geom_histogram(bins = 50) +
-  theme_minimal()
-```
-
-*Note, R's `log()` uses base e ≈ 2.718 instead of 10, so it's* $\log_{e}(price)$*.*
+**Any clear pattern in a residual plot means the straight line is missing something (a sign of non-linearity)**. Here the errors grow as prices rise, so price changes in percentages rather than fixed dollar amounts. A log transform turns those percentage changes into equal steps, which makes the relationship closer to a straight line and evens out the errors.
 
 # Model 4: Log-transform the Outcome
 
-Apply `log()` directly inside the formula:
+A log transformation is a common approach for **a highly skewed variable**. We can apply `log()` directly inside the formula:
 
 ```{r}
 m4 <- lm(log(price) ~ dist_downtown + dist_transit + living_area + bedrooms + full_bath + age + style,
@@ -291,7 +268,9 @@ m4 <- lm(log(price) ~ dist_downtown + dist_transit + living_area + bedrooms + fu
 summary(m4)
 ```
 
-Check the residuals again:
+*Note, R's `log()` uses base e ≈ 2.718 instead of 10, so it's* $\log_{e}(price)$*.*
+
+Check the residuals again. The residuals are now spread more evenly around 0.
 
 ```{r}
 houses |>
@@ -303,11 +282,11 @@ houses |>
     theme_minimal()
 ```
 
-The residuals are now spread more evenly around 0.
+In practice, **whether to transform a variable** **should be decided at the beginning**, when you check the scatter plots. If the y is strongly skewed, log-transform it from the start and use the log version in every model.
 
 ## Interpretation changes
 
-The outcome of Model 4 is now log(price), so the **coefficients** can not be interpreted in dollars.
+The outcome of Model 4 is now `log(price)`, so the **coefficients** can not be interpreted in direct dollars.
 
 After log (Model 4): for every additional mile from downtown, the **log of price** tends to be **0.044 smaller**. With a few steps of math, we can still know the coefficient now describes the **percentage changes**. When a predictor goes up by 1 unit, price changes by about $(e^{\beta} - 1) \times 100\%$.
 
@@ -319,7 +298,7 @@ The result -0.043 means each additional mile from downtown goes with about 4.3% 
 
 # Compare the Models
 
-Reading four separate `summary()` outputs gets tedious. `modelsummary()` puts them side by side, which is also how regression results are usually presented in reports and papers. Each column is a model, the numbers in parentheses are standard errors, and the stars show significance.
+`modelsummary()` puts model results side by side, which is also how regression results are usually presented in reports and papers. Each column is a model, the numbers in parentheses are standard errors, and the stars show significance.
 
 ```{r}
 modelsummary(
@@ -330,7 +309,9 @@ modelsummary(
 )
 ```
 
-*Note: the Adjusted R² (0.38) of Model 4 can't be compared directly with the others, because the last model explain different outcomes (price vs. log of price).*
+*Note: Model 4 predicts log(price), so its R² is not directly comparable with Models 1–3. Converted back to dollars, its Adjusted R² is about 0.48, higher than all three.*
+
+## Findings
 
 Reading across the first row, the story of today's tutorial: the distance-to-downtown coefficient shrinks as we add controls (from -\$86,500 to -\$61,300 to -\$39,900 per mile), but it stays negative and significant in every model, including the log model (about -4% per mile). Distance to transit, as a location control, is never significant once distance to downtown is in the model.
 
@@ -338,7 +319,7 @@ Reading across the first row, the story of today's tutorial: the distance-to-dow
 
 **Location is still underrepresented.** Distance to downtown is a single line drawn from the center. It doesn't capture the differences between neighborhoods at similar distances. Several options here: 1) create variables such as population density, school quality, crime, etc. to describe the surrounding neighborhood, and use them as location controls. 2) add neighborhood names as a categorical variable, although the result table will be long. 3) Apply a [spatial regression model](https://r-spatial.org/book/16-SpatialRegression.html), which accounts for the fact that nearby houses tend to have similar prices.
 
-**Variable selection.** You could have chosen variables like `fireplace` and did not choose `bedroom`, and still had a good reason: each makes sense as a factor in housing prices. When several modeling choices are all reasonable, the one with a higher adjusted R² means the model explains more and gives a more precise estimate.
+**Variable selection.** You could have chosen variables like `fireplace`, `floor` and did not choose `bedroom`, or `style` and still had a good reason: each makes sense as a factor in housing prices. When several modeling choices are all reasonable, the one with a higher adjusted R² means the model explains more and gives a more precise estimate.
 
 There is no single correct set of variables, but the first rule is each must make sense for your question. Practical guidelines include: add variables that affect the outcome and are related to your variable of interest, avoid near-duplicates, keep it simple, and lean on what earlier studies have used.
 
@@ -355,7 +336,7 @@ The variables are assembled from several sources, including the Census American 
 We have an extract for you: **3,393 block groups in the Boston metropolitan area**, with 11 variables. Download `sld_boston_metro.csv` and its codebook `sld_boston_metro_codebook.csv` from our link.
 
 | Variable | Description |
-|------------------|------------------------------------------------------|
+|-------------------|-----------------------------------------------------|
 | `GEOID20` | Block group ID |
 | `county` | County name |
 | `Pct_AO0` | Share of households with **zero cars** (0-1) |
@@ -376,7 +357,7 @@ For more details on how each variable was created, see the [SLD Technical Docume
 
 Suppose the **outcome** you are interested in is `Pct_AO0`, and your **variable of interest** is `D4C`.
 
-However, if you are interested in another relationship, feel free to propose your own research question in one sentence like that.
+*However, if you are interested in another relationship, feel free to propose your own research question in one sentence like that.*
 
 ## Suggested steps
 
@@ -384,7 +365,7 @@ Whichever question you choose, keep your variable of interest at the center of t
 
 1.  **Read and describe the data.** Use `glimpse()` or `summary()` or `hist()` to check each variable's type and range. Which variables are numeric or categorical? What are their ranges and missing values? How the values distribute? Rename the variables if you prefer.
 
-2.  **Look at the relationships.** Make a scatterplot of your outcome against your variable of interest. Then make a correlation plot (`corrplot()`) of the numeric variables. Which variables are correlated with the outcome? Are there predictors that are so strongly correlated with each other that you should keep only one?
+2.  **Look at the relationships.** Make a scatter plot of your outcome against your variable of interest. Then make a correlation plot (`corrplot()`) of the numeric variables. Which variables are correlated with the outcome? Are there predictors that are so strongly correlated with each other that you should keep only one?
 
 3.  **Fit a series of models.** Start simple and build up, as we did with the housing data:
 

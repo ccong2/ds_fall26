@@ -201,7 +201,10 @@ window.Quarto = {
   <ul class="collapse">
   <li><a href="#interpretation-changes" id="toc-interpretation-changes" class="nav-link" data-scroll-target="#interpretation-changes">Interpretation changes</a></li>
   </ul></li>
-  <li><a href="#compare-the-models" id="toc-compare-the-models" class="nav-link" data-scroll-target="#compare-the-models">Compare the Models</a></li>
+  <li><a href="#compare-the-models" id="toc-compare-the-models" class="nav-link" data-scroll-target="#compare-the-models">Compare the Models</a>
+  <ul class="collapse">
+  <li><a href="#findings" id="toc-findings" class="nav-link" data-scroll-target="#findings">Findings</a></li>
+  </ul></li>
   <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
   <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a>
   <ul class="collapse">
@@ -315,7 +318,7 @@ window.Quarto = {
 </section>
 <section id="model-1-price-and-distance-to-downtown" class="level1">
 <h1>Model 1: Price and Distance to Downtown</h1>
-<p>Let’s first take a look at the relationship with a scatterplot. <code>geom_smooth(method = "lm")</code> draws the best-fitting straight line through the points, which is exactly what a simple linear regression does.</p>
+<p>Let’s first take a look at the relationship with a scatter plot. <code>geom_smooth(method = "lm")</code> draws the best-fitting straight line through the points, which is exactly what a simple linear regression does.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dist_downtown, <span class="at">y =</span> price)) <span class="sc">+</span></span>
@@ -369,13 +372,13 @@ F-statistic: 243.6 on 1 and 1325 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>To get a better picture of the distance effect, we should compare houses that are otherwise similar. We do this by adding <strong>control variables</strong> to the model.</p>
 <section id="choose-controls-with-a-correlation-plot" class="level2">
 <h2 class="anchored" data-anchor-id="choose-controls-with-a-correlation-plot">Choose controls with a correlation plot</h2>
-<p>Before adding variables, it’s a good habit to check how they relate to the outcome and to each other. A correlation matrix computes the correlation coefficient (from -1 to 1) for every pair of variables, and <code>corrplot()</code> turns it into a picture.</p>
+<p>Before adding variables, it’s a good habit to check how they relate to the outcome and to each other. A <strong>correlation matrix</strong> computes the correlation coefficient (from -1 to 1) for every pair of variables, and <code>corrplot()</code> turns it into a picture.</p>
 <p>Let’s first create one more variable: the <code>age</code> of the house, which is more intuitive than the year built.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>houses <span class="ot">&lt;-</span> houses <span class="sc">|&gt;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="dv">2026</span> <span class="sc">-</span> yr_built)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Then select all numeric variables you are interested in, compute <code>cor()</code>, this gives us pairwise correlations.</p>
+<p>Then select all numeric variables you are interested in, compute <code>cor()</code>, this gives us a correlation matrix.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, dist_downtown, dist_transit, living_area, bedrooms,</span>
@@ -489,7 +492,7 @@ F-statistic: 82.93 on 6 and 1320 DF,  p-value: &lt; 2.2e-16</code></pre>
 <li><code>age</code>: each additional year of age is associated with about $1,090 higher price. Older is not worse here: many of Boston’s older houses are in desirable neighborhoods.</li>
 <li><code>living_area</code>: if living area goes up by 1 sq.ft., the house price tends to increase by about $208. Or, 100 sq.ft. more is about $20,800.</li>
 <li><code>full_bath</code>: one more full bathroom is associated with about $95,000 higher price.</li>
-<li><code>bedrooms</code>: one more bedroom is associated with a price decrease of about $105,500. Surprising? A opposite direction from what we might expect often indicates variable correlation. However, this is still interpretable, because remember it is <em>holding living area constant</em>. Adding a bedroom to a house of the same size means cutting the space into smaller rooms, which buys don’t necessarily value.</li>
+<li><code>bedrooms</code>: one more bedroom is associated with a price decrease. Surprising? A opposite direction from what we might expect often indicates variable correlation. However, this is still interpretable, because remember it is <em>holding living area constant</em>. Adding a bedroom to a house of the same size means cutting the space into smaller rooms, which buys don’t necessarily value.</li>
 </ul>
 </section>
 <section id="statistic-values-significance" class="level3">
@@ -497,7 +500,7 @@ F-statistic: 82.93 on 6 and 1320 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>The <code>Pr(&gt;|t|)</code> (p-value) measure the extent to which a coefficient is “statistically significant”. In other words, whether the relationship we see between that predictor and the outcome is likely to be real, or could have happened just by random chance. By convention, a p-value below 0.05 is considered significant (the lower the better), and R marks it with stars at the end of each row.</p>
 <ul>
 <li><code>dist_downtown</code> has a p-value below 2e-16: very significant.</li>
-<li><code>dist_transit</code> has a p-value of 0.53: <strong>not significant</strong>. We also found in our descritive summary at the beginning that most houses in this data are already within walking distance of a station, so there is not much difference to explain. Once we know how far a house is from downtown and what the house is like, knowing its distance to the nearest rail station doesn’t add much.</li>
+<li><code>dist_transit</code> has a p-value of 0.53: <strong>not significant</strong>. We also found in our descriptive summary at the beginning that most houses in this data are already within walking distance of a station, so there is not much difference to explain. Once we know how far a house is from downtown and what the house is like, knowing its distance to the nearest rail station doesn’t add much.</li>
 </ul>
 </section>
 <section id="model-fit" class="level3">
@@ -602,45 +605,15 @@ F-statistic: 67.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
 </div>
-<p>This doesn’t look like random noise. The points fan out to the right. The model makes much bigger errors for expensive houses than for cheap ones.</p>
-<p>Both point back to the outcome variable. So it’s worth checking the distribution of <code>price</code>:</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lab6_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>As expected, housing prices are right-skewed. A common fix is to take the logarithmic transformation of Y. This does not change the values themselves, but it changes the scale<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and can help a straight line fit the data better. Here is the same histogram with taking a log-transformation on price. After the log transformation, the distribution is much more symmetric.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb23" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log</span>(price))) <span class="sc">+</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="lab6_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p><em>Note, R’s <code>log()</code> uses base e ≈ 2.718 instead of 10, so it’s</em> <span class="math inline">\(\log_{e}(price)\)</span><em>.</em></p>
+<p><strong>Any clear pattern in a residual plot means the straight line is missing something (a sign of non-linearity)</strong>. Here the errors grow as prices rise, so price changes in percentages rather than fixed dollar amounts. A log transform turns those percentage changes into equal steps, which makes the relationship closer to a straight line and evens out the errors.</p>
 </section>
 <section id="model-4-log-transform-the-outcome" class="level1">
 <h1>Model 4: Log-transform the Outcome</h1>
-<p>Apply <code>log()</code> directly inside the formula:</p>
+<p>A log transformation is a common approach for <strong>a highly skewed variable</strong>. We can apply <code>log()</code> directly inside the formula:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> dist_downtown <span class="sc">+</span> dist_transit <span class="sc">+</span> living_area <span class="sc">+</span> bedrooms <span class="sc">+</span> full_bath <span class="sc">+</span> age <span class="sc">+</span> style,</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> houses)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> dist_downtown <span class="sc">+</span> dist_transit <span class="sc">+</span> living_area <span class="sc">+</span> bedrooms <span class="sc">+</span> full_bath <span class="sc">+</span> age <span class="sc">+</span> style,</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> houses)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code>
 Call:
@@ -675,30 +648,31 @@ Multiple R-squared:  0.3907,    Adjusted R-squared:  0.3847
 F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 </div>
-<p>Check the residuals again:</p>
+<p><em>Note, R’s <code>log()</code> uses base e ≈ 2.718 instead of 10, so it’s</em> <span class="math inline">\(\log_{e}(price)\)</span><em>.</em></p>
+<p>Check the residuals again. The residuals are now spread more evenly around 0.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> <span class="fu">fitted</span>(m4), <span class="at">residuals =</span> <span class="fu">resid</span>(m4)) <span class="sc">|&gt;</span></span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> residuals)) <span class="sc">+</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Fitted log(price)"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> <span class="fu">fitted</span>(m4), <span class="at">residuals =</span> <span class="fu">resid</span>(m4)) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Fitted log(price)"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="lab6_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="lab6_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>The residuals are now spread more evenly around 0.</p>
+<p>In practice, <strong>whether to transform a variable</strong> <strong>should be decided at the beginning</strong>, when you check the scatter plots. If the y is strongly skewed, log-transform it from the start and use the log version in every model.</p>
 <section id="interpretation-changes" class="level2">
 <h2 class="anchored" data-anchor-id="interpretation-changes">Interpretation changes</h2>
-<p>The outcome of Model 4 is now log(price), so the <strong>coefficients</strong> can not be interpreted in dollars.</p>
+<p>The outcome of Model 4 is now <code>log(price)</code>, so the <strong>coefficients</strong> can not be interpreted in direct dollars.</p>
 <p>After log (Model 4): for every additional mile from downtown, the <strong>log of price</strong> tends to be <strong>0.044 smaller</strong>. With a few steps of math, we can still know the coefficient now describes the <strong>percentage changes</strong>. When a predictor goes up by 1 unit, price changes by about <span class="math inline">\((e^{\beta} - 1) \times 100\%\)</span>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">exp</span>(<span class="fu">coef</span>(m4)[<span class="st">"dist_downtown"</span>]) <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">exp</span>(<span class="fu">coef</span>(m4)[<span class="st">"dist_downtown"</span>]) <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre data-code-line-numbers=""><code>dist_downtown 
   -0.04315759 </code></pre>
@@ -709,39 +683,39 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 </section>
 <section id="compare-the-models" class="level1">
 <h1>Compare the Models</h1>
-<p>Reading four separate <code>summary()</code> outputs gets tedious. <code>modelsummary()</code> puts them side by side, which is also how regression results are usually presented in reports and papers. Each column is a model, the numbers in parentheses are standard errors, and the stars show significance.</p>
+<p><code>modelsummary()</code> puts model results side by side, which is also how regression results are usually presented in reports and papers. Each column is a model, the numbers in parentheses are standard errors, and the stars show significance.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">"Model 1"</span> <span class="ot">=</span> m1, <span class="st">"Model 2"</span> <span class="ot">=</span> m2, <span class="st">"Model 3"</span> <span class="ot">=</span> m3, <span class="st">"Model 4 (log)"</span> <span class="ot">=</span> m4),</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">gof_map =</span> <span class="fu">c</span>(<span class="st">"nobs"</span>, <span class="st">"r.squared"</span>, <span class="st">"adj.r.squared"</span>),</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">notes =</span> <span class="st">"Model 4 predicts log(price)"</span></span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">"Model 1"</span> <span class="ot">=</span> m1, <span class="st">"Model 2"</span> <span class="ot">=</span> m2, <span class="st">"Model 3"</span> <span class="ot">=</span> m3, <span class="st">"Model 4 (log)"</span> <span class="ot">=</span> m4),</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">gof_map =</span> <span class="fu">c</span>(<span class="st">"nobs"</span>, <span class="st">"r.squared"</span>, <span class="st">"adj.r.squared"</span>),</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">notes =</span> <span class="st">"Model 4 predicts log(price)"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
     <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
 
     <script>
       // Create table-specific functions using external factory
-      const tableFns_ai1jdmgid68bqwral965 = TinyTable.createTableFunctions("tinytable_ai1jdmgid68bqwral965");
+      const tableFns_j7zgv64vir11cb0eqnc4 = TinyTable.createTableFunctions("tinytable_j7zgv64vir11cb0eqnc4");
       // tinytable span after
       window.addEventListener('load', function () {
           var cellsToStyle = [
             // tinytable style arrays after
-          { positions: [ { i: '31', j: 2 }, { i: '31', j: 3 }, { i: '31', j: 4 }, { i: '31', j: 5 } ], css_id: 'tinytable_css_ahex6dcalt9b1ey7xzth',}, 
-          { positions: [ { i: '28', j: 2 }, { i: '28', j: 3 }, { i: '28', j: 4 }, { i: '28', j: 5 } ], css_id: 'tinytable_css_xthja0kt609qpatsecrf',}, 
-          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '13', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '16', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '19', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '22', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '25', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '13', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '16', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '19', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '22', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '25', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '13', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '16', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '19', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '22', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '25', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '13', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '16', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '19', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '22', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '25', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 } ], css_id: 'tinytable_css_zb5kx2zktzz5hken2k79',}, 
-          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 } ], css_id: 'tinytable_css_yz7leewqiy9xugzou7u0',}, 
-          { positions: [ { i: '31', j: 1 } ], css_id: 'tinytable_css_y2ci14l0rze8b4noz4i9',}, 
-          { positions: [ { i: '28', j: 1 } ], css_id: 'tinytable_css_sojr3itfo9f6b7j9nctg',}, 
-          { positions: [ { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '13', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '16', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '19', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '22', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '25', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 } ], css_id: 'tinytable_css_amaqkwjp7149d9yurpmb',}, 
-          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_l85q9llbb0u2hzk1fw5l',}, 
+          { positions: [ { i: '31', j: 2 }, { i: '31', j: 3 }, { i: '31', j: 4 }, { i: '31', j: 5 } ], css_id: 'tinytable_css_kjhshgurxwpaq8gs5xke',}, 
+          { positions: [ { i: '28', j: 2 }, { i: '28', j: 3 }, { i: '28', j: 4 }, { i: '28', j: 5 } ], css_id: 'tinytable_css_q4j8xplvhakv3boi5b4d',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '13', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '16', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '19', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '22', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '25', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '13', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '16', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '19', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '22', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '25', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '13', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '16', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '19', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '22', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '25', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '13', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '16', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '19', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '22', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '25', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 } ], css_id: 'tinytable_css_73iuup75qt0zih1m1cjx',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 } ], css_id: 'tinytable_css_pklt78ap2l90ymu4reby',}, 
+          { positions: [ { i: '31', j: 1 } ], css_id: 'tinytable_css_ghds9www29dbgfh0skwm',}, 
+          { positions: [ { i: '28', j: 1 } ], css_id: 'tinytable_css_a4rjwwirtbealnoljcr9',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '13', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '16', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '19', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '22', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '25', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 } ], css_id: 'tinytable_css_ney2w6xdjsw4us0wa8hr',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_4olwrjmgi3y5a0e73syr',}, 
           ];
 
           // Loop over the arrays to style the cells
           cellsToStyle.forEach(function (group) {
               group.positions.forEach(function (cell) {
-                  tableFns_ai1jdmgid68bqwral965.styleCell(cell.i, cell.j, group.css_id);
+                  tableFns_j7zgv64vir11cb0eqnc4.styleCell(cell.i, cell.j, group.css_id);
               });
           });
       });
@@ -750,17 +724,17 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
     <style>
     /* tinytable css entries after */
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_ahex6dcalt9b1ey7xzth, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_ahex6dcalt9b1ey7xzth {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_xthja0kt609qpatsecrf, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_xthja0kt609qpatsecrf {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_zb5kx2zktzz5hken2k79, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_zb5kx2zktzz5hken2k79 { text-align: center }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_yz7leewqiy9xugzou7u0, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_yz7leewqiy9xugzou7u0 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_y2ci14l0rze8b4noz4i9, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_y2ci14l0rze8b4noz4i9 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_sojr3itfo9f6b7j9nctg, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_sojr3itfo9f6b7j9nctg {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_amaqkwjp7149d9yurpmb, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_amaqkwjp7149d9yurpmb { text-align: left }
-    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_l85q9llbb0u2hzk1fw5l, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_l85q9llbb0u2hzk1fw5l {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_kjhshgurxwpaq8gs5xke, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_kjhshgurxwpaq8gs5xke {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_q4j8xplvhakv3boi5b4d, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_q4j8xplvhakv3boi5b4d {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_73iuup75qt0zih1m1cjx, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_73iuup75qt0zih1m1cjx { text-align: center }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_pklt78ap2l90ymu4reby, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_pklt78ap2l90ymu4reby {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_ghds9www29dbgfh0skwm, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_ghds9www29dbgfh0skwm {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_a4rjwwirtbealnoljcr9, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_a4rjwwirtbealnoljcr9 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_ney2w6xdjsw4us0wa8hr, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_ney2w6xdjsw4us0wa8hr { text-align: left }
+    #tinytable_j7zgv64vir11cb0eqnc4 td.tinytable_css_4olwrjmgi3y5a0e73syr, #tinytable_j7zgv64vir11cb0eqnc4 th.tinytable_css_4olwrjmgi3y5a0e73syr {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
     </style>
     <div class="container">
-      <table class="tinytable" id="tinytable_ai1jdmgid68bqwral965" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+      <table class="tinytable" id="tinytable_j7zgv64vir11cb0eqnc4" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
         
         <thead>
               <tr>
@@ -997,13 +971,16 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 <!-- hack to avoid NA insertion in last line -->
 </div>
 </div>
-<p><em>Note: the Adjusted R² (0.38) of Model 4 can’t be compared directly with the others, because the last model explain different outcomes (price vs.&nbsp;log of price).</em></p>
+<p><em>Note: Model 4 predicts log(price), so its R² is not directly comparable with Models 1–3. Converted back to dollars, its Adjusted R² is about 0.48, higher than all three.</em></p>
+<section id="findings" class="level2">
+<h2 class="anchored" data-anchor-id="findings">Findings</h2>
 <p>Reading across the first row, the story of today’s tutorial: the distance-to-downtown coefficient shrinks as we add controls (from -$86,500 to -$61,300 to -$39,900 per mile), but it stays negative and significant in every model, including the log model (about -4% per mile). Distance to transit, as a location control, is never significant once distance to downtown is in the model.</p>
+</section>
 </section>
 <section id="final-notes" class="level1">
 <h1>Final Notes</h1>
 <p><strong>Location is still underrepresented.</strong> Distance to downtown is a single line drawn from the center. It doesn’t capture the differences between neighborhoods at similar distances. Several options here: 1) create variables such as population density, school quality, crime, etc. to describe the surrounding neighborhood, and use them as location controls. 2) add neighborhood names as a categorical variable, although the result table will be long. 3) Apply a <a href="https://r-spatial.org/book/16-SpatialRegression.html">spatial regression model</a>, which accounts for the fact that nearby houses tend to have similar prices.</p>
-<p><strong>Variable selection.</strong> You could have chosen variables like <code>fireplace</code> and did not choose <code>bedroom</code>, and still had a good reason: each makes sense as a factor in housing prices. When several modeling choices are all reasonable, the one with a higher adjusted R² means the model explains more and gives a more precise estimate.</p>
+<p><strong>Variable selection.</strong> You could have chosen variables like <code>fireplace</code>, <code>floor</code> and did not choose <code>bedroom</code>, or <code>style</code> and still had a good reason: each makes sense as a factor in housing prices. When several modeling choices are all reasonable, the one with a higher adjusted R² means the model explains more and gives a more precise estimate.</p>
 <p>There is no single correct set of variables, but the first rule is each must make sense for your question. Practical guidelines include: add variables that affect the outcome and are related to your variable of interest, avoid near-duplicates, keep it simple, and lean on what earlier studies have used.</p>
 </section>
 <section id="exercise" class="level1">
@@ -1016,8 +993,8 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 <p>We have an extract for you: <strong>3,393 block groups in the Boston metropolitan area</strong>, with 11 variables. Download <code>sld_boston_metro.csv</code> and its codebook <code>sld_boston_metro_codebook.csv</code> from our link.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 75%">
+<col style="width: 26%">
+<col style="width: 73%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1078,14 +1055,14 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 <h2 class="anchored" data-anchor-id="your-question">Your Question</h2>
 <p><strong>Do neighborhoods with more frequent transit have more car-free households?</strong></p>
 <p>Suppose the <strong>outcome</strong> you are interested in is <code>Pct_AO0</code>, and your <strong>variable of interest</strong> is <code>D4C</code>.</p>
-<p>However, if you are interested in another relationship, feel free to propose your own research question in one sentence like that.</p>
+<p><em>However, if you are interested in another relationship, feel free to propose your own research question in one sentence like that.</em></p>
 </section>
 <section id="suggested-steps" class="level2">
 <h2 class="anchored" data-anchor-id="suggested-steps">Suggested steps</h2>
 <p>Whichever question you choose, keep your variable of interest at the center of the analysis: what does its coefficient tell you, and does it stay significant?</p>
 <ol type="1">
 <li><p><strong>Read and describe the data.</strong> Use <code>glimpse()</code> or <code>summary()</code> or <code>hist()</code> to check each variable’s type and range. Which variables are numeric or categorical? What are their ranges and missing values? How the values distribute? Rename the variables if you prefer.</p></li>
-<li><p><strong>Look at the relationships.</strong> Make a scatterplot of your outcome against your variable of interest. Then make a correlation plot (<code>corrplot()</code>) of the numeric variables. Which variables are correlated with the outcome? Are there predictors that are so strongly correlated with each other that you should keep only one?</p></li>
+<li><p><strong>Look at the relationships.</strong> Make a scatter plot of your outcome against your variable of interest. Then make a correlation plot (<code>corrplot()</code>) of the numeric variables. Which variables are correlated with the outcome? Are there predictors that are so strongly correlated with each other that you should keep only one?</p></li>
 <li><p><strong>Fit a series of models.</strong> Start simple and build up, as we did with the housing data:</p>
 <ul>
 <li>Model 1: the outcome and your variable of interest only.</li>
@@ -1106,13 +1083,7 @@ F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
 
 </section>
 
-
-<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
-
-<ol>
-<li id="fn1"><p>On a regular axis, each equal step adds the same amount. On a <span class="math inline">\(\log_{10}\)</span> axis, each step is ×10.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section></div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
