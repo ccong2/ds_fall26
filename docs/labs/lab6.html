@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-10-27">
 
-<title>lab6 – Applied Data Science for Cities</title>
+<title>Explain the Distance Effect on Housing Prices with Regression in  – Applied Data Science for Cities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -40,6 +75,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap-f3c2ea88cadbcfb37ba28ffa2c97cfc1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,6 +104,35 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -108,19 +173,946 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#the-data-we-use-today" id="toc-the-data-we-use-today" class="nav-link" data-scroll-target="#the-data-we-use-today">The Data We Use Today</a></li>
+  <li><a href="#calculate-distances" id="toc-calculate-distances" class="nav-link" data-scroll-target="#calculate-distances">Calculate Distances</a></li>
+  <li><a href="#model-1-price-and-distance-to-downtown" id="toc-model-1-price-and-distance-to-downtown" class="nav-link" data-scroll-target="#model-1-price-and-distance-to-downtown">Model 1: Price and Distance to Downtown</a></li>
+  <li><a href="#model-2-add-control-variables" id="toc-model-2-add-control-variables" class="nav-link" data-scroll-target="#model-2-add-control-variables">Model 2: Add Control Variables</a>
+  <ul class="collapse">
+  <li><a href="#choose-controls-with-a-correlation-plot" id="toc-choose-controls-with-a-correlation-plot" class="nav-link" data-scroll-target="#choose-controls-with-a-correlation-plot">Choose controls with a correlation plot</a></li>
+  <li><a href="#fit-the-model" id="toc-fit-the-model" class="nav-link" data-scroll-target="#fit-the-model">Fit the model</a>
+  <ul class="collapse">
+  <li><a href="#coefficients-effect-size" id="toc-coefficients-effect-size" class="nav-link" data-scroll-target="#coefficients-effect-size">Coefficients: effect size</a></li>
+  <li><a href="#statistic-values-significance" id="toc-statistic-values-significance" class="nav-link" data-scroll-target="#statistic-values-significance">Statistic values: significance</a></li>
+  <li><a href="#model-fit" id="toc-model-fit" class="nav-link" data-scroll-target="#model-fit">Model fit</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#model-3-add-a-categorical-variable" id="toc-model-3-add-a-categorical-variable" class="nav-link" data-scroll-target="#model-3-add-a-categorical-variable">Model 3: Add a Categorical Variable</a>
+  <ul class="collapse">
+  <li><a href="#read-the-result-table" id="toc-read-the-result-table" class="nav-link" data-scroll-target="#read-the-result-table">Read the result table</a></li>
+  </ul></li>
+  <li><a href="#check-the-residuals" id="toc-check-the-residuals" class="nav-link" data-scroll-target="#check-the-residuals">Check the Residuals</a></li>
+  <li><a href="#model-4-log-transform-the-outcome" id="toc-model-4-log-transform-the-outcome" class="nav-link" data-scroll-target="#model-4-log-transform-the-outcome">Model 4: Log-transform the Outcome</a>
+  <ul class="collapse">
+  <li><a href="#interpretation-changes" id="toc-interpretation-changes" class="nav-link" data-scroll-target="#interpretation-changes">Interpretation changes</a></li>
+  </ul></li>
+  <li><a href="#compare-the-models" id="toc-compare-the-models" class="nav-link" data-scroll-target="#compare-the-models">Compare the Models</a></li>
+  <li><a href="#final-notes" id="toc-final-notes" class="nav-link" data-scroll-target="#final-notes">Final Notes</a></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a>
+  <ul class="collapse">
+  <li><a href="#the-data" id="toc-the-data" class="nav-link" data-scroll-target="#the-data">The Data</a></li>
+  <li><a href="#your-question" id="toc-your-question" class="nav-link" data-scroll-target="#your-question">Your Question</a></li>
+  <li><a href="#suggested-steps" id="toc-suggested-steps" class="nav-link" data-scroll-target="#suggested-steps">Suggested steps</a></li>
+  </ul></li>
+  <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Explain the Distance Effect on Housing Prices with Regression in <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+<p class="subtitle lead"><span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span></p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">October 27, 2026</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
+</header>
 
 
-</main> <!-- /main -->
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Do houses closer to downtown sell for more? The idea goes back to the monocentric city model (<a href="https://digitalrepository.unm.edu/cgi/viewcontent.cgi?article=3731&amp;context=nrj">Alonso, 1964</a>): jobs and amenities concentrate in the center, so people are willing to pay more to live closer to it. But a house’s price also depends on what the house is (its size, number of bathrooms, age, style) and on what is around it, such as access to transit. Regression lets us look at the factor of distance to downtown while holding these other factors constant. This approach of breaking a price into the contributions of its characteristics is known as a hedonic price model (<a href="https://www.jstor.org/stable/1830899?seq=2">Rosen, 1974</a>).</p>
+<p>In this tutorial, we will fit a series of linear regression models, each one building on the last. Throughout, the main goal is to explain the relationship between price and distance to downtown.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># you might need to install the following two</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="the-data-we-use-today" class="level1">
+<h1>The Data We Use Today</h1>
+<p>Datasets we will use for this lab and exercise are here: <a href="https://www.dropbox.com/scl/fo/z9weknh6pnb2qu12b5o4z/ACZsIgs5ig8xORC0zshKw80?rlkey=aixh1xckh2uuhr938paje18by&amp;st=kznrotc4&amp;dl=0">Data Download Link</a></p>
+<p><code>boston_house_clean.csv</code>: The dataset contains 1,327 house sales in Boston. Sale prices come from Ken Steif’s open textbook <a href="https://urbanspatial.github.io/PublicPolicyAnalytics/">Public Policy Analytics</a> (<a href="https://urbanspatial.github.io/PublicPolicyAnalytics/intro-to-geospatial-machine-learning-part-1.html#machine-learning-as-a-planning-tool">Chapter 3</a>), which uses it to model home prices. The sales are from the years 2015 to 2016.</p>
+<p>Housing characteriscis follow the fields of the City of Boston’s <a href="https://data.boston.gov/dataset/property-assessment">Property Assessment</a> data on Analyze Boston, where you can find the full data dictionary (“Data Key”). I have cleaned the data for today: kept only 1–3 family homes, removed records with missing values, and dropped building styles that are unknown or have very few observations.</p>
+<div class="sourceCode" id="cb2" data-code-line-numbers=""><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>houses &lt;- read_csv("data/boston_house_clean.csv")</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Each row is one house. The outcome we want to explain is <code>price</code>, the sale price. The other columns describe the house: <code>living_area</code> (sq.ft.), number of <code>bedrooms</code>, number of <code>full_bath</code>, <code>yr_built</code>, <code>style</code>, and its location (<code>lat</code>, <code>lon</code>).</p>
+</section>
+<section id="calculate-distances" class="level1">
+<h1>Calculate Distances</h1>
+<p>This part uses <code>st_distance()</code> from the <code>sf</code> package. This function calculates the distance between features in any two spatial files. So we can calculate:</p>
+<ul>
+<li><code>dist_downtown</code>: distance from each house to downtown. We use Downtown Crossing as the center point.</li>
+<li><code>dist_transit</code>: distance from each house to its nearest rail station (subway, light rail, or commuter rail). Station locations come from the MBTA’s <a href="https://www.mbta.com/developers/gtfs">GTFS feed</a>, a standard format transit agencies use to publish their schedules and stops.</li>
+</ul>
+<p>I am putting all the distance calculation in one block. Once you run it, the <code>houses</code> will get two new columns. Both are measured in <strong>miles</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Download MBTA stops, keep light rail (0), subway (1) and commuter rail (2)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>gtfs <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".zip"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(<span class="st">"https://cdn.mbta.com/MBTA_GTFS.zip"</span>, gtfs, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>stops <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="fu">unz</span>(gtfs, <span class="st">"stops.txt"</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(vehicle_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"stop_lon"</span>, <span class="st">"stop_lat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">2249</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Distance to center point (Downtown Crossing)</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>downtown <span class="ot">&lt;-</span> <span class="fu">st_sfc</span>(<span class="fu">st_point</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">71.0605</span>, <span class="fl">42.3554</span>)), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">2249</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert houses to points</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>houses_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(houses, <span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">|&gt;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(<span class="dv">2249</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co"># EPSG 2249 is in feet, divide by 5280 to get miles</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>nearest <span class="ot">&lt;-</span> <span class="fu">st_nearest_feature</span>(houses_sf, stops)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>houses <span class="ot">&lt;-</span> houses <span class="sc">|&gt;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist_downtown =</span> <span class="fu">as.numeric</span>(<span class="fu">st_distance</span>(houses_sf, downtown)) <span class="sc">/</span> <span class="dv">5280</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">dist_transit  =</span> <span class="fu">as.numeric</span>(<span class="fu">st_distance</span>(houses_sf, stops[nearest, ], <span class="at">by_element =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> <span class="dv">5280</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>These houses range from 0.3 to 9 miles from downtown.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(houses<span class="sc">$</span>dist_downtown)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.3068  2.5284  4.3703  4.4457  6.3092  9.2308 </code></pre>
+</div>
+</div>
+<p>Most are close to a rail station: half of them are within about 0.4 miles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(houses<span class="sc">$</span>dist_transit)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.01492 0.27843 0.40738 0.45513 0.55598 1.65557 </code></pre>
+</div>
+</div>
+</section>
+<section id="model-1-price-and-distance-to-downtown" class="level1">
+<h1>Model 1: Price and Distance to Downtown</h1>
+<p>Let’s first take a look at the relationship with a scatterplot. <code>geom_smooth(method = "lm")</code> draws the best-fitting straight line through the points, which is exactly what a simple linear regression does.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> dist_downtown, <span class="at">y =</span> price)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance to downtown (miles)"</span>, <span class="at">y =</span> <span class="st">"Sale price"</span>) <span class="sc">+</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The line slopes downward: houses farther from downtown tend to sell for less. To put a number on it, we fit a linear regression with <code>lm()</code>. The formula reads as “price explained by distance to downtown”: the outcome goes on the left of <code>~</code>, and the predictors go on the right.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(price <span class="sc">~</span> dist_downtown, <span class="at">data =</span> houses)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>
+Call:
+lm(formula = price ~ dist_downtown, data = houses)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-620238 -224874  -58376   94089 3595321 
+
+Coefficients:
+              Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    1031213      27383   37.66   &lt;2e-16 ***
+dist_downtown   -86484       5541  -15.61   &lt;2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 435600 on 1325 degrees of freedom
+Multiple R-squared:  0.1553,    Adjusted R-squared:  0.1547 
+F-statistic: 243.6 on 1 and 1325 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Look at the <code>Estimate</code> column in the <code>Coefficients</code> table:</p>
+<ul>
+<li><code>(Intercept)</code> is the predicted price when all predictors are 0, here a house sitting right at downtown: about $1,031,000.</li>
+<li><code>dist_downtown</code> is the slope: every additional mile from downtown, the sale price tends to drop by about $86,500. The three stars (<code>***</code>) tell us this relationship is statistically significant.</li>
+</ul>
+<p>The <code>Adjusted R-squared</code> near the bottom: 0.15, shows model fit. Distance alone explains only 15% of the variation in housing prices. That makes sense because distance alone cannot explain all the differences in housing prices.</p>
+</section>
+<section id="model-2-add-control-variables" class="level1">
+<h1>Model 2: Add Control Variables</h1>
+<p>To get a better picture of the distance effect, we should compare houses that are otherwise similar. We do this by adding <strong>control variables</strong> to the model.</p>
+<section id="choose-controls-with-a-correlation-plot" class="level2">
+<h2 class="anchored" data-anchor-id="choose-controls-with-a-correlation-plot">Choose controls with a correlation plot</h2>
+<p>Before adding variables, it’s a good habit to check how they relate to the outcome and to each other. A correlation matrix computes the correlation coefficient (from -1 to 1) for every pair of variables, and <code>corrplot()</code> turns it into a picture.</p>
+<p>Let’s first create one more variable: the <code>age</code> of the house, which is more intuitive than the year built.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>houses <span class="ot">&lt;-</span> houses <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="dv">2026</span> <span class="sc">-</span> yr_built)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then select all numeric variables you are interested in, compute <code>cor()</code>, this gives us pairwise correlations.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(price, dist_downtown, dist_transit, living_area, bedrooms,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>         full_bath, half_bath, total_rooms, floors, kitchens, fireplaces, age) <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cor</span>() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>                     price dist_downtown dist_transit living_area    bedrooms
+price          1.000000000  -0.394078819 -0.124824770  0.29004912  0.07332008
+dist_downtown -0.394078819   1.000000000  0.204842778 -0.26338251 -0.22455465
+dist_transit  -0.124824770   0.204842778  1.000000000 -0.22854164 -0.21641759
+living_area    0.290049124  -0.263382513 -0.228541640  1.00000000  0.78000100
+bedrooms       0.073320079  -0.224554651 -0.216417593  0.78000100  1.00000000
+full_bath      0.314558149  -0.388169752 -0.217435294  0.71850517  0.64725871
+half_bath      0.189172472   0.071734868  0.055666729 -0.18007536 -0.21993994
+total_rooms    0.097373980  -0.254512481 -0.215926698  0.84999486  0.87467947
+floors         0.441254180  -0.574019995 -0.225159991  0.63445744  0.54292025
+kitchens       0.005903916  -0.303643167 -0.182478009  0.71597857  0.73286454
+fireplaces     0.470083157   0.008452175  0.005282647 -0.05083765 -0.20481696
+age            0.243673458  -0.475556922 -0.210155001  0.19503608  0.16959797
+                full_bath   half_bath total_rooms       floors     kitchens
+price          0.31455815  0.18917247  0.09737398  0.441254180  0.005903916
+dist_downtown -0.38816975  0.07173487 -0.25451248 -0.574019995 -0.303643167
+dist_transit  -0.21743529  0.05566673 -0.21592670 -0.225159991 -0.182478009
+living_area    0.71850517 -0.18007536  0.84999486  0.634457439  0.715978569
+bedrooms       0.64725871 -0.21993994  0.87467947  0.542920251  0.732864541
+full_bath      1.00000000 -0.27738904  0.72078469  0.636184174  0.776111580
+half_bath     -0.27738904  1.00000000 -0.28770748 -0.065873711 -0.404224252
+total_rooms    0.72078469 -0.28770748  1.00000000  0.596849502  0.835221762
+floors         0.63618417 -0.06587371  0.59684950  1.000000000  0.597017964
+kitchens       0.77611158 -0.40422425  0.83522176  0.597017964  1.000000000
+fireplaces    -0.05272384  0.29523319 -0.21156007 -0.005797239 -0.313643403
+age            0.18728702 -0.17308899  0.19918781  0.383161790  0.212829957
+                fireplaces         age
+price          0.470083157  0.24367346
+dist_downtown  0.008452175 -0.47555692
+dist_transit   0.005282647 -0.21015500
+living_area   -0.050837649  0.19503608
+bedrooms      -0.204816964  0.16959797
+full_bath     -0.052723836  0.18728702
+half_bath      0.295233194 -0.17308899
+total_rooms   -0.211560071  0.19918781
+floors        -0.005797239  0.38316179
+kitchens      -0.313643403  0.21282996
+fireplaces     1.000000000 -0.04761307
+age           -0.047613070  1.00000000</code></pre>
+</div>
+</div>
+<p>Then add a <code>corrplot</code> to plot them.</p>
+<div class="cell" data-source-line-numbers="5-6">
+<div class="sourceCode cell-code" id="cb14" data-source-line-numbers="5-6" data-code-line-numbers="5-6"><pre class="sourceCode numberSource r numberLines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>  <span class="fu">select</span>(price, dist_downtown, dist_transit, living_area, bedrooms,</span>
+<span id="cb14-3"><a href="#cb14-3"></a>         full_bath, half_bath, total_rooms, floors, kitchens, fireplaces, age) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4"></a>  <span class="fu">cor</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5"></a>  <span class="fu">corrplot</span>(<span class="at">method =</span> <span class="st">"color"</span>, <span class="at">type =</span> <span class="st">"upper"</span>,</span>
+<span id="cb14-6"><a href="#cb14-6"></a>           <span class="at">addCoef.col =</span> <span class="st">"black"</span>, <span class="at">number.cex =</span> <span class="fl">0.7</span>, <span class="at">tl.col =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="768"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>A few things to look for:</p>
+<ul>
+<li><p><strong>The first row</strong>: how each variable relates to <code>price</code>. Darker colors mean stronger correlations.</p></li>
+<li><p><strong>Correlations among the predictors.</strong> <code>living_area</code>, <code>bedrooms</code>, <code>total_rooms</code> and <code>kitchens</code> are all strongly correlated (0.7–0.9), because they all describe roughly the same thing: how big the house is. Putting all of them in one model is not very useful, since they carry overlapping information.</p></li>
+<li><p><strong>Our variable of interest</strong> (the second row): <code>dist_downtown</code> moderately correlates with several house characteristics. Houses near downtown tend to be older (-0.48), taller (<code>floors</code>, -0.57), and have more bathrooms (-0.39). This is why we need controls: some of the price difference we attributed to distance may come from these characteristics.</p></li>
+</ul>
+<p>I will choose variables that help me explain my story of how distance shapes prices: preferably variables that affect the price and related to my variable of interest. I first want to include a few variables that represent each aspect of the house: <code>living_area</code> for size, plus <code>bedrooms</code>, <code>full_bath</code> and <code>age</code>. Then I want to include <code>dist_transit</code> to control for the location, since being close to a rail station could also raise the price. We will start from here and later build up to see how things change.</p>
+</section>
+<section id="fit-the-model" class="level2">
+<h2 class="anchored" data-anchor-id="fit-the-model">Fit the model</h2>
+<p>Add the predictors to the right side of <code>~</code>, separated by <code>+</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(price <span class="sc">~</span> dist_downtown <span class="sc">+</span> dist_transit <span class="sc">+</span> living_area <span class="sc">+</span> bedrooms <span class="sc">+</span> full_bath <span class="sc">+</span> age, <span class="at">data =</span> houses)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>
+Call:
+lm(formula = price ~ dist_downtown + dist_transit + living_area + 
+    bedrooms + full_bath + age, data = houses)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-789576 -212989  -48025  125235 3281506 
+
+Coefficients:
+                Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)    619238.09   80933.80   7.651 3.82e-14 ***
+dist_downtown  -61309.36    6274.41  -9.771  &lt; 2e-16 ***
+dist_transit   -27873.36   44749.83  -0.623   0.5335    
+living_area       207.99      20.74  10.030  &lt; 2e-16 ***
+bedrooms      -105507.38    9031.37 -11.682  &lt; 2e-16 ***
+full_bath       95007.13   19456.79   4.883 1.17e-06 ***
+age              1089.70     432.33   2.521   0.0118 *  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 404700 on 1320 degrees of freedom
+Multiple R-squared:  0.2738,    Adjusted R-squared:  0.2705 
+F-statistic: 82.93 on 6 and 1320 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Now let’s go through this output more carefully.</p>
+<section id="coefficients-effect-size" class="level3">
+<h3 class="anchored" data-anchor-id="coefficients-effect-size">Coefficients: effect size</h3>
+<p>The <code>Estimate</code> tells us how each predictor is associated with <code>price</code>, <strong>assuming all other variables are held constant</strong>. The sign (+ or -) tells you the direction of the relationship.</p>
+<ul>
+<li><code>dist_downtown</code>: for every additional mile from downtown, price tends to decrease by about $61,300, keeping all other factors the same. This is smaller than the $86,500 in Model 1. Part of what looked like a distance effect was actually about the houses themselves.</li>
+<li><code>age</code>: each additional year of age is associated with about $1,090 higher price. Older is not worse here: many of Boston’s older houses are in desirable neighborhoods.</li>
+<li><code>living_area</code>: if living area goes up by 1 sq.ft., the house price tends to increase by about $208. Or, 100 sq.ft. more is about $20,800.</li>
+<li><code>full_bath</code>: one more full bathroom is associated with about $95,000 higher price.</li>
+<li><code>bedrooms</code>: one more bedroom is associated with a price decrease of about $105,500. Surprising? A opposite direction from what we might expect often indicates variable correlation. However, this is still interpretable, because remember it is <em>holding living area constant</em>. Adding a bedroom to a house of the same size means cutting the space into smaller rooms, which buys don’t necessarily value.</li>
+</ul>
+</section>
+<section id="statistic-values-significance" class="level3">
+<h3 class="anchored" data-anchor-id="statistic-values-significance">Statistic values: significance</h3>
+<p>The <code>Pr(&gt;|t|)</code> (p-value) measure the extent to which a coefficient is “statistically significant”. In other words, whether the relationship we see between that predictor and the outcome is likely to be real, or could have happened just by random chance. By convention, a p-value below 0.05 is considered significant (the lower the better), and R marks it with stars at the end of each row.</p>
+<ul>
+<li><code>dist_downtown</code> has a p-value below 2e-16: very significant.</li>
+<li><code>dist_transit</code> has a p-value of 0.53: <strong>not significant</strong>. We also found in our descritive summary at the beginning that most houses in this data are already within walking distance of a station, so there is not much difference to explain. Once we know how far a house is from downtown and what the house is like, knowing its distance to the nearest rail station doesn’t add much.</li>
+</ul>
+</section>
+<section id="model-fit" class="level3">
+<h3 class="anchored" data-anchor-id="model-fit">Model fit</h3>
+<p>The <strong>coefficient of determination (R²)</strong> tells us the proportion of variance in the outcome that is explained by the predictors, ranging from 0 (no explanatory power) to 1 (perfect fit). For multiple linear regression, look at the <strong>Adjusted R²</strong>, which penalizes adding predictors that don’t really help. In our example it’s 0.27, meaning this model explains about 27% of the total variance in housing prices, up from 15% in Model 1.</p>
+</section>
+</section>
+</section>
+<section id="model-3-add-a-categorical-variable" class="level1">
+<h1>Model 3: Add a Categorical Variable</h1>
+<p><code>style</code> describes the building type: Cape, Colonial, Decker (the “triple-decker”, a Boston classic), Row houses, etc.</p>
+<p><img src="..\img/lab6-houses.png" class="img-fluid"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span> <span class="fu">count</span>(style)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code># A tibble: 8 × 2
+  style             n
+  &lt;chr&gt;         &lt;int&gt;
+1 Cape            110
+2 Colonial        404
+3 Conventional    265
+4 Decker          178
+5 Row_End          66
+6 Row_Middle       92
+7 Semi_Det         85
+8 Two_Fam_Stack   127</code></pre>
+</div>
+</div>
+<p>For a numeric variable, it’s easy to say: “one more square foot”, “one more mile”. But <code>style</code> has no units. Going from Cape to Colonial is not “one unit” of anything, and Colonial is not “more” than Cape. They only switch from one type to another.</p>
+<p>So in the modeling world, one category is set as the reference group, and the <code>style</code> column is converted to several 0/1 columns.</p>
+<p><img src="..\img/lab6-cate.png" class="img-fluid" width="484"></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>m3 <span class="ot">&lt;-</span> <span class="fu">lm</span>(price <span class="sc">~</span> dist_downtown <span class="sc">+</span> dist_transit <span class="sc">+</span> living_area <span class="sc">+</span> bedrooms <span class="sc">+</span> full_bath <span class="sc">+</span> age <span class="sc">+</span> style, <span class="at">data =</span> houses)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>
+Call:
+lm(formula = price ~ dist_downtown + dist_transit + living_area + 
+    bedrooms + full_bath + age + style, data = houses)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1125566  -167271   -14068   118716  3051538 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         388918.46   82666.99   4.705 2.81e-06 ***
+dist_downtown       -39935.12    6804.16  -5.869 5.54e-09 ***
+dist_transit        -28076.17   41296.90  -0.680 0.496712    
+living_area            257.18      19.65  13.089  &lt; 2e-16 ***
+bedrooms            -75146.54    8645.09  -8.692  &lt; 2e-16 ***
+full_bath           106195.06   18796.22   5.650 1.97e-08 ***
+age                    714.71     405.04   1.765 0.077871 .  
+styleColonial       -24429.82   42071.47  -0.581 0.561560    
+styleConventional  -286004.18   51437.52  -5.560 3.26e-08 ***
+styleDecker        -348206.55   62918.56  -5.534 3.77e-08 ***
+styleRow_End        148541.77   67913.86   2.187 0.028903 *  
+styleRow_Middle     418781.01   65196.78   6.423 1.86e-10 ***
+styleSemi_Det      -150788.31   63025.42  -2.392 0.016874 *  
+styleTwo_Fam_Stack -175077.97   52365.67  -3.343 0.000851 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 368400 on 1313 degrees of freedom
+Multiple R-squared:  0.4015,    Adjusted R-squared:  0.3956 
+F-statistic: 67.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<section id="read-the-result-table" class="level2">
+<h2 class="anchored" data-anchor-id="read-the-result-table">Read the result table</h2>
+<p>For a categorical variable, R automatically <strong>creates one 0/1 variable</strong> (a “dummy”) <strong>for each category</strong>, except the reference group. Every other category is compared against it. By default, R uses the first category in alphabetical order, which here is Cape.</p>
+<p>So each <code>style</code> coefficient reads as: <em>compared to a Cape house of the same size, age, and location, how much more (or less) does this style sell for?</em></p>
+<ul>
+<li><code>styleRow_Middle</code>: a house in the middle of a row sells for about $419,000 more than a comparable Cape. <code>styleRow_End</code> is about $149,000 more. Row houses in Boston are concentrated in historic neighborhoods such as Back Bay, South End and Beacon Hill.</li>
+<li><code>styleDecker</code> (-$348,000), <code>styleConventional</code> (-$286,000) and <code>styleTwo_Fam_Stack</code> (-$175,000) sell for less than a comparable Cape.</li>
+<li><code>styleColonial</code> has a p-value of 0.56: did not find significant difference from Cape.</li>
+</ul>
+<p>Now look at the rest of the table:</p>
+<ul>
+<li><code>dist_downtown</code> drops again, to about -$39,900 per mile, but stays highly significant. Some of what we attributed to distance was really about building style.</li>
+<li><code>dist_transit</code> stays non-significant.</li>
+<li>Adjusted R² rises to 0.40. Style adds quite a lot of explanatory power.</li>
+</ul>
+</section>
+</section>
+<section id="check-the-residuals" class="level1">
+<h1>Check the Residuals</h1>
+<p>A <strong>residual</strong> is the difference between a house’s actual price and the price our model predicts. If a linear model fits well, the residuals should look like random noise scattered evenly around 0. Let’s plot residuals against the predicted (fitted) values:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> <span class="fu">fitted</span>(m3), <span class="at">residuals =</span> <span class="fu">resid</span>(m3)) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Fitted price"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This doesn’t look like random noise. The points fan out to the right. The model makes much bigger errors for expensive houses than for cheap ones.</p>
+<p>Both point back to the outcome variable. So it’s worth checking the distribution of <code>price</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> price)) <span class="sc">+</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>dollar) <span class="sc">+</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As expected, housing prices are right-skewed. A common fix is to take the logarithmic transformation of Y. This does not change the values themselves, but it changes the scale<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> and can help a straight line fit the data better. Here is the same histogram with taking a log-transformation on price. After the log transformation, the distribution is much more symmetric.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">log</span>(price))) <span class="sc">+</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">50</span>) <span class="sc">+</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><em>Note, R’s <code>log()</code> uses base e ≈ 2.718 instead of 10, so it’s</em> <span class="math inline">\(\log_{e}(price)\)</span><em>.</em></p>
+</section>
+<section id="model-4-log-transform-the-outcome" class="level1">
+<h1>Model 4: Log-transform the Outcome</h1>
+<p>Apply <code>log()</code> directly inside the formula:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>m4 <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">log</span>(price) <span class="sc">~</span> dist_downtown <span class="sc">+</span> dist_transit <span class="sc">+</span> living_area <span class="sc">+</span> bedrooms <span class="sc">+</span> full_bath <span class="sc">+</span> age <span class="sc">+</span> style,</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>         <span class="at">data =</span> houses)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>
+Call:
+lm(formula = log(price) ~ dist_downtown + dist_transit + living_area + 
+    bedrooms + full_bath + age + style, data = houses)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.40356 -0.21736  0.00135  0.18774  1.43387 
+
+Coefficients:
+                     Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)         1.285e+01  7.936e-02 161.876  &lt; 2e-16 ***
+dist_downtown      -4.412e-02  6.532e-03  -6.754 2.16e-11 ***
+dist_transit        4.705e-02  3.964e-02   1.187  0.23549    
+living_area         2.461e-04  1.886e-05  13.044  &lt; 2e-16 ***
+bedrooms           -5.888e-02  8.299e-03  -7.095 2.11e-12 ***
+full_bath           1.091e-01  1.804e-02   6.045 1.95e-09 ***
+age                 3.906e-04  3.888e-04   1.005  0.31528    
+styleColonial       1.050e-01  4.039e-02   2.600  0.00941 ** 
+styleConventional  -1.507e-01  4.938e-02  -3.051  0.00233 ** 
+styleDecker        -1.873e-01  6.040e-02  -3.101  0.00197 ** 
+styleRow_End        2.085e-01  6.520e-02   3.197  0.00142 ** 
+styleRow_Middle     3.673e-01  6.259e-02   5.868 5.57e-09 ***
+styleSemi_Det       5.636e-03  6.050e-02   0.093  0.92580    
+styleTwo_Fam_Stack -5.213e-02  5.027e-02  -1.037  0.29991    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3536 on 1313 degrees of freedom
+Multiple R-squared:  0.3907,    Adjusted R-squared:  0.3847 
+F-statistic: 64.77 on 13 and 1313 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<p>Check the residuals again:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>houses <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">fitted =</span> <span class="fu">fitted</span>(m4), <span class="at">residuals =</span> <span class="fu">resid</span>(m4)) <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> fitted, <span class="at">y =</span> residuals)) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linetype =</span> <span class="st">"dashed"</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Fitted log(price)"</span>, <span class="at">y =</span> <span class="st">"Residual"</span>) <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab6_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The residuals are now spread more evenly around 0.</p>
+<section id="interpretation-changes" class="level2">
+<h2 class="anchored" data-anchor-id="interpretation-changes">Interpretation changes</h2>
+<p>The outcome of Model 4 is now log(price), so the <strong>coefficients</strong> can not be interpreted in dollars.</p>
+<p>After log (Model 4): for every additional mile from downtown, the <strong>log of price</strong> tends to be <strong>0.044 smaller</strong>. With a few steps of math, we can still know the coefficient now describes the <strong>percentage changes</strong>. When a predictor goes up by 1 unit, price changes by about <span class="math inline">\((e^{\beta} - 1) \times 100\%\)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>(<span class="fu">exp</span>(<span class="fu">coef</span>(m4)[<span class="st">"dist_downtown"</span>]) <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre data-code-line-numbers=""><code>dist_downtown 
+  -0.04315759 </code></pre>
+</div>
+</div>
+<p>The result -0.043 means each additional mile from downtown goes with about 4.3% lower price.</p>
+</section>
+</section>
+<section id="compare-the-models" class="level1">
+<h1>Compare the Models</h1>
+<p>Reading four separate <code>summary()</code> outputs gets tedious. <code>modelsummary()</code> puts them side by side, which is also how regression results are usually presented in reports and papers. Each column is a model, the numbers in parentheses are standard errors, and the stars show significance.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29" data-source-line-numbers="nil" data-code-line-numbers="nil"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="st">"Model 1"</span> <span class="ot">=</span> m1, <span class="st">"Model 2"</span> <span class="ot">=</span> m2, <span class="st">"Model 3"</span> <span class="ot">=</span> m3, <span class="st">"Model 4 (log)"</span> <span class="ot">=</span> m4),</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">stars =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">gof_map =</span> <span class="fu">c</span>(<span class="st">"nobs"</span>, <span class="st">"r.squared"</span>, <span class="st">"adj.r.squared"</span>),</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">notes =</span> <span class="st">"Model 4 predicts log(price)"</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+    <script src="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.js"></script>
+
+    <script>
+      // Create table-specific functions using external factory
+      const tableFns_ai1jdmgid68bqwral965 = TinyTable.createTableFunctions("tinytable_ai1jdmgid68bqwral965");
+      // tinytable span after
+      window.addEventListener('load', function () {
+          var cellsToStyle = [
+            // tinytable style arrays after
+          { positions: [ { i: '31', j: 2 }, { i: '31', j: 3 }, { i: '31', j: 4 }, { i: '31', j: 5 } ], css_id: 'tinytable_css_ahex6dcalt9b1ey7xzth',}, 
+          { positions: [ { i: '28', j: 2 }, { i: '28', j: 3 }, { i: '28', j: 4 }, { i: '28', j: 5 } ], css_id: 'tinytable_css_xthja0kt609qpatsecrf',}, 
+          { positions: [ { i: '1', j: 2 }, { i: '2', j: 2 }, { i: '3', j: 2 }, { i: '4', j: 2 }, { i: '5', j: 2 }, { i: '6', j: 2 }, { i: '7', j: 2 }, { i: '8', j: 2 }, { i: '9', j: 2 }, { i: '10', j: 2 }, { i: '11', j: 2 }, { i: '12', j: 2 }, { i: '13', j: 2 }, { i: '14', j: 2 }, { i: '15', j: 2 }, { i: '16', j: 2 }, { i: '17', j: 2 }, { i: '18', j: 2 }, { i: '19', j: 2 }, { i: '20', j: 2 }, { i: '21', j: 2 }, { i: '22', j: 2 }, { i: '23', j: 2 }, { i: '24', j: 2 }, { i: '25', j: 2 }, { i: '26', j: 2 }, { i: '27', j: 2 }, { i: '29', j: 2 }, { i: '30', j: 2 }, { i: '1', j: 3 }, { i: '2', j: 3 }, { i: '3', j: 3 }, { i: '4', j: 3 }, { i: '5', j: 3 }, { i: '6', j: 3 }, { i: '7', j: 3 }, { i: '8', j: 3 }, { i: '9', j: 3 }, { i: '10', j: 3 }, { i: '11', j: 3 }, { i: '12', j: 3 }, { i: '13', j: 3 }, { i: '14', j: 3 }, { i: '15', j: 3 }, { i: '16', j: 3 }, { i: '17', j: 3 }, { i: '18', j: 3 }, { i: '19', j: 3 }, { i: '20', j: 3 }, { i: '21', j: 3 }, { i: '22', j: 3 }, { i: '23', j: 3 }, { i: '24', j: 3 }, { i: '25', j: 3 }, { i: '26', j: 3 }, { i: '27', j: 3 }, { i: '29', j: 3 }, { i: '30', j: 3 }, { i: '1', j: 4 }, { i: '2', j: 4 }, { i: '3', j: 4 }, { i: '4', j: 4 }, { i: '5', j: 4 }, { i: '6', j: 4 }, { i: '7', j: 4 }, { i: '8', j: 4 }, { i: '9', j: 4 }, { i: '10', j: 4 }, { i: '11', j: 4 }, { i: '12', j: 4 }, { i: '13', j: 4 }, { i: '14', j: 4 }, { i: '15', j: 4 }, { i: '16', j: 4 }, { i: '17', j: 4 }, { i: '18', j: 4 }, { i: '19', j: 4 }, { i: '20', j: 4 }, { i: '21', j: 4 }, { i: '22', j: 4 }, { i: '23', j: 4 }, { i: '24', j: 4 }, { i: '25', j: 4 }, { i: '26', j: 4 }, { i: '27', j: 4 }, { i: '29', j: 4 }, { i: '30', j: 4 }, { i: '1', j: 5 }, { i: '2', j: 5 }, { i: '3', j: 5 }, { i: '4', j: 5 }, { i: '5', j: 5 }, { i: '6', j: 5 }, { i: '7', j: 5 }, { i: '8', j: 5 }, { i: '9', j: 5 }, { i: '10', j: 5 }, { i: '11', j: 5 }, { i: '12', j: 5 }, { i: '13', j: 5 }, { i: '14', j: 5 }, { i: '15', j: 5 }, { i: '16', j: 5 }, { i: '17', j: 5 }, { i: '18', j: 5 }, { i: '19', j: 5 }, { i: '20', j: 5 }, { i: '21', j: 5 }, { i: '22', j: 5 }, { i: '23', j: 5 }, { i: '24', j: 5 }, { i: '25', j: 5 }, { i: '26', j: 5 }, { i: '27', j: 5 }, { i: '29', j: 5 }, { i: '30', j: 5 } ], css_id: 'tinytable_css_zb5kx2zktzz5hken2k79',}, 
+          { positions: [ { i: '0', j: 2 }, { i: '0', j: 3 }, { i: '0', j: 4 }, { i: '0', j: 5 } ], css_id: 'tinytable_css_yz7leewqiy9xugzou7u0',}, 
+          { positions: [ { i: '31', j: 1 } ], css_id: 'tinytable_css_y2ci14l0rze8b4noz4i9',}, 
+          { positions: [ { i: '28', j: 1 } ], css_id: 'tinytable_css_sojr3itfo9f6b7j9nctg',}, 
+          { positions: [ { i: '1', j: 1 }, { i: '2', j: 1 }, { i: '3', j: 1 }, { i: '4', j: 1 }, { i: '5', j: 1 }, { i: '6', j: 1 }, { i: '7', j: 1 }, { i: '8', j: 1 }, { i: '9', j: 1 }, { i: '10', j: 1 }, { i: '11', j: 1 }, { i: '12', j: 1 }, { i: '13', j: 1 }, { i: '14', j: 1 }, { i: '15', j: 1 }, { i: '16', j: 1 }, { i: '17', j: 1 }, { i: '18', j: 1 }, { i: '19', j: 1 }, { i: '20', j: 1 }, { i: '21', j: 1 }, { i: '22', j: 1 }, { i: '23', j: 1 }, { i: '24', j: 1 }, { i: '25', j: 1 }, { i: '26', j: 1 }, { i: '27', j: 1 }, { i: '29', j: 1 }, { i: '30', j: 1 } ], css_id: 'tinytable_css_amaqkwjp7149d9yurpmb',}, 
+          { positions: [ { i: '0', j: 1 } ], css_id: 'tinytable_css_l85q9llbb0u2hzk1fw5l',}, 
+          ];
+
+          // Loop over the arrays to style the cells
+          cellsToStyle.forEach(function (group) {
+              group.positions.forEach(function (cell) {
+                  tableFns_ai1jdmgid68bqwral965.styleCell(cell.i, cell.j, group.css_id);
+              });
+          });
+      });
+    </script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/vincentarelbundock/tinytable@main/inst/tinytable.css">
+    <style>
+    /* tinytable css entries after */
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_ahex6dcalt9b1ey7xzth, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_ahex6dcalt9b1ey7xzth {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_xthja0kt609qpatsecrf, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_xthja0kt609qpatsecrf {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_zb5kx2zktzz5hken2k79, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_zb5kx2zktzz5hken2k79 { text-align: center }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_yz7leewqiy9xugzou7u0, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_yz7leewqiy9xugzou7u0 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: center }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_y2ci14l0rze8b4noz4i9, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_y2ci14l0rze8b4noz4i9 {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.08em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_sojr3itfo9f6b7j9nctg, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_sojr3itfo9f6b7j9nctg {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 0; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.1em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_amaqkwjp7149d9yurpmb, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_amaqkwjp7149d9yurpmb { text-align: left }
+    #tinytable_ai1jdmgid68bqwral965 td.tinytable_css_l85q9llbb0u2hzk1fw5l, #tinytable_ai1jdmgid68bqwral965 th.tinytable_css_l85q9llbb0u2hzk1fw5l {  position: relative; --border-bottom: 1; --border-left: 0; --border-right: 0; --border-top: 1; --line-color-bottom: var(--tt-line-color); --line-color-left: var(--tt-line-color); --line-color-right: var(--tt-line-color); --line-color-top: var(--tt-line-color); --line-width-bottom: 0.05em; --line-width-left: 0.1em; --line-width-right: 0.1em; --line-width-top: 0.08em; --line-type-bottom: solid; --line-type-left: solid; --line-type-right: solid; --line-type-top: solid; --trim-bottom-left: 0%; --trim-bottom-right: 0%; --trim-left-bottom: 0%; --trim-left-top: 0%; --trim-right-bottom: 0%; --trim-right-top: 0%; --trim-top-left: 0%; --trim-top-right: 0%; ; text-align: left }
+    </style>
+    <div class="container">
+      <table class="tinytable" id="tinytable_ai1jdmgid68bqwral965" style="width: auto; margin-left: auto; margin-right: auto;" data-quarto-disable-processing="true">
+        
+        <thead>
+              <tr>
+                <th scope="col" data-row="0" data-col="1"> </th>
+                <th scope="col" data-row="0" data-col="2">Model 1</th>
+                <th scope="col" data-row="0" data-col="3">Model 2</th>
+                <th scope="col" data-row="0" data-col="4">Model 3</th>
+                <th scope="col" data-row="0" data-col="5">Model 4 (log)</th>
+              </tr>
+        </thead>
+        <tfoot><tr><td colspan="5">+ p &lt; 0.1, * p &lt; 0.05, ** p &lt; 0.01, *** p &lt; 0.001</td></tr>
+<tr><td colspan="5">Model 4 predicts log(price)</td></tr></tfoot>
+        <tbody>
+                <tr>
+                  <td data-row="1" data-col="1">(Intercept)</td>
+                  <td data-row="1" data-col="2">1031212.627***</td>
+                  <td data-row="1" data-col="3">619238.086***</td>
+                  <td data-row="1" data-col="4">388918.458***</td>
+                  <td data-row="1" data-col="5">12.846***</td>
+                </tr>
+                <tr>
+                  <td data-row="2" data-col="1"></td>
+                  <td data-row="2" data-col="2">(27383.219)</td>
+                  <td data-row="2" data-col="3">(80933.797)</td>
+                  <td data-row="2" data-col="4">(82666.986)</td>
+                  <td data-row="2" data-col="5">(0.079)</td>
+                </tr>
+                <tr>
+                  <td data-row="3" data-col="1">dist_downtown</td>
+                  <td data-row="3" data-col="2">-86483.666***</td>
+                  <td data-row="3" data-col="3">-61309.362***</td>
+                  <td data-row="3" data-col="4">-39935.120***</td>
+                  <td data-row="3" data-col="5">-0.044***</td>
+                </tr>
+                <tr>
+                  <td data-row="4" data-col="1"></td>
+                  <td data-row="4" data-col="2">(5541.085)</td>
+                  <td data-row="4" data-col="3">(6274.412)</td>
+                  <td data-row="4" data-col="4">(6804.161)</td>
+                  <td data-row="4" data-col="5">(0.007)</td>
+                </tr>
+                <tr>
+                  <td data-row="5" data-col="1">dist_transit</td>
+                  <td data-row="5" data-col="2"></td>
+                  <td data-row="5" data-col="3">-27873.359</td>
+                  <td data-row="5" data-col="4">-28076.173</td>
+                  <td data-row="5" data-col="5">0.047</td>
+                </tr>
+                <tr>
+                  <td data-row="6" data-col="1"></td>
+                  <td data-row="6" data-col="2"></td>
+                  <td data-row="6" data-col="3">(44749.832)</td>
+                  <td data-row="6" data-col="4">(41296.904)</td>
+                  <td data-row="6" data-col="5">(0.040)</td>
+                </tr>
+                <tr>
+                  <td data-row="7" data-col="1">living_area</td>
+                  <td data-row="7" data-col="2"></td>
+                  <td data-row="7" data-col="3">207.986***</td>
+                  <td data-row="7" data-col="4">257.185***</td>
+                  <td data-row="7" data-col="5">0.000***</td>
+                </tr>
+                <tr>
+                  <td data-row="8" data-col="1"></td>
+                  <td data-row="8" data-col="2"></td>
+                  <td data-row="8" data-col="3">(20.736)</td>
+                  <td data-row="8" data-col="4">(19.649)</td>
+                  <td data-row="8" data-col="5">(0.000)</td>
+                </tr>
+                <tr>
+                  <td data-row="9" data-col="1">bedrooms</td>
+                  <td data-row="9" data-col="2"></td>
+                  <td data-row="9" data-col="3">-105507.378***</td>
+                  <td data-row="9" data-col="4">-75146.539***</td>
+                  <td data-row="9" data-col="5">-0.059***</td>
+                </tr>
+                <tr>
+                  <td data-row="10" data-col="1"></td>
+                  <td data-row="10" data-col="2"></td>
+                  <td data-row="10" data-col="3">(9031.367)</td>
+                  <td data-row="10" data-col="4">(8645.088)</td>
+                  <td data-row="10" data-col="5">(0.008)</td>
+                </tr>
+                <tr>
+                  <td data-row="11" data-col="1">full_bath</td>
+                  <td data-row="11" data-col="2"></td>
+                  <td data-row="11" data-col="3">95007.133***</td>
+                  <td data-row="11" data-col="4">106195.062***</td>
+                  <td data-row="11" data-col="5">0.109***</td>
+                </tr>
+                <tr>
+                  <td data-row="12" data-col="1"></td>
+                  <td data-row="12" data-col="2"></td>
+                  <td data-row="12" data-col="3">(19456.793)</td>
+                  <td data-row="12" data-col="4">(18796.220)</td>
+                  <td data-row="12" data-col="5">(0.018)</td>
+                </tr>
+                <tr>
+                  <td data-row="13" data-col="1">age</td>
+                  <td data-row="13" data-col="2"></td>
+                  <td data-row="13" data-col="3">1089.702*</td>
+                  <td data-row="13" data-col="4">714.710+</td>
+                  <td data-row="13" data-col="5">0.000</td>
+                </tr>
+                <tr>
+                  <td data-row="14" data-col="1"></td>
+                  <td data-row="14" data-col="2"></td>
+                  <td data-row="14" data-col="3">(432.332)</td>
+                  <td data-row="14" data-col="4">(405.037)</td>
+                  <td data-row="14" data-col="5">(0.000)</td>
+                </tr>
+                <tr>
+                  <td data-row="15" data-col="1">styleColonial</td>
+                  <td data-row="15" data-col="2"></td>
+                  <td data-row="15" data-col="3"></td>
+                  <td data-row="15" data-col="4">-24429.815</td>
+                  <td data-row="15" data-col="5">0.105**</td>
+                </tr>
+                <tr>
+                  <td data-row="16" data-col="1"></td>
+                  <td data-row="16" data-col="2"></td>
+                  <td data-row="16" data-col="3"></td>
+                  <td data-row="16" data-col="4">(42071.471)</td>
+                  <td data-row="16" data-col="5">(0.040)</td>
+                </tr>
+                <tr>
+                  <td data-row="17" data-col="1">styleConventional</td>
+                  <td data-row="17" data-col="2"></td>
+                  <td data-row="17" data-col="3"></td>
+                  <td data-row="17" data-col="4">-286004.183***</td>
+                  <td data-row="17" data-col="5">-0.151**</td>
+                </tr>
+                <tr>
+                  <td data-row="18" data-col="1"></td>
+                  <td data-row="18" data-col="2"></td>
+                  <td data-row="18" data-col="3"></td>
+                  <td data-row="18" data-col="4">(51437.515)</td>
+                  <td data-row="18" data-col="5">(0.049)</td>
+                </tr>
+                <tr>
+                  <td data-row="19" data-col="1">styleDecker</td>
+                  <td data-row="19" data-col="2"></td>
+                  <td data-row="19" data-col="3"></td>
+                  <td data-row="19" data-col="4">-348206.549***</td>
+                  <td data-row="19" data-col="5">-0.187**</td>
+                </tr>
+                <tr>
+                  <td data-row="20" data-col="1"></td>
+                  <td data-row="20" data-col="2"></td>
+                  <td data-row="20" data-col="3"></td>
+                  <td data-row="20" data-col="4">(62918.562)</td>
+                  <td data-row="20" data-col="5">(0.060)</td>
+                </tr>
+                <tr>
+                  <td data-row="21" data-col="1">styleRow_End</td>
+                  <td data-row="21" data-col="2"></td>
+                  <td data-row="21" data-col="3"></td>
+                  <td data-row="21" data-col="4">148541.769*</td>
+                  <td data-row="21" data-col="5">0.208**</td>
+                </tr>
+                <tr>
+                  <td data-row="22" data-col="1"></td>
+                  <td data-row="22" data-col="2"></td>
+                  <td data-row="22" data-col="3"></td>
+                  <td data-row="22" data-col="4">(67913.861)</td>
+                  <td data-row="22" data-col="5">(0.065)</td>
+                </tr>
+                <tr>
+                  <td data-row="23" data-col="1">styleRow_Middle</td>
+                  <td data-row="23" data-col="2"></td>
+                  <td data-row="23" data-col="3"></td>
+                  <td data-row="23" data-col="4">418781.014***</td>
+                  <td data-row="23" data-col="5">0.367***</td>
+                </tr>
+                <tr>
+                  <td data-row="24" data-col="1"></td>
+                  <td data-row="24" data-col="2"></td>
+                  <td data-row="24" data-col="3"></td>
+                  <td data-row="24" data-col="4">(65196.780)</td>
+                  <td data-row="24" data-col="5">(0.063)</td>
+                </tr>
+                <tr>
+                  <td data-row="25" data-col="1">styleSemi_Det</td>
+                  <td data-row="25" data-col="2"></td>
+                  <td data-row="25" data-col="3"></td>
+                  <td data-row="25" data-col="4">-150788.307*</td>
+                  <td data-row="25" data-col="5">0.006</td>
+                </tr>
+                <tr>
+                  <td data-row="26" data-col="1"></td>
+                  <td data-row="26" data-col="2"></td>
+                  <td data-row="26" data-col="3"></td>
+                  <td data-row="26" data-col="4">(63025.422)</td>
+                  <td data-row="26" data-col="5">(0.061)</td>
+                </tr>
+                <tr>
+                  <td data-row="27" data-col="1">styleTwo_Fam_Stack</td>
+                  <td data-row="27" data-col="2"></td>
+                  <td data-row="27" data-col="3"></td>
+                  <td data-row="27" data-col="4">-175077.974***</td>
+                  <td data-row="27" data-col="5">-0.052</td>
+                </tr>
+                <tr>
+                  <td data-row="28" data-col="1"></td>
+                  <td data-row="28" data-col="2"></td>
+                  <td data-row="28" data-col="3"></td>
+                  <td data-row="28" data-col="4">(52365.672)</td>
+                  <td data-row="28" data-col="5">(0.050)</td>
+                </tr>
+                <tr>
+                  <td data-row="29" data-col="1">Num.Obs.</td>
+                  <td data-row="29" data-col="2">1327</td>
+                  <td data-row="29" data-col="3">1327</td>
+                  <td data-row="29" data-col="4">1327</td>
+                  <td data-row="29" data-col="5">1327</td>
+                </tr>
+                <tr>
+                  <td data-row="30" data-col="1">R2</td>
+                  <td data-row="30" data-col="2">0.155</td>
+                  <td data-row="30" data-col="3">0.274</td>
+                  <td data-row="30" data-col="4">0.402</td>
+                  <td data-row="30" data-col="5">0.391</td>
+                </tr>
+                <tr>
+                  <td data-row="31" data-col="1">R2 Adj.</td>
+                  <td data-row="31" data-col="2">0.155</td>
+                  <td data-row="31" data-col="3">0.270</td>
+                  <td data-row="31" data-col="4">0.396</td>
+                  <td data-row="31" data-col="5">0.385</td>
+                </tr>
+        </tbody>
+      </table>
+    </div>
+<!-- hack to avoid NA insertion in last line -->
+</div>
+</div>
+<p><em>Note: the Adjusted R² (0.38) of Model 4 can’t be compared directly with the others, because the last model explain different outcomes (price vs.&nbsp;log of price).</em></p>
+<p>Reading across the first row, the story of today’s tutorial: the distance-to-downtown coefficient shrinks as we add controls (from -$86,500 to -$61,300 to -$39,900 per mile), but it stays negative and significant in every model, including the log model (about -4% per mile). Distance to transit, as a location control, is never significant once distance to downtown is in the model.</p>
+</section>
+<section id="final-notes" class="level1">
+<h1>Final Notes</h1>
+<p><strong>Location is still underrepresented.</strong> Distance to downtown is a single line drawn from the center. It doesn’t capture the differences between neighborhoods at similar distances. Several options here: 1) create variables such as population density, school quality, crime, etc. to describe the surrounding neighborhood, and use them as location controls. 2) add neighborhood names as a categorical variable, although the result table will be long. 3) Apply a <a href="https://r-spatial.org/book/16-SpatialRegression.html">spatial regression model</a>, which accounts for the fact that nearby houses tend to have similar prices.</p>
+<p><strong>Variable selection.</strong> You could have chosen variables like <code>fireplace</code> and did not choose <code>bedroom</code>, and still had a good reason: each makes sense as a factor in housing prices. When several modeling choices are all reasonable, the one with a higher adjusted R² means the model explains more and gives a more precise estimate.</p>
+<p>There is no single correct set of variables, but the first rule is each must make sense for your question. Practical guidelines include: add variables that affect the outcome and are related to your variable of interest, avoid near-duplicates, keep it simple, and lean on what earlier studies have used.</p>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>Now it’s your turn to build a regression model, this time with a different dataset and a different question. You can follow the same workflow we just walked through.</p>
+<section id="the-data" class="level2">
+<h2 class="anchored" data-anchor-id="the-data">The Data</h2>
+<p>The data comes from the EPA’s <a href="https://www.epa.gov/smartgrowth/smart-location-mapping">Smart Location Database</a> (SLD). The EPA built it around 2011 to measure <strong>location efficiency</strong>: how the built environment of a place supports (or discourages) walking, transit use and shorter car trips. It covers every census block group in the US, and summarizes the built environment with a set of “D” variables, a framework that is widely used in transportation research (<a href="https://doi.org/10.1080/01944361003766766">Ewing &amp; Cervero, 2010</a>): <strong>D</strong>ensity, <strong>D</strong>iversity of land uses, <strong>D</strong>esign of the street network, <strong>D</strong>istance to transit, and <strong>D</strong>estination accessibility.</p>
+<p>The variables are assembled from several sources, including the Census American Community Survey, the Census LEHD employment data, HERE street maps, and transit agencies’ schedules.</p>
+<p>We have an extract for you: <strong>3,393 block groups in the Boston metropolitan area</strong>, with 11 variables. Download <code>sld_boston_metro.csv</code> and its codebook <code>sld_boston_metro_codebook.csv</code> from our link.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 75%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Variable</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>GEOID20</code></td>
+<td>Block group ID</td>
+</tr>
+<tr class="even">
+<td><code>county</code></td>
+<td>County name</td>
+</tr>
+<tr class="odd">
+<td><code>Pct_AO0</code></td>
+<td>Share of households with <strong>zero cars</strong> (0-1)</td>
+</tr>
+<tr class="even">
+<td><code>D4C</code></td>
+<td><strong>Transit frequency</strong>: transit trips per hour within ¼ mile, afternoon peak</td>
+</tr>
+<tr class="odd">
+<td><code>D4A</code></td>
+<td>Walking distance to the nearest transit stop (meters)</td>
+</tr>
+<tr class="even">
+<td><code>D1A</code></td>
+<td>Residential density (housing units per acre)</td>
+</tr>
+<tr class="odd">
+<td><code>D1B</code></td>
+<td>Population density (people per acre)</td>
+</tr>
+<tr class="even">
+<td><code>D1C</code></td>
+<td>Employment density (jobs per acre)</td>
+</tr>
+<tr class="odd">
+<td><code>D2A_EPHHM</code></td>
+<td>Land use mix of jobs and housing (0-1, higher = more mixed)</td>
+</tr>
+<tr class="even">
+<td><code>D3B</code></td>
+<td>Street intersection density (intersections per square mile)</td>
+</tr>
+<tr class="odd">
+<td><code>R_PCTLOWWAGE</code></td>
+<td>Share of resident workers who are low-wage earners (0-1)</td>
+</tr>
+</tbody>
+</table>
+<p>For more details on how each variable was created, see the <a href="https://www.epa.gov/system/files/documents/2023-10/epa_sld_3.0_technicaldocumentationuserguide_may2021_0.pdf">SLD Technical Documentation and User Guide</a>.</p>
+</section>
+<section id="your-question" class="level2">
+<h2 class="anchored" data-anchor-id="your-question">Your Question</h2>
+<p><strong>Do neighborhoods with more frequent transit have more car-free households?</strong></p>
+<p>Suppose the <strong>outcome</strong> you are interested in is <code>Pct_AO0</code>, and your <strong>variable of interest</strong> is <code>D4C</code>.</p>
+<p>However, if you are interested in another relationship, feel free to propose your own research question in one sentence like that.</p>
+</section>
+<section id="suggested-steps" class="level2">
+<h2 class="anchored" data-anchor-id="suggested-steps">Suggested steps</h2>
+<p>Whichever question you choose, keep your variable of interest at the center of the analysis: what does its coefficient tell you, and does it stay significant?</p>
+<ol type="1">
+<li><p><strong>Read and describe the data.</strong> Use <code>glimpse()</code> or <code>summary()</code> or <code>hist()</code> to check each variable’s type and range. Which variables are numeric or categorical? What are their ranges and missing values? How the values distribute? Rename the variables if you prefer.</p></li>
+<li><p><strong>Look at the relationships.</strong> Make a scatterplot of your outcome against your variable of interest. Then make a correlation plot (<code>corrplot()</code>) of the numeric variables. Which variables are correlated with the outcome? Are there predictors that are so strongly correlated with each other that you should keep only one?</p></li>
+<li><p><strong>Fit a series of models.</strong> Start simple and build up, as we did with the housing data:</p>
+<ul>
+<li>Model 1: the outcome and your variable of interest only.</li>
+<li>Model 2: add the control variables you selected. Choose a set that you think best helps you explain the relationship in question.</li>
+<li>Model 3: add <code>county</code> as a categorical variable. Which county is used as the reference group?</li>
+</ul>
+<p>Save each model to its own object (<code>m1</code>, <code>m2</code>, <code>m3</code>), then put them side by side with <code>modelsummary(list("Model 1" = m1, "Model 2" = m2, "Model 3" = m3), stars = TRUE)</code>.</p></li>
+<li><p><strong>Check the results.</strong> Interpret the coefficient (effect size), its significance, and the model fit, in plain language. How does the coefficient change from Model 1 to Model 3? How much does <code>county</code> contribute to the model, and why is that?</p></li>
+</ol>
+</section>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p>Please submit a rendered Quarto report (HTML) that walks us through your modeling process. This can include: how you prepared the data and chose your variables, your correlation plot, a side-by-side table of your models. End with a short paragraph answering your question and noting the limitations of your analysis.</p>
+<p>A reminder that you should include <code>embed-resources: true</code> in your YAML header, to preserve all your pictures in your HTML.</p>
+<p>Please <strong>upload your rendered HTML file to Canvas by 9am, Wednesday, November 4.</strong></p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>On a regular axis, each equal step adds the same amount. On a <span class="math inline">\(\log_{10}\)</span> axis, each step is ×10.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -556,4 +1548,5 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 
 
 
+<script src="../site_libs/quarto-contrib/line-highlight-1.0.0/line-highlight.js" defer="true"></script>
 </body></html>
