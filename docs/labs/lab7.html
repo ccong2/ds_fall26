@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>lab7 – Applied Data Science for Cities</title>
+<title>Predict Housing Prices with Machine Learning in  – Applied Data Science for Cities</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -108,19 +142,534 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#the-data-we-use-today" id="toc-the-data-we-use-today" class="nav-link" data-scroll-target="#the-data-we-use-today">The Data We Use Today</a></li>
+  <li><a href="#components-in-the-model-fitting-process" id="toc-components-in-the-model-fitting-process" class="nav-link" data-scroll-target="#components-in-the-model-fitting-process">Components in the Model Fitting Process</a>
+  <ul class="collapse">
+  <li><a href="#data-preprocessing" id="toc-data-preprocessing" class="nav-link" data-scroll-target="#data-preprocessing">Data preprocessing</a></li>
+  <li><a href="#split-train-and-test" id="toc-split-train-and-test" class="nav-link" data-scroll-target="#split-train-and-test">Split train and test</a></li>
+  <li><a href="#model" id="toc-model" class="nav-link" data-scroll-target="#model">Model</a></li>
+  <li><a href="#parameter-tuning" id="toc-parameter-tuning" class="nav-link" data-scroll-target="#parameter-tuning">Parameter tuning</a></li>
+  <li><a href="#cross-validation" id="toc-cross-validation" class="nav-link" data-scroll-target="#cross-validation">Cross validation</a></li>
+  <li><a href="#test-error" id="toc-test-error" class="nav-link" data-scroll-target="#test-error">Test error</a></li>
+  </ul></li>
+  <li><a href="#start-try-a-shortlist-of-models" id="toc-start-try-a-shortlist-of-models" class="nav-link" data-scroll-target="#start-try-a-shortlist-of-models">Start: Try a Shortlist of Models</a>
+  <ul class="collapse">
+  <li><a href="#regularized-linear-regression" id="toc-regularized-linear-regression" class="nav-link" data-scroll-target="#regularized-linear-regression">Regularized linear regression</a></li>
+  <li><a href="#loess" id="toc-loess" class="nav-link" data-scroll-target="#loess">LOESS</a></li>
+  <li><a href="#tree-based-models" id="toc-tree-based-models" class="nav-link" data-scroll-target="#tree-based-models">Tree-based models</a>
+  <ul class="collapse">
+  <li><a href="#decision-tree" id="toc-decision-tree" class="nav-link" data-scroll-target="#decision-tree">Decision tree</a></li>
+  <li><a href="#random-forest" id="toc-random-forest" class="nav-link" data-scroll-target="#random-forest">Random forest</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#model-summary" id="toc-model-summary" class="nav-link" data-scroll-target="#model-summary">Model Summary</a></li>
+  <li><a href="#final-note-analyzing-the-result" id="toc-final-note-analyzing-the-result" class="nav-link" data-scroll-target="#final-note-analyzing-the-result">Final note: analyzing the result</a></li>
+  <li><a href="#exercise" id="toc-exercise" class="nav-link" data-scroll-target="#exercise">Exercise</a></li>
+  <li><a href="#lab-report" id="toc-lab-report" class="nav-link" data-scroll-target="#lab-report">Lab Report</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Predict Housing Prices with Machine Learning in <img src="../img/Rlogo.png" class="img-fluid" width="60"></h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
 
-</main> <!-- /main -->
+<div class="cell">
+<style type="text/css">
+.run { border-left: 6px solid #2e7d32; background: #e8f5e9 !important; }
+.code-with-filename:has(.run) .code-with-filename-file { background: #2e7d32; color: white; }
+</style>
+</div>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Machine learning is learning patterns from data to predict new data. In my view, it comes down to: choosing a model at the right level of complexity for your data. To predict well on data the model has never seen, the model has to learn the real pattern in the data. It shouldn’t be so rough that it misses the pattern (<em>underfitting</em>), and it shouldn’t be so flexible that it memorizes the noise (<em>overfitting</em>).</p>
+<p>We can control complexity in two ways:</p>
+<ol type="1">
+<li><strong>Selecting the model.</strong> Different types of models (a straight line, a curve, a set of decision rules) have different levels of flexibility.</li>
+<li><strong>Tuning the parameters.</strong> Each type of model has its own “moving parts”, called <em>tuning parameters</em> or <em>hyperparameters</em>, that make it simpler or more complex.</li>
+</ol>
+<p>To decide which model and which setting work best, we will use metrics such as <strong>RMSE</strong> (root mean squared error), which measures on average how far our predictions are from the true values. Lower is better.</p>
+<p>In this lab we return to the Boston house sales, try several machine learning models to predict housing prices, and see if we can find a model that predicts housing prices well.</p>
+</section>
+<section id="the-data-we-use-today" class="level1">
+<h1>The Data We Use Today</h1>
+<p>We will continue to use the Boston house sales data <code>boston_houses.csv</code>, with 1,327 sales of 1 to 3 family homes from 2015-2016.</p>
+<p><a href="https://www.dropbox.com/scl/fo/nb7q1qpg99lfonfjvnzx3/AKfuNrWWZrt8aptGdJLfXyg?rlkey=2t6f6fc6yu57moiv8aofyiaab&amp;st=xx97m2pf&amp;dl=0">Data Download Link</a></p>
+<p>We will use the <code>caret</code> (Classification And Regression Training) package.</p>
+<p><strong>To make the steps clear, please only run all the green code chunks. The code chunks left gray are just for explanation.</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c("caret", "rattle", "gam"))</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rattle)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>houses <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/boston_house.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Machine learning models use <strong>every column</strong> you give them as a predictor when you write <code>price ~ .</code>. So we first remove a few ID columns and text fields that the model doesn’t need to learn from.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>modeldata <span class="ot">&lt;-</span> houses <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(parcel_no, lat, lon)) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(modeldata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,327
+Columns: 15
+$ price         &lt;dbl&gt; 4600000, 4300000, 4274500, 4200000, 3900000, 3877500, 38…
+$ living_area   &lt;dbl&gt; 3018, 3981, 5439, 4146, 4396, 3849, 4449, 2702, 2611, 24…
+$ style         &lt;chr&gt; "Row_End", "Row_Middle", "Row_Middle", "Row_Middle", "Ro…
+$ floors        &lt;dbl&gt; 3.0, 4.0, 4.0, 4.0, 4.0, 4.0, 3.0, 3.0, 3.0, 3.0, 3.0, 4…
+$ bedrooms      &lt;dbl&gt; 5, 5, 6, 4, 4, 4, 5, 3, 4, 3, 4, 5, 5, 5, 4, 3, 4, 4, 5,…
+$ full_bath     &lt;dbl&gt; 5, 3, 5, 3, 2, 3, 3, 3, 3, 2, 4, 4, 3, 3, 2, 2, 4, 3, 3,…
+$ half_bath     &lt;dbl&gt; 3, 1, 1, 0, 2, 1, 1, 1, 3, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1,…
+$ kitchens      &lt;dbl&gt; 1, 1, 2, 1, 1, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 1, 1, 2,…
+$ fireplaces    &lt;dbl&gt; 7, 4, 4, 1, 5, 2, 0, 3, 2, 5, 1, 2, 1, 5, 1, 0, 3, 1, 0,…
+$ land_use      &lt;chr&gt; "R1", "R1", "R2", "R1", "R1", "R1", "R1", "R1", "R1", "R…
+$ owner_occ     &lt;chr&gt; "N", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "Y", "N", "Y", "…
+$ total_rooms   &lt;dbl&gt; 10, 10, 12, 12, 10, 9, 11, 8, 9, 9, 9, 12, 8, 10, 8, 5, …
+$ yr_built      &lt;dbl&gt; 1890, 1890, 1900, 1860, 1809, 1900, 1890, 1890, 1890, 18…
+$ dist_downtown &lt;dbl&gt; 0.3068108, 1.1673875, 0.3365661, 1.1373739, 0.3848319, 0…
+$ dist_transit  &lt;dbl&gt; 0.1913399, 0.2849169, 0.2181033, 0.2549522, 0.2674126, 0…</code></pre>
+</div>
+</div>
+</section>
+<section id="components-in-the-model-fitting-process" class="level1">
+<h1>Components in the Model Fitting Process</h1>
+<p>The <code>caret</code> package gives one common interface to hundreds of machine learning models. Once you understand what each model does, putting it into code is a pretty standard process. You fill in the same code skeleton every time, and <code>caret</code> does a lot of the work for you:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Train</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  y <span class="sc">~</span> x,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> ,          <span class="co"># training data</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> ,        <span class="co"># which model</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> ,     <span class="co"># how to validate (cross-validation)</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneLength =</span> ,    <span class="co"># how many parameter values to try</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)   <span class="co"># data preprocessing</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> )</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Test error</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="fu">RMSE</span>(pred, )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Let’s walk through each piece.</strong></p>
+<section id="data-preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing">Data preprocessing</h2>
+<p>A machine learning model is just a pattern-finding machine, so it works better and runs more smoothly when the data is prepared. Preparation puts variables on equal footing so they can be compared fairly. Common steps include:</p>
+<ul>
+<li><strong>Feature scaling (variable standardization).</strong> Put predictors on the same scale. Otherwise <code>living_area</code> (in the thousands) dominates <code>bedrooms</code> (1 to 6) just because its numbers are bigger. This matters most for models that use distances or penalties, like regularized linear regression.</li>
+<li><strong>Imputing missing values.</strong> Missing data can be directly dropped, or, depending on the situation, imputed. We will talk about this next time.</li>
+<li><strong>Encoding categorical variables.</strong> Turning categories like <code>style</code> into 0/1 dummy columns. When you use the formula interface (<code>price ~ .</code>), <strong><code>caret</code> does this automatically.</strong></li>
+</ul>
+<p>In <code>caret</code>, you ask for feature scaling with one argument:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>preProcess <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>This performs <strong>z-score standardization</strong> on all of your variables. Each variable ends up with mean 0 and standard deviation 1: <code>(x - mean) / sd</code>.</p>
+</section>
+<section id="split-train-and-test" class="level2">
+<h2 class="anchored" data-anchor-id="split-train-and-test">Split train and test</h2>
+<p>To know whether a model predicts well, we need to test it on houses where we <strong>know the true price but the model has never seen them</strong>. So we hold out part of the data as a test set. A common split is about 70% training and 30% testing.</p>
+<p>The split is random, so we use <code>set.seed()</code> to make it reproducible: everyone who runs the code with the same “seed” gets the same split. You’ll see code like this, which gives you two datasets, <code>train_data</code> and <code>test_data</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set a random seed (any number works, but use the same one for every model)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>train_index <span class="ot">&lt;-</span> <span class="fu">createDataPartition</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> modeldata<span class="sc">$</span>price,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">p =</span> <span class="fl">0.7</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">list =</span> <span class="cn">FALSE</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>train_data <span class="ot">&lt;-</span> modeldata[ train_index, ]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>test_data  <span class="ot">&lt;-</span> modeldata[<span class="sc">-</span>train_index, ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>createDataPartition()</code> samples within groups of the outcome, so the training and test sets have similar price distributions.</p>
+<p><strong>The test set is used only once, at the very end, to report the final score.</strong> All the model fitting and tuning happens on the training data.</p>
+</section>
+<section id="model" class="level2">
+<h2 class="anchored" data-anchor-id="model">Model</h2>
+<p>You choose the model by filling its name in the <code>method =</code> argument. <code>caret</code> supports over 230 machine learning algorithms, and each one has a short name. You can find them all in this list: <a href="https://topepo.github.io/caret/available-models.html" class="uri">https://topepo.github.io/caret/available-models.html</a>.</p>
+<p>For example, for a random forest model, <code>method = "rf"</code>. The list also tells you which R package the model needs and which tuning parameters it has.</p>
+</section>
+<section id="parameter-tuning" class="level2">
+<h2 class="anchored" data-anchor-id="parameter-tuning">Parameter tuning</h2>
+<p>Every model has some moving parts to tune. Some have one, some have several. You can find each model’s tuning parameters in the same list above. For example, a random forest’s tuning parameter is <code>mtry</code>.</p>
+<p>We usually don’t know the best value in advance, so we try several and keep the one that works best. The argument <code>tuneLength</code> tells <code>caret</code> how many values to try:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tuneLength <span class="ot">=</span> <span class="dv">10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Alternatively, if you have a sense of which values may work, list them yourself with <code>tuneGrid</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this is to say, try exactly these 3 values and nothing else.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tuneGrid <span class="ot">=</span> <span class="fu">expand.grid</span>(<span class="at">mtry =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="cross-validation" class="level2">
+<h2 class="anchored" data-anchor-id="cross-validation">Cross validation</h2>
+<p>How do we compare parameter choices without touching the test set? That’s where <strong>cross-validation</strong> comes in. In <strong>5-fold cross-validation</strong>, <code>caret</code> splits the training data into 5 equal parts (folds). It then runs a round robin: it trains on 4 folds and validates on the 5th, repeating until every fold has been the validation set once. The 5 validation RMSEs are averaged into one number.</p>
+<p>Using 5 different validation sets instead of one stabilizes the result, so a lucky or unlucky split doesn’t trick us. We set this up once with <code>trainControl()</code> and reuse it for every model:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>trControl <span class="ot">=</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="test-error" class="level2">
+<h2 class="anchored" data-anchor-id="test-error">Test error</h2>
+<p>Everything above goes into the training function. Once the model is trained, we predict on the test set, and the <code>RMSE()</code> function gives us the <strong>test error</strong>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get prediction</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate test RMSE</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">RMSE</span>(pred, test_data<span class="sc">$</span>price)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>When the RMSE is in dollars, you can read it: “on average, our predictions are off by about $X.”</p>
+</section>
+</section>
+<section id="start-try-a-shortlist-of-models" class="level1">
+<h1>Start: Try a Shortlist of Models</h1>
+<p>In practice you don’t try all 230 models. For a given kind of problem there is a short list of good candidates. Our problem is a regression problem on tabular data (predicting a number from a table of variables), so we will try four models that range from simple to complex:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 34%">
+<col style="width: 25%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model</th>
+<th>Complexity</th>
+<th>Shape of the pattern it can learn</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regularized linear regression</td>
+<td>Low</td>
+<td>Straight-line relationships</td>
+</tr>
+<tr class="even">
+<td>LOESS</td>
+<td>Medium</td>
+<td>Smooth curves</td>
+</tr>
+<tr class="odd">
+<td>Decision tree</td>
+<td>Medium</td>
+<td>Step-like if-then rules</td>
+</tr>
+<tr class="even">
+<td>Random forest</td>
+<td>High</td>
+<td>Many trees averaged together</td>
+</tr>
+</tbody>
+</table>
+<blockquote class="blockquote">
+<p>Note: In other cases, there are models more suited to the data. For classification, you might shortlist logistic regression (glm) or k-nearest neighbors (knn). For images, perhaps a CNN-based model, which is not in <code>caret</code>. But each kind of data problem has its own shortlist to choose from.</p>
+</blockquote>
+<section id="regularized-linear-regression" class="level2">
+<h2 class="anchored" data-anchor-id="regularized-linear-regression">Regularized linear regression</h2>
+<p>This is the linear regression you already know, plus a <strong>penalty</strong>. Every time the model adds a variable, it weighs that variable’s contribution against the cost of including it. Variables that don’t help much get their coefficients shrunk toward zero. This keeps the model from overfitting when you have many predictors.</p>
+<p>There are two common types of linear model regularization:</p>
+<ul>
+<li><strong>Ridge regression</strong> shrinks the coefficients of less important variables toward zero.</li>
+<li><strong>LASSO regression</strong> shrinks some coefficients all the way to zero, effectively <strong>dropping</strong> those variables from the model.</li>
+</ul>
+<p>The <code>glmnet</code> method mixes the two, so we use <code>method = "glmnet"</code>. It has two tuning parameters:</p>
+<ul>
+<li><code>alpha</code>: the mix between Ridge and LASSO (0 = pure Ridge, 1 = pure LASSO). It sets the type of penalty.</li>
+<li><code>lambda</code>: the strength of the penalty. A bigger <code>lambda</code> means a simpler model.</li>
+</ul>
+<p>With <code>tuneLength = 10</code>, <code>caret</code> automatically tries combinations of <code>alpha</code> and <code>lambda</code> for you, so you don’t need to specify them manually.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>glmnet_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  price <span class="sc">~</span> .,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> train_data,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"glmnet"</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>),</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneLength =</span> <span class="dv">10</span>,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(glmnet_model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>glmnet_result <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(pred, test_data<span class="sc">$</span>price)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>glmnet_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 300091.3</code></pre>
+</div>
+</div>
+<p>That gives you the test RMSE.</p>
+<p>To see which parameter values won the cross-validation, print <code>bestTune</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>glmnet_model<span class="sc">$</span>bestTune</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  alpha   lambda
+7   0.1 16872.05</code></pre>
+</div>
+</div>
+<p>Here what we see is a little lasso (0.1) × a big push for removing variables.</p>
+<p>To see the final model’s coefficients at that <code>lambda</code>, use <code>coef()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">coef</span>(glmnet_model<span class="sc">$</span>finalModel, glmnet_model<span class="sc">$</span>bestTune<span class="sc">$</span>lambda)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>22 x 1 sparse Matrix of class "dgCMatrix"
+                   s=16872.05
+(Intercept)         652734.61
+living_area         124566.93
+styleColonial       -60149.53
+styleConventional   -14900.98
+styleDecker              .   
+styleRow_End         12399.39
+styleRow_Middle      54485.98
+styleSemi_Det       -12579.39
+styleTwo_Fam_Stack   10922.93
+floors              129364.92
+bedrooms            -48503.53
+full_bath           128115.66
+half_bath            35394.07
+kitchens            -96910.42
+fireplaces          158202.77
+land_useR2          -38647.61
+land_useR3         -100364.68
+owner_occY           16176.88
+total_rooms         -13123.57
+yr_built            -35602.85
+dist_downtown       -54962.90
+dist_transit          5838.54</code></pre>
+</div>
+</div>
+<p>Only one variable is dropped here (the one whose coefficient shown as <code>.</code>). Keeping most of the variables gave the best predictions. But this is not an explanation of relationships: there are no significance tests, and variables are kept only because they help prediction.</p>
+</section>
+<section id="loess" class="level2">
+<h2 class="anchored" data-anchor-id="loess">LOESS</h2>
+<p>LOESS (LOcally Estimated Scatterplot Smoothing) fits <strong>curves</strong> instead of straight lines. Instead of fitting one line to all the data, it fits many small regressions, each one using only the nearby points, and joins them into a smooth curve. In <code>caret</code> we use <code>method = "gamLoess"</code>, which fits a LOESS curve for each numeric predictor and adds them up.</p>
+<p>Its tuning parameters are:</p>
+<ul>
+<li><code>span</code>: the share of the data used in each local fit. A <strong>small span</strong> uses only a few nearby points, producing a wiggly curve (complex). A <strong>large span</strong> averages over many points, producing a smooth, nearly straight curve (simple).</li>
+<li><code>degree</code>: the shape of <strong>each small local fit</strong>. 1 fits a straight line, 2 fits a curve (quadratic).</li>
+</ul>
+<p>Here we choose the candidate values ourselves with <code>tuneGrid</code>. <code>expand.grid()</code> builds every combination of the <code>span</code> and <code>degree</code> values we list, and <code>caret</code> tests each one. We can try 8 values of <code>span</code> and keep <code>degree</code> fixed at 1.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>loess_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  price <span class="sc">~</span> ., <span class="at">data =</span> train_data,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"gamLoess"</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneGrid =</span> <span class="fu">expand.grid</span>(<span class="at">span =</span> <span class="fu">seq</span>(<span class="fl">0.2</span>, <span class="fl">0.9</span>, <span class="at">by =</span> <span class="fl">0.1</span>), <span class="at">degree =</span> <span class="dv">1</span>),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">preProcess =</span> <span class="fu">c</span>(<span class="st">"center"</span>, <span class="st">"scale"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(loess_model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>loess_result <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(pred, test_data<span class="sc">$</span>price)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>loess_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 245648.1</code></pre>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Note: You may see a lot of warnings when fitting LOESS, and they can usually be ignored: they appear because LOESS tries to fit many small local regressions with limited data.</p>
+</blockquote>
+<p>To see which <code>span</code> was chosen and how RMSE changed across spans:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>loess_model<span class="sc">$</span>bestTune</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  span degree
+2  0.3      1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(loess_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab7_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Cross-validation selected span = 0.3, the lowest point on the plot. A span of 0.3 means each small local fit uses the 30% of houses closest to the point being estimated.</p>
+</section>
+<section id="tree-based-models" class="level2">
+<h2 class="anchored" data-anchor-id="tree-based-models">Tree-based models</h2>
+<section id="decision-tree" class="level3">
+<h3 class="anchored" data-anchor-id="decision-tree">Decision tree</h3>
+<p>A decision tree learns a set of <strong>if-then-else rules</strong> to make predictions. At each split, the tree decides which variable to use and what value to split on. Each path leads to a smaller group of houses that is more homogeneous in price, and the prediction is the average price in that small group.</p>
+<p>We use <code>method = "rpart"</code>. The tuning parameter is <code>cp</code> (complexity parameter). A split is only kept if it improves the fit by at least <code>cp</code>. A <strong>small <code>cp</code></strong> grows a big, detailed tree (complex, risk of overfitting). A <strong>large <code>cp</code></strong> keeps only a few splits (simple).</p>
+<p>Trees split on the raw values, so they don’t need feature scaling.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>tree_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  price <span class="sc">~</span> .,</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> train_data,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"rpart"</span>,</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>),</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneLength =</span> <span class="dv">10</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(tree_model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>tree_result <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(pred, test_data<span class="sc">$</span>price)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>tree_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 289945.1</code></pre>
+</div>
+</div>
+<p>One nice thing about a single tree is that you can read it. This prints the tree structure:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fancyRpartPlot</span>(</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  tree_model<span class="sc">$</span>finalModel,</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="sc">-</span><span class="dv">3</span>,</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">sub =</span> <span class="st">""</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab7_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Each box shows the average price of the houses. Follow the rules from the top to see how the model reasons: for example, which variable it splits on first tells you the single most useful predictor.</p>
+</section>
+<section id="random-forest" class="level3">
+<h3 class="anchored" data-anchor-id="random-forest">Random forest</h3>
+<p>A single tree is easy to read but unstable: a slightly different sample of houses can give a very different tree. A <strong>random forest</strong> fixes this by growing hundreds of trees, each on a random resample of the data, and <strong>averaging their predictions</strong>. To make the trees differ from one another, each split only gets to consider a random subset of the variables.</p>
+<p>We use <code>method = "rf"</code>. The tuning parameter is <code>mtry</code>, the number of variables randomly considered at each split.</p>
+<p>Random forests take much longer to train (hundreds of trees × 5 folds × each candidate value), so we use a smaller value <code>tuneLength = 3</code> here.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r run code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>rf_model <span class="ot">&lt;-</span> <span class="fu">train</span>(</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  price <span class="sc">~</span> .,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> train_data,</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">"rf"</span>,</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">trControl =</span> <span class="fu">trainControl</span>(<span class="at">method =</span> <span class="st">"cv"</span>, <span class="at">number =</span> <span class="dv">5</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">tuneLength =</span> <span class="dv">3</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>pred <span class="ot">&lt;-</span> <span class="fu">predict</span>(rf_model, <span class="at">newdata =</span> test_data)</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>rf_result <span class="ot">&lt;-</span> <span class="fu">RMSE</span>(pred, test_data<span class="sc">$</span>price)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>rf_result</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 214438.8</code></pre>
+</div>
+</div>
+<p>A forest of hundreds of trees can’t be drawn like a single tree. Instead, we look at <strong>variable importance</strong>: which questions the model found most useful to ask when guessing a price. Every time a tree splits on a variable, the prediction error drops a bit.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>rf_model<span class="sc">$</span>bestTune</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  mtry
+2   11</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">varImp</span>(rf_model))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="lab7_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><code>dist_downtown</code> provides a lot of information for predition. But importance is not statistical significance. Significance asks “is this effect real, or just chance?” Importance asks “how much did the model rely on this variable?” It has no p-value, and it doesn’t tell you the direction. However, knowing the importance helps us open the black box to see what drives its predictions.</p>
+</section>
+</section>
+</section>
+<section id="model-summary" class="level1">
+<h1>Model Summary</h1>
+<p>Now we put the scoreboard together. Each model was tuned with 5-fold cross-validation on the training data and then scored once on the same test set.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Model Type</th>
+<th>Test RMSE ($)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regularized linear model</td>
+<td>300,091</td>
+</tr>
+<tr class="even">
+<td>LOESS regression</td>
+<td>245,648</td>
+</tr>
+<tr class="odd">
+<td>Decision Tree</td>
+<td>289,945</td>
+</tr>
+<tr class="even">
+<td>Random Forest</td>
+<td>214,439</td>
+</tr>
+</tbody>
+</table>
+<p>So for our models, the random forest predicts best, missing the true price by about $214,000 on average. It does better than the other three models ($246,000 to $300,000), and much better than simply guessing the average price for every house ($456,000).</p>
+</section>
+<section id="final-note-analyzing-the-result" class="level1">
+<h1>Final note: analyzing the result</h1>
+<p>The random forest gives the lowest test error, about $214,000. We stop here because the next logical step up in complexity, a boosted tree (<code>method = "xgbTree"</code>), raised the test RMSE to about $226,000. A more complex model no longer helps.</p>
+<p>Being off by $200K would matter to any buyer or seller, so it’s not a accurate prediction for pricing a single house. It is more useful for broad questions, such as comparing typical prices across areas or flagging houses that look unusually cheap or expensive.</p>
+<p>But why the error still seems large? We can map each house’s prediction error (predicted minus actual). The errors are clustered in space, not random. The model under-predicts in neighborhoods like Jamaica Plain and Charlestown, and over-predicts in Dorchester and East Boston. Our data doesn’t have a good location variable: <code>dist_downtown</code> treats Jamaica Plain and Dorchester the same when they are equally far from downtown, even though they are priced differently. Adding some context variables (population density, school quality, water, parks, etc.) should help reduce the error.</p>
+<p><img src="..\img/lab7-map.png" class="img-fluid" width="489"></p>
+<p>The models can only take us as far as the data allows. Beyond a certain point, better data improves predictions more than a more complex model does.</p>
+</section>
+<section id="exercise" class="level1">
+<h1>Exercise</h1>
+<p>Thousands of taxis drive through Manhattan every day, and many of them are empty while they look for passengers<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Since congestion pricing started in 2025, fewer private cars enter Midtown and Lower Manhattan, but taxi trips there have gone up<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. If we know where and when people need taxis, the city can better plan pickup spots and see where taxis fill gaps that transit leaves.</p>
+<p>The NYC Taxi and Limousine Commission divides the city into 263 taxi zones<a href="#fn3" class="footnote-ref" id="fnref3" role="doc-noteref"><sup>3</sup></a>, and every trip records the zone where it starts. Our data covers the 62 zones in Manhattan. <strong>In this exercise, you will predict how many taxi pickups happen in a zone in a given hour.</strong></p>
+<p>Our data comes in two tables.</p>
+<ul>
+<li><code>manhattan_taxi_trips_2026_09.csv</code> comes from the <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page">NYC yellow taxi trip records</a> (September 2026). Each row is one taxi zone, at one hour, on weekdays or weekends, with the average number of pickups.</li>
+<li><code>manhattan_taxi_zones.csv</code> has one row per zone and describes what the zone is like. It combines Census ACS data on residents, households, car ownership and income; Census LODES job counts; NYC restaurant inspections; Citi Bike stations; and MTA subway stations. See <code>manhattan_taxi_data_dictionary.csv</code> for what each variable means.</li>
+</ul>
+<p><strong>Your task:</strong> predict the average number of taxi pickups (<code>pickups</code>).</p>
+<p>You will need to <strong>join</strong> the two tables first. Before you build a model, it’s worth looking at each zone variable and decide whether to use the raw count or a rate. Then follow the key steps from the lab to build and compare <strong>at least three machine learning models</strong>, try different <code>tuneLength</code> or <code>tuneGrid</code>. <strong>Summarize your results</strong> in a table of test RMSE for each model.</p>
+<p>Write a short discussion of your results, which can include: Which model predicts best, and how does it compare with the simpler models and with a simple guess (the average)? How could predictions like these support a decision (e.g.&nbsp;adding curb spaces, or estimating taxi trips from new developments)? What do you see from each model’s plots. Where does your model make mistakes, and what other predictors would you consider?</p>
+</section>
+<section id="lab-report" class="level1">
+<h1>Lab Report</h1>
+<p>Submit a rendered Quarto report that walks us through your modeling process. Please <strong>upload your rendered HTML file to Canvas by 9am, Wednesday, November 11.</strong></p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Schaller, B. (2017). <em>Empty Seats, Full Streets: Fixing Manhattan’s Traffic Problem.</em> Schaller Consulting. <a href="http://www.schallerconsult.com/rideservices/emptyseats.pdf" class="uri">http://www.schallerconsult.com/rideservices/emptyseats.pdf</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>NY1 (2025, March 1). <em>Taxi rides in congestion zone up in January compared to last year.</em> <a href="https://ny1.com/nyc/manhattan/news/2025/03/01/taxi-rides-in-congestion-zone-up-in-january-compared-to-last-year" class="uri">https://ny1.com/nyc/manhattan/news/2025/03/01/taxi-rides-in-congestion-zone-up-in-january-compared-to-last-year</a><a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p>NYC Taxi and Limousine Commission. <em>TLC Trip Record Data</em> (includes the taxi zone map). <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" class="uri">https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page</a><a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

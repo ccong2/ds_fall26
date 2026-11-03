@@ -336,7 +336,7 @@ The variables are assembled from several sources, including the Census American 
 We have an extract for you: **3,393 block groups in the Boston metropolitan area**, with 11 variables. Download `sld_boston_metro.csv` and its codebook `sld_boston_metro_codebook.csv` from our link.
 
 | Variable | Description |
-|-------------------|-----------------------------------------------------|
+|----|----|
 | `GEOID20` | Block group ID |
 | `county` | County name |
 | `Pct_AO0` | Share of households with **zero cars** (0-1) |
