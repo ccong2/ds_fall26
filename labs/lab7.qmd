@@ -15,7 +15,7 @@ execute:
 
 # Overview
 
-Machine learning is learning patterns from data to predict new data. In my view, it comes down to: choosing a model at the right level of complexity for your data. To predict well on data the model has never seen, the model has to learn the real pattern in the data. It shouldn't be so rough that it misses the pattern (*underfitting*), and it shouldn't be so flexible that it memorizes the noise (*overfitting*).
+Machine learning is learning patterns from data to predict new data. It comes down to: choosing a model at the right level of complexity for your data. To predict well on data the model has never seen, the model has to learn the real pattern in the data. It shouldn't be so rough that it misses the pattern (*underfitting*), and it shouldn't be so flexible that it memorizes the noise (*overfitting*).
 
 We can control complexity in two ways:
 
@@ -58,7 +58,7 @@ houses <- read_csv("data/boston_house.csv")
 houses <- read_csv("../data/boston_house.csv")
 ```
 
-Machine learning models use **every column** you give them as a predictor when you write `price ~ .`. So we first remove a few ID columns and text fields that the model doesn't need to learn from.
+Machine learning models use every column you give them as a predictor when you write `price ~ .`. So we first remove a few ID columns or text fields that the model doesn't need to learn from.
 
 ```{r}
 #| class-source: run
@@ -76,20 +76,20 @@ The `caret` package gives one common interface to hundreds of machine learning m
 ```{r}
 #| eval: false
 # Train
-model <- train(
+model <- train( 
   y ~ x,
-  data = ,          # training data
-  method = ,        # which model
-  trControl = ,     # how to validate (cross-validation)
-  tuneLength = ,    # how many parameter values to try
-  preProcess = c("center", "scale")   # data preprocessing
+  data = ...,          # training data
+  method = ...,        # which model
+  trControl = ...,     # how to validate (cross-validation)
+  tuneLength = ...,    # how many parameter values to try
+  preProcess = ...   # data preprocessing
 )
 
 # Predict
-pred <- predict(model, newdata = )
+pred <- predict(model, newdata = ...)
 
 # Test error
-RMSE(pred, )
+RMSE(pred, ...)
 ```
 
 **Let's walk through each piece.**
@@ -98,8 +98,8 @@ RMSE(pred, )
 
 A machine learning model is just a pattern-finding machine, so it works better and runs more smoothly when the data is prepared. Preparation puts variables on equal footing so they can be compared fairly. Common steps include:
 
--   **Feature scaling (variable standardization).** Put predictors on the same scale. Otherwise `living_area` (in the thousands) dominates `bedrooms` (1 to 6) just because its numbers are bigger. This matters most for models that use distances or penalties, like regularized linear regression.
--   **Imputing missing values.** Missing data can be directly dropped, or, depending on the situation, imputed. We will talk about this next time.
+-   **Feature scaling (variable standardization).** Put predictors on the same scale. This matters most for models that use distances or penalties, like regularized linear regression. Otherwise `living_area` (in the thousands) dominates `bedrooms` (1 to 6) just because its numbers are bigger.
+-   **Imputing missing values.** Missing data can be directly dropped, or, depending on the situation, imputed. We will talk about data imputation next time.
 -   **Encoding categorical variables.** Turning categories like `style` into 0/1 dummy columns. When you use the formula interface (`price ~ .`), **`caret` does this automatically.**
 
 In `caret`, you ask for feature scaling with one argument:
@@ -115,7 +115,7 @@ This performs **z-score standardization** on all of your variables. Each variabl
 
 To know whether a model predicts well, we need to test it on houses where we **know the true price but the model has never seen them**. So we hold out part of the data as a test set. A common split is about 70% training and 30% testing.
 
-The split is random, so we use `set.seed()` to make it reproducible: everyone who runs the code with the same "seed" gets the same split. You'll see code like this, which gives you two datasets, `train_data` and `test_data`:
+The split is random, so we use `set.seed()` to make it reproducible: every model split data by the same random "seed". You'll see code like below, `createDataPartition()` gives you two datasets, `train_data` and `test_data`:
 
 ```{r}
 #| class-source: run
@@ -132,9 +132,7 @@ train_data <- modeldata[ train_index, ]
 test_data  <- modeldata[-train_index, ]
 ```
 
-`createDataPartition()` samples within groups of the outcome, so the training and test sets have similar price distributions.
-
-**The test set is used only once, at the very end, to report the final score.** All the model fitting and tuning happens on the training data.
+The test set is used only once, at the very end, to report the final score. All the model fitting and tuning happens on the training data.
 
 ## Model
 
@@ -146,14 +144,14 @@ For example, for a random forest model, `method = "rf"`. The list also tells you
 
 Every model has some moving parts to tune. Some have one, some have several. You can find each model's tuning parameters in the same list above. For example, a random forest's tuning parameter is `mtry`.
 
-We usually don't know the best value in advance, so we try several and keep the one that works best. The argument `tuneLength` tells `caret` how many values to try:
+We usually don't know the best value in advance, so we try several and keep the one that works best. The argument `tuneLength` tells `caret` **how many** values to try:
 
 ```{r}
 #| eval: false
 tuneLength = 10
 ```
 
-Alternatively, if you have a sense of which values may work, list them yourself with `tuneGrid`:
+Alternatively, if you have a sense of what values may work, you can list them yourself with `tuneGrid`:
 
 ```{r}
 #| eval: false
@@ -165,7 +163,7 @@ tuneGrid = expand.grid(mtry = c(2, 5, 10))
 
 How do we compare parameter choices without touching the test set? That's where **cross-validation** comes in. In **5-fold cross-validation**, `caret` splits the training data into 5 equal parts (folds). It then runs a round robin: it trains on 4 folds and validates on the 5th, repeating until every fold has been the validation set once. The 5 validation RMSEs are averaged into one number.
 
-Using 5 different validation sets instead of one stabilizes the result, so a lucky or unlucky split doesn't trick us. We set this up once with `trainControl()` and reuse it for every model:
+Using 5 different validation sets instead of one stabilizes the result, so a lucky or unlucky split doesn't trick us. We set this up once with `trainControl()`:
 
 ```{r}
 #| eval: false
@@ -209,10 +207,10 @@ There are two common types of linear model regularization:
 -   **Ridge regression** shrinks the coefficients of less important variables toward zero.
 -   **LASSO regression** shrinks some coefficients all the way to zero, effectively **dropping** those variables from the model.
 
-The `glmnet` method mixes the two, so we use `method = "glmnet"`. It has two tuning parameters:
+The `glmnet` (Elastic net) method mixes the two, so we use `method = "glmnet"`. It has two tuning parameters:
 
 -   `alpha`: the mix between Ridge and LASSO (0 = pure Ridge, 1 = pure LASSO). It sets the type of penalty.
--   `lambda`: the strength of the penalty. A bigger `lambda` means a simpler model.
+-   `lambda`: the strength of the penalty. A bigger `lambda` means less variables.
 
 With `tuneLength = 10`, `caret` automatically tries combinations of `alpha` and `lambda` for you, so you don't need to specify them manually.
 
@@ -260,7 +258,7 @@ Its tuning parameters are:
 -   `span`: the share of the data used in each local fit. A **small span** uses only a few nearby points, producing a wiggly curve (complex). A **large span** averages over many points, producing a smooth, nearly straight curve (simple).
 -   `degree`: the shape of **each small local fit**. 1 fits a straight line, 2 fits a curve (quadratic).
 
-Here we choose the candidate values ourselves with `tuneGrid`. `expand.grid()` builds every combination of the `span` and `degree` values we list, and `caret` tests each one. We can try 8 values of `span` and keep `degree` fixed at 1.
+Here let's try choosing the candidate values ourselves with `tuneGrid`. `expand.grid()` builds every combination of the `span` and `degree` values we list, and `caret` tests each one. We can try 8 values of `span` and keep `degree` fixed at 1.
 
 ```{r}
 #| class-source: run
@@ -293,7 +291,7 @@ Cross-validation selected span = 0.3, the lowest point on the plot. A span of 0.
 
 ### Decision tree
 
-A decision tree learns a set of **if-then-else rules** to make predictions. At each split, the tree decides which variable to use and what value to split on. Each path leads to a smaller group of houses that is more homogeneous in price, and the prediction is the average price in that small group.
+A decision tree learns a set of **if-then-else rules** to make predictions. At each split, the tree decides which variable to use and what value to split on. Each path leads to a smaller group of houses, and the prediction is the average price in that small group.
 
 We use `method = "rpart"`. The tuning parameter is `cp` (complexity parameter). A split is only kept if it improves the fit by at least `cp`. A **small `cp`** grows a big, detailed tree (complex, risk of overfitting). A **large `cp`** keeps only a few splits (simple).
 
@@ -325,7 +323,7 @@ fancyRpartPlot(
 )
 ```
 
-Each box shows the average price of the houses. Follow the rules from the top to see how the model reasons: for example, which variable it splits on first tells you the single most useful predictor.
+Each box shows the average price of the houses. Follow the rules from the top to see how the model reasons: which variable it splits on tells you the most useful predictor at each step.
 
 ### Random forest
 
@@ -371,11 +369,11 @@ Now we put the scoreboard together. Each model was tuned with 5-fold cross-valid
 | Decision Tree | `r format(round(tree_result), big.mark = ",", scientific = FALSE)` |
 | Random Forest | `r format(round(rf_result), big.mark = ",", scientific = FALSE)` |
 
-So for our models, the random forest predicts best, missing the true price by about \$214,000 on average. It does better than the other three models (\$246,000 to \$300,000), and much better than simply guessing the average price for every house (\$456,000).
+So for our models, the random forest predicts best, missing the true price by about \$214,000 on average. It does better than the other three models (\$246,000 to \$300,000), and much better than simply averaging the prices for all house (\$456,000).
 
 # Final note: analyzing the result
 
-The random forest gives the lowest test error, about \$214,000. We stop here because the next logical step up in complexity, a boosted tree (`method = "xgbTree"`), raised the test RMSE to about \$226,000. A more complex model no longer helps.
+The random forest gives the lowest test error. We stop here because the next logical step up in complexity, a gradient boosted tree (`method = "xgbTree"`), raised the test RMSE to about \$226,000. A more complex model no longer helps.
 
 Being off by \$200K would matter to any buyer or seller, so it's not a accurate prediction for pricing a single house. It is more useful for broad questions, such as comparing typical prices across areas or flagging houses that look unusually cheap or expensive.
 
@@ -404,7 +402,9 @@ Our data comes in two tables.
 
 **Your task:** predict the average number of taxi pickups (`pickups`).
 
-You will need to **join** the two tables first. Before you build a model, it's worth looking at each zone variable and decide whether to use the raw count or a rate. Then follow the key steps from the lab to build and compare **at least three machine learning models**, try different `tuneLength` or `tuneGrid`. **Summarize your results** in a table of test RMSE for each model.
+You will need to **join** the two tables first. Before you build a model, it's worth looking at each zone variable, think about how they were constructed, how they might be helpful for prediction.
+
+Then follow the key steps from the lab to build and compare **at least three machine learning models**, try different `tuneLength` or `tuneGrid`. Explore model types (e.g. besides what we show here, you can try `xgbTree`). **Summarize your results** in a table of test RMSE for each model.
 
 Write a short discussion of your results, which can include: Which model predicts best, and how does it compare with the simpler models and with a simple guess (the average)? How could predictions like these support a decision (e.g. adding curb spaces, or estimating taxi trips from new developments)? What do you see from each model's plots. Where does your model make mistakes, and what other predictors would you consider?
 
