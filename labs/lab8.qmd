@@ -1,1 +1,392 @@
+---
+title: "Fairness-Aware Classification Models with ![](../img/Rlogo.png){width=60px}"
+subtitle: <span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span>
+date: "Last Updated `r Sys.Date()`"
+format: html
+editor: visual
+execute: 
+  warning: false
+---
 
+```{r}
+#| message: false
+library(tidyverse)
+library(caret)
+library(mlr3fairness)
+```
+
+# Data and Disputes
+
+Today we will explore the COMPAS (Correctional Offender Management Profiling for Alternative Sanctions) model. It was a popular commercial algorithm used by judges and parole officers for scoring criminal defendant’s likelihood of reoffending (recidivism). [ProPublica](https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm) has shown that the algorithm is biased in favor of white defendants, and against black inmates, based on a two-year follow-up study (i.e who actually committed crimes or violent crimes after 2 years). The pattern of mistakes across racial groups in this dataset is notable.
+
+This dataset is frequently used to study machine learning bias and is now readily available through [`mlr3fairness`](https://search.r-project.org/CRAN/refmans/mlr3fairness/html/compas.html) package.
+
+```{r}
+data("compas", package = "mlr3fairness")
+```
+
+Check out `?mlr3fairness::compas` to see its documentation including variable explanations and data processing notes. The data includes basic demographics (`age`, `race`, `sex`), and a few variables about prior offense history, such as charge degree (`c_charge_degree`: F for Felony, M for Misdemeanor), and `length_of_stay`.
+
+The `decile_score` column is the COMPAS model's estimated risk of recidivism (1–10). The `score_text` column puts these into text categories: Low (1–4), Medium (5–7), and High (8–10) risk.
+
+Then there is the `two_year_recid` column. This is based on Propublica's follow-up. It's a binary variable indicate whether defendant was actually rearrested (1) and not rearrested (0) within two years.
+
+## Evaluate COMPAS
+
+How did COMPAS come up with the `decile_score` is not known (a proprietary algorithm), but we can treat these scores as a "predicted label", and the `two_year_recid` as the "actual label" to evaluate this COMPAS's performance.
+
+To clarify our analysis, we'll create two new columns. The first, **predicted**, will be "Yes" if `decile_score` is greater than 5, and "No" if otherwise. The second, **actual**, will be "Yes" if `two_year_recid` is 1, and "No" if it is 0.
+
+```{r}
+compas <- compas |>
+  mutate(
+    predicted = case_when(
+      decile_score > 5  ~ "yes",
+      decile_score <= 5 ~ "no"
+    ),
+    actual = factor(
+      two_year_recid,
+      levels = c(0, 1),
+      labels = c("no", "yes")
+    )
+  )
+```
+
+## **Model Accuracy**
+
+How well does COMPAS predict reoffending? One way to measure it is by checking the model’s accuracy. Since this is a classification problem with "Yes" or "No" outcomes, accuracy is defined as the proportion of **correct predictions**: both when the model predicts reoffending and the person does reoffend, and when it predicts no reoffending and the person does not.
+
+In other words, accuracy tells us how often the model is correct overall.
+
+```{r}
+correct_predictions <- compas |>
+  filter(
+    (predicted == "yes" & actual == "yes") |
+    (predicted == "no" & actual == "no")
+)
+
+accuracy <- nrow(correct_predictions) / nrow(compas)
+accuracy
+```
+
+In our case, the accuracy of the COMPAS model is about 0.66, meaning it makes the correct prediction 66% of the time. It's not particularly high, but it's better than random guessing (50%).
+
+## Confusion Matrix
+
+Accuracy doesn’t show in what way a model makes mistakes. It treats a **false positive** (predicting someone will reoffend when they won't) the same as a **false negative** (predicting someone won’t reoffend when they will). In practice, these errors can have very different implications.
+
+Confusion matrix breaks down the types of correct and incorrect predictions:
+
+```{r}
+# True Positive: predicted recidivism, actually recidivated
+TP <- sum(compas$predicted == "yes" & compas$actual == "yes")  
+
+# True Negative: predicted no recidivism, didn't recidivate
+TN <- sum(compas$predicted == "no" & compas$actual == "no")  
+
+# False Positive: predicted recidivism, didn't recidivate
+FP <- sum(compas$predicted == "yes" & compas$actual == "no")  
+
+# False Negative: predicted no recidivism, actually recidivated
+FN <- sum(compas$predicted == "no" & compas$actual == "yes")  
+
+# Create a matrix manually
+conf_matrix <- matrix(c(TN, FN, FP, TP),
+                      nrow = 2, byrow = TRUE,
+                      dimnames = list(Prediction = c("N", "P"),
+                                      Reference = c("N", "P")))
+conf_matrix
+```
+
+This matrix reads:
+
+```         
+           Reference (Actual)
+Prediction    no     yes
+         -----------------
+      no  |   TN     FN
+      yes |   FP     TP
+```
+
+A perfect classifier would only have non-zero values on it's main diagonal (TN and TP).
+
+To put this result in our context, in the "Actual No" column, there are (2647+716=3363) people who actually did not reoffend. Among them, 716 were misclassified. In other words, about (716/3363 = 21%) non-reoffenders were flagged as high risk. This is the **False Positive Rate (FPR)**: the proportion of non-reoffenders incorrectly predicted as reoffenders.
+
+## Breaking it down by racial groups
+
+If we take a closer look and break down the confusion matrix by racial groups, we will see that the model’s errors are not evenly distributed.
+
+[The analysis by Propublica](https://www.propublica.org/article/how-we-analyzed-the-compas-recidivism-algorithm) has this quote:
+
+> "Black defendants were often predicted to be at a higher risk of recidivism than they actually were. Our analysis found that black defendants who did not recidivate over a two-year period were nearly twice as likely to be misclassified as higher risk compared to their white counterparts"
+
+This means the **FPR** (predicting someone will reoffend when they won't) is higher for Black defendants compared to white defendants.
+
+To make the process easier and reusable, we will **write a function** that generates a confusion matrix for any specified race. Writing your own function can be a bit less intuitive, but it works like outlining the entire process using “placeholder” variables. After the process is built, you use the function by providing actual variables as inputs to replace those placeholders.
+
+```{r}
+# Our function's name is called confusion_by_race
+# It calculates confusion matrix cells by given race
+confusion_by_race <- function(df, race_name) {
+  df_race <- df |> filter(race == race_name)
+  
+  TP <- sum(df_race$predicted == "yes" & df_race$actual == "yes")
+  TN <- sum(df_race$predicted == "no" & df_race$actual == "no")
+  FP <- sum(df_race$predicted == "yes" & df_race$actual == "no")
+  FN <- sum(df_race$predicted == "no" & df_race$actual == "yes")
+  
+  return(c(TP = TP, TN = TN, FP = FP, FN = FN))
+}
+```
+
+Then calculate the confusion matrix for Black and White population, separately.
+
+```{r}
+# Calculate the confusion matrix values for Black defendants
+# by passing the dataset and racial group to our function
+b_vals <- confusion_by_race(compas, "African-American")
+
+# Then we can get False Positive Rate of Black offendants
+b_fpr <- b_vals["FP"]/(b_vals["FP"]+b_vals["TN"])
+```
+
+```{r}
+# Calculate FPR for White affenders
+w_vals <- confusion_by_race(compas, "Caucasian")
+w_fpr <- w_vals["FP"]/(w_vals["FP"]+ w_vals["TN"])
+```
+
+```{r}
+# Print our results
+str_glue(
+  "FPR: \n",
+  "Black defendants: {round(b_fpr*100)}% \n",
+  "White defendants: {round(w_fpr*100)}%")
+```
+
+This aligns with the Propublic result. Black defendants who did not recidivate over a two-year period were nearly twice as likely to be misclassified as higher risk than their White counterparts.
+
+Propublica has another quote:
+
+> "White defendants were often predicted to be less risky than they were. Our analysis found that white defendants who re-offended within the next two years were mistakenly labeled low risk almost twice as often as black re-offenders"
+
+This points to another type of model error: **False Negative Rate (FNR)**. It tells us, among all people who actually reoffended (the "Actual Yes" column), how many were missed by the model (predicted as No).
+
+```{r}
+# Calculate FNR for Black reaffenders
+b_fnr <- b_vals["FN"]/(b_vals["FN"]+b_vals["TP"]) 
+
+# Calculate for White reaffenders
+w_fnr <- w_vals["FN"]/(w_vals["FN"]+ w_vals["TP"])
+
+# Print our results
+str_glue(
+  "FNR: \n",
+  "Black defendants: {round(b_fnr*100)}% \n",
+  "White defendants: {round(w_fnr*100)}%")
+```
+
+Similar to Propublica's result, White defendants are almost twice as likely to be incorrectly classify as low-risk compared to Black defendants.
+
+Such kind of pattern is generally referred to as **disparate impact**: when a decision-making process seems neutral on the surface but still results in unequal outcomes for certain groups. In this case, the COMPAS model tends to over-predict risk for Black defendants and under-predict for White defendants, leading to unequal results.
+
+Does this mean the COMPAS model is simply problematic? To explore this further, let's try building our own prediction model and see how it performs.
+
+# Logistic classification model
+
+Logistic regression is a supervised learning method that uses a linear combination of variables to predict the probability of a “yes” outcome. Probabilities will range 0 to 1. Then the model turns those probabilities into actual labels like “yes” or “no”.
+
+## **Model Building**
+
+We’ll now prepare data for modeling, and repeat the modeling workflow you’ve used in previous sessions.
+
+```{r}
+modeldata <- compas |> 
+  select(actual, age, race, sex, c_charge_degree, priors_count, length_of_stay)
+
+set.seed(24)
+train_index <- createDataPartition(
+  y = modeldata$actual,
+  p = 0.7,
+  list = FALSE
+)
+
+train_data <- modeldata[train_index, ]
+test_data  <- modeldata[-train_index, ]
+```
+
+## **Variable selection notes**
+
+Analyst decisions already emerge here. Now if we include `race` in a prediction model, our result will reflect patterns found between race and recidivism, which basically read: “Being race X increases predicted recidivism by 0.2”, or the model will consistently add 0.2 for defendants of race X. This kind of prediction is problematic as it encodes unwanted bias into the predictions.
+
+We can choose to remove `race`, but variables like `priors_count` can still reflect historical biases in policing that are correlated with race, leading algorithms to make consistently less accurate predictions for certain socioeconomic groups. Part of the reasons we get unbalanced outcome we saw before is because models learn from historic patterns. We will first see how our logistic models perform then talk about how to correct them.
+
+## Model train
+
+In the `train()` function, set `method = "glm"` to specify that we’re using a generalized linear model. `family = "binomial"` indicates that the outcome variable is binary. This is the set up for building a logistic classification model.
+
+```{r}
+logit_model <- train(
+  actual ~ . - race,  # The "-" sign is to remove one specific variable from all (".") predictors.
+  data = train_data,
+  method = "glm",        
+  family = "binomial"
+)
+```
+
+## **Our Result**
+
+Use our trained logistic classification model to predict class labels for the test set.
+
+```{r}
+pred_class <- predict(logit_model, newdata = test_data)
+
+# take a look at the predicted labels
+pred_class |> head(10)
+```
+
+After generating these predicted classes, we attach them back to the test set for the subsequent confusion matrix calculation.
+
+```{r}
+# attach the predictions to the test data
+test_pred <- 
+  test_data |> 
+  mutate(predicted = pred_class)
+```
+
+Reuse our previous function `confusion_by_race` to calculate error metrics by race:
+
+```{r}
+b_vals <- confusion_by_race(test_pred, "African-American")
+b_fpr <- b_vals["FP"] / (b_vals["FP"] + b_vals["TN"])
+b_fnr <- b_vals["FN"] / (b_vals["FN"] + b_vals["TP"])
+b_acc <- (b_vals["TP"] + b_vals["TN"]) / sum(b_vals)
+
+w_vals <- confusion_by_race(test_pred, "Caucasian")
+w_fpr <- w_vals["FP"] / (w_vals["FP"] + w_vals["TN"])
+w_fnr <- w_vals["FN"] / (w_vals["FN"] + w_vals["TP"])
+w_acc <- (w_vals["TP"] + w_vals["TN"]) / sum(w_vals)
+
+# Print results
+str_glue(
+  "FPR: \n",
+  "Black defendants: {round(b_fpr*100, 1)}% \n",
+  "White defendants: {round(w_fpr*100, 1)}% \n",
+  "Accuracy: {round(b_acc * 100, 1)}%\n\n"
+)
+
+str_glue(
+  "FNR: \n",
+  "Black defendants: {round(b_fnr*100, 1)}% \n",
+  "White defendants: {round(w_fnr*100, 1)}% \n",
+  "Accuracy: {round(b_acc * 100, 1)}%\n\n"
+)
+```
+
+Although our model has slightly better accuracy than COMPAS, it produces very similar results and shows the same level of disparities.
+
+Models can generate biased result because they have learned from historically biased data. We can't undo the historical patterns that shaped the data, and we often can't completely avoid using variables that carry implicit bias. Recognizing this challenge is broadly referred to as **fairness-aware modeling**.
+
+But there are still a range of strategies we can apply: understanding the data context, being critical about variables that may act as proxies for protected characteristics, and applying fairness techniques in the decision-making process to correct potential harm. We'll try to improve our logistic classification model using some of these ideas.
+
+# Adjust Classification Thresholds
+
+In logistic regression, the model doesn't directly predict a "yes" or "no" outcome. It predicts a probability between 0 and 1 that an observation belongs to the positive class. A final classification decision still needs to be made. By default, the threshold is set at 0.5, meaning if the predicted probability is greater than 0.5, the case is classified as "yes", otherwise "no".
+
+By adding `type = "prob"` in the `predict` function, we will get the results of **predicted probabilities** instead of class labels. This lets us adjust the decision threshold, which means, if we lower the decision threshold, the model is more likely to predict "yes".
+
+Changing the threshold affects how predictions fall into true or false positives and negatives, which in turn impacts error rates and fairness.
+
+```{r}
+# This is the probability result
+pred_probs <- predict(logit_model, newdata = test_data, type = "prob")
+
+# take a look at the predicted probabilities
+pred_probs |> head(10)
+```
+
+Now let's try to set different classification thresholds for different groups!
+
+```{r}
+# Attach pred_probs to the test data
+test_pred <- 
+  test_data |> 
+  mutate(pred_prob = pred_probs$yes)
+
+##==== Define separate thresholds for two groups====
+thresholds <- list(
+  African_American = 0.6,
+  Caucasian = 0.5
+)
+
+# Create a new "predicted" column based on group-specific thresholds.
+# For African-American and Caucasian individuals, apply separate thresholds.
+# For all others, use the default threshold of 0.5.
+test_pred <- test_pred |>
+  mutate(predicted = case_when(
+    race == "African-American" & pred_prob > thresholds$African_American ~ "yes",
+    race == "African-American" & pred_prob <= thresholds$African_American ~ "no",
+    race == "Caucasian" & pred_prob > thresholds$Caucasian ~ "yes",
+    race == "Caucasian" & pred_prob <= thresholds$Caucasian ~ "no",
+    pred_prob > 0.5 ~ "yes",
+    TRUE ~ "no"
+  ))
+```
+
+In our new prediction result `test_pred`, we have **applied group-specific thresholds**.
+
+Now we can calculate and compare performance metrics again: FPR, FNR and Accuracy, for African-American and Caucasian defendants, separately.
+
+```{r}
+# three metrics, FNR, FPR and Accuracy for both race
+b_vals <- confusion_by_race(test_pred, "African-American")
+b_fpr <- b_vals["FP"] / (b_vals["FP"] + b_vals["TN"])
+b_fnr <- b_vals["FN"] / (b_vals["FN"] + b_vals["TP"])
+b_acc <- (b_vals["TP"] + b_vals["TN"]) / sum(b_vals)
+
+w_vals <- confusion_by_race(test_pred, "Caucasian")
+w_fpr <- w_vals["FP"] / (w_vals["FP"] + w_vals["TN"])
+w_fnr <- w_vals["FN"] / (w_vals["FN"] + w_vals["TP"])
+w_acc <- (w_vals["TP"] + w_vals["TN"]) / sum(w_vals)
+
+# Print results
+str_glue(
+  "FPR: \n",
+  "Black defendants: {round(b_fpr*100, 1)}% \n",
+  "White defendants: {round(w_fpr*100, 1)}% \n",
+  "Accuracy: {round(b_acc * 100, 1)}%\n\n"
+)
+
+str_glue(
+  "FNR: \n",
+  "Black defendants: {round(b_fnr*100, 1)}% \n",
+  "White defendants: {round(w_fnr*100, 1)}% \n",
+  "Accuracy: {round(b_acc * 100, 1)}%\n\n"
+)
+```
+
+Today's analysis is built on [Chapter 7](https://urbanspatial.github.io/PublicPolicyAnalytics/people-based-ml-models-algorithmic-fairness.html) of [Public Policy Analysis](https://urbanspatial.github.io/PublicPolicyAnalytics/). In this chapter, the author introduced a few guildlines for **an "equity threshold"**,
+
+-   **Minimize differences** in False Positive Rates (FPR) and False Negative Rates (FNR) between racial groups, **while keeping both rates relatively low.**
+-   **Minimize differences** in Accuracy rates between racial groups, **while keeping the overall accuracy high.**
+
+Would you consider our new outcome a better and more equitable model, or maybe there is more room for improvement?
+
+# Exercise
+
+You've seen how changing the decision threshold affects model evaluation. Previously, we tested one pair of thresholds (0.6 for Black defendants and 0.5 for White defendants). But that was just one possibility. Are there other threshold pairs that might lead to even better fairness or overall performance? How to find them?
+
+Your goal for this exercise is to **explore multiple possible threshold combinations** to see whether some produce better fairness, better accuracy, or a better balance of both.
+
+There is no perfect solution: changing thresholds will always involve trade-offs. Your job is to think like a data scientist who has to explain these trade-offs to stakeholders.
+
+Suggested steps:
+
+1.  **Design your approach.** Decide what racial groups/performance metrics you want to focus on and which threshold values you want to try. For threshold values, you can: Pick several threshold pairs based on intuition, or, use a more systematic approach such as sensitivity analysis by testing a series of thresholds (e.g., 0.1 to 1.0) for both groups.
+2.  **Run your analysis.** For each pair, apply your thresholds, calculate metrics such as FPR, FNR, or Accuracy for both racial groups. You can reuse the function we created to do this more efficiently.
+3.  **Communicate your findings.** Use either tables or visualizations to show how your metrics change. You can simply put together a table to compare metrics across threshold pairs. Or you can choose to use line plots, bar charts, or [heatmap](https://r-graph-gallery.com/79-levelplot-with-ggplot2.html). (Refer to the last page of lecture slides for some examples).
+4.  **Reflect and recommend.** Choose a recommended threshold pair (or more than one pairs) based on your analysis. Please include a short write-up to explain what you recommend and why, any trade-offs involved and how you'd explain your results to a general audience.
+
+# Lab Report
+
+Please prepare a rendered Quarto report that walks us through all your work. submit your rendered HTML file to Canvas by **9am, Wednesday, Nov 25**.

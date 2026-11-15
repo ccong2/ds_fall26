@@ -13,5 +13,5 @@ Here you’ll find links and resources for each lab session:
 -   [Lab x \[optional\]: Shiny Apps](labx.qmd)
 -   [Lab 6: Linear Regression Workflow](lab6.qmd)
 -   [Lab 7: Build Machine Learning Models: Predict Housing Prices](lab7.qmd)
--   [Lab 8: Fairness-Aware ML Models: Predict Recidivism](lab9.qmd)
--   [Lab 9: Clustering Approches](lab8.qmd)
+-   [Lab 8: Fairness-Aware ML Models: Predict Recidivism](lab8.qmd)
+-   [Lab 9: Clustering Approches](lab9.qmd)
