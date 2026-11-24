@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-22">
+<meta name="dcterms.date" content="2026-11-23">
 
 <title>Cluster Places by Characteristics and Use in  – Applied Data Science for Cities</title>
 <style>
@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 22, 2026</p>
+      <p class="date">November 23, 2026</p>
     </div>
   </div>
   
@@ -427,7 +427,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="odd">
 <td>3</td>
-<td>Low income, far from Times Square, relatively high share of health jobs</td>
+<td>Low income, far from city center, relatively high share of health jobs</td>
 <td>Uptown / lower-income residential</td>
 </tr>
 <tr class="even">
@@ -611,12 +611,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td>2</td>
 <td>Weekday and weekend peak around 6 to 8pm</td>
-<td>Commercial and midtown, evening peak</td>
+<td>Commercial and downtown, evening peak</td>
 </tr>
 <tr class="odd">
 <td>3</td>
 <td>Activity stays high through day on both weekdays and weekends</td>
-<td>Downtown, all-day and evening</td>
+<td>Midtown, all-day and evening</td>
 </tr>
 <tr class="even">
 <td>4</td>
@@ -628,8 +628,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Like before, we attach the names to the cluster numbers, and then get the zone IDs back from <code>zones</code> so that we can join to the map.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hc_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Downtown nightlife"</span>,</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Commercial and midtown, evening peak"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Downtown, all-day and evening"</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Commercial and downtown, evening peak"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Midtown, all-day and evening"</span>,</span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Uptown, morning commute"</span>)</span>
 <span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>hc_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">zone =</span> <span class="fu">names</span>(hc_cluster),</span>
@@ -662,13 +662,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="final-notes" class="level1">
 <h1>Final Notes</h1>
-<p>We clustered the same zones twice with two different lenses. The first tells us what kind of place a zone is, and the second tells us how taxi pickups happen there. By looking at both, we can get a better idea of what’s going on in each zone. The groups don’t have to match, but where they agree, the kind of place helps explain the rhythm of pickups. Where they disagree, something else is at play, which could be something worth digging into.</p>
+<p>We clustered the same zones twice with two different lenses. The first tells us what kind of place a zone is, and the second tells us how taxi pickups happen there. By looking at both, we can get a better idea of what’s going on in each zone. The groups don’t have to match, but together they can help explain the rhythm of pickups.</p>
 <p>K-means and hierarchical clustering are two ways to run the same workflow, and they have different strengths:</p>
 <ul>
 <li><strong>K-means</strong> assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows. It assumes roughly round clusters in the data space.</li>
 <li><strong>Hierarchical clustering</strong> gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it gets slow and memory-heavy past a few hundred rows, because it needs all pairwise distances.</li>
 </ul>
-<p>There is also no strict criterion that says one clustering is “right”. Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense when you look back at the map.</p>
+<p>There is also no strict criterion that says one clustering is “right”. Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense for your downstream decisions.</p>
 </section>
 <section id="exercise" class="level1">
 <h1>Exercise</h1>

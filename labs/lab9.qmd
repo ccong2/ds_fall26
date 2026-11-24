@@ -1,7 +1,7 @@
 ---
 title: "Cluster Places by Characteristics and Use in ![](../img/Rlogo.png){width=60px}"
 subtitle: <span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span>
-date: "November 22, 2026"
+date: "November 23, 2026"
 format: html
 editor: visual
 execute:
@@ -205,7 +205,7 @@ Reading the profile, the *k* = 4 solution reads roughly as follows. Your cluster
 |------------------|------------------------------|------------------------|
 | 1 | High population density, very high share of hotel and food jobs, many restaurants | Dense, lively, restaurant-heavy neighborhoods |
 | 2 | Very high job density, office share, subway access, restaurants and bike docks; low population density | Central business core |
-| 3 | Low income, far from Times Square, relatively high share of health jobs | Uptown / lower-income residential |
+| 3 | Low income, far from city center, relatively high share of health jobs | Uptown / lower-income residential |
 | 4 | Higher income, fewer households without cars, otherwise close to average | Affluent residential |
 
 We give the names to the clusters in the same order as the cluster numbers. `factor()` turns the cluster numbers (1 to 4) into a set order, and `labels` attaches the name to each accordingly.
@@ -353,16 +353,16 @@ Reading the curves, the 4 groups can be roughly grouped to:
 | Cluster | Pattern in the daily signature | A possible name |
 |------------------|-----------------------------|-------------------------|
 | 1 | Weekend pickups are highest after midnight (0 to 3am) | Downtown nightlife |
-| 2 | Weekday and weekend peak around 6 to 8pm | Commercial and midtown, evening peak |
-| 3 | Activity stays high through day on both weekdays and weekends | Downtown, all-day and evening |
+| 2 | Weekday and weekend peak around 6 to 8pm | Commercial and downtown, evening peak |
+| 3 | Activity stays high through day on both weekdays and weekends | Midtown, all-day and evening |
 | 4 | Sharp peak at 7 to 8am on weekdays | Uptown residential, morning commute |
 
 Like before, we attach the names to the cluster numbers, and then get the zone IDs back from `zones` so that we can join to the map.
 
 ```{r}
 hc_names <- c("Downtown nightlife",
-              "Commercial and midtown, evening peak",
-              "Downtown, all-day and evening",
+              "Commercial and downtown, evening peak",
+              "Midtown, all-day and evening",
               "Uptown, morning commute")
 
 hc_table <- tibble(zone = names(hc_cluster),
@@ -387,14 +387,14 @@ zones_hc |>
 
 # Final Notes
 
-We clustered the same zones twice with two different lenses. The first tells us what kind of place a zone is, and the second tells us how taxi pickups happen there. By looking at both, we can get a better idea of what's going on in each zone. The groups don't have to match, but where they agree, the kind of place helps explain the rhythm of pickups. Where they disagree, something else is at play, which could be something worth digging into.
+We clustered the same zones twice with two different lenses. The first tells us what kind of place a zone is, and the second tells us how taxi pickups happen there. By looking at both, we can get a better idea of what's going on in each zone. The groups don't have to match, but together they can help explain the rhythm of pickups.
 
 K-means and hierarchical clustering are two ways to run the same workflow, and they have different strengths:
 
 -   **K-means** assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows. It assumes roughly round clusters in the data space.
 -   **Hierarchical clustering** gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it gets slow and memory-heavy past a few hundred rows, because it needs all pairwise distances.
 
-There is also no strict criterion that says one clustering is "right". Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense when you look back at the map.
+There is also no strict criterion that says one clustering is "right". Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense for your downstream decisions.
 
 # Exercise
 
