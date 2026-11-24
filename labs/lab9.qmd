@@ -398,21 +398,25 @@ There is also no strict criterion that says one clustering is "right". Clusterin
 
 # Exercise
 
-In this exercise we return to the EPA's Smart Location Database (SLD) that we used in Lab 6. Here we cluster MBTA rapid transit stations by what surrounds them, to build a **station-area typology**: what kinds of places do our subway stations serve?
+In this exercise we return to the EPA's Smart Location Database (SLD) that we used in Lab 6. We will revisit the question from transit-oriented development (TOD): how well does the land around a station fit the transit service it provides?
+
+We will explore this by grouping MBTA subway stations based on variables that describe the stations as well as what's around them. These groups form a station-area typology, a way to describe the different kinds of places our subway stations serve.
 
 Our data comes in several files:
 
--   `mbta_station_data.csv` holds SLD measures for the area within 800 m of each station, such as population, jobs, land use mix, street network and access. These are calculated from the original SLD measures by block group, representing the characteristics of the land adjacent to each station.
+-   `mbta_station_data.csv` holds SLD measures for the area within 800 m of each station, such as transit connections, population and jobs, land use mix, etc. These are calculated from the original block group-level SLD measures, representing the characteristics of the land adjacent to each station.
 -   `mbta_station_data_codebook.csv` describes every column.
 -   `mbta_stations.geojson` (points) and `mbta_lines.geojson` (lines) let you map the result.
 
 You are only required to use **k-means** to do the clustering.
 
-The data has 36 columns, but you won't need them all. It would be a good idea to select the variables to cluster on and sort them into meaningful dimensions.
+The data has 36 columns, but you might not need them all. It would be a good idea to pick variables that capture different things and organize them by what they describe.
 
 Then you can follow the same five steps as in this lab: prepare the variables, scale them, choose *k*, run k-means, and interpret the result.
 
-In your report, show the profile of each cluster (heatmap or rose diagram), name each cluster, and map them with the lines. Finish with a short reflection: What types of stations did you find, and where are they in the region? Do the clusters match what you know about Boston?
+Your results may look different from your friends' depending what variables you use. The groups can also change based on how many groups you ask for (the value of k). As you try different options, you'll see how clustering helps you explore different ways of grouping stations. Use our discussion of transit and land use to decide which grouping makes better sense.
+
+In your report, please walk us through your process and explain the groups you found. Describe what the station areas in each group have in common and what sets them apart. Include a graph comparing the groups' profiles and a map showing which group each station belongs to.
 
 # Lab Report
 
