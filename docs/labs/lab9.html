@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-11-20">
+<meta name="dcterms.date" content="2026-11-22">
 
 <title>Cluster Places by Characteristics and Use in  – Applied Data Science for Cities</title>
 <style>
@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 20, 2026</p>
+      <p class="date">November 22, 2026</p>
     </div>
   </div>
   
@@ -521,14 +521,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>trips_dist <span class="ot">&lt;-</span> <span class="fu">dist</span>(trips_scale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Then we choose a <strong>linkage method</strong>, which defines how to measure the distance between two <em>clusters</em> that each have several members. Common options are <code>"complete"</code> (compare the two farthest members), <code>"average"</code>, and <code>"ward.D2"</code> (merge the pair of clusters that increases the within-cluster variance the least, which often behaves like k-means). We use <code>"ward.D2"</code> because it produces more compact clusters.</p>
+<p>Then we choose a <strong>linkage method</strong>, which defines how to measure the distance between two <em>clusters</em> that each have several members. Common options are <code>"complete"</code> (compare the two farthest members), <code>"average"</code>, and <code>"ward.D2"</code> (merge the pair of clusters that increases the within-cluster variance the least, which often behaves like k-means). Feel free to try each. We can take a look at what <code>"ward.D2"</code> produces. It generally produces more compact clusters.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>hc.out <span class="ot">&lt;-</span> <span class="fu">hclust</span>(trips_dist, <span class="at">method =</span> <span class="st">"ward.D2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">24</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>hc.out <span class="ot">&lt;-</span> <span class="fu">hclust</span>(trips_dist, <span class="at">method =</span> <span class="st">"ward.D2"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Here we have our clustering result. In a dendrogram, branches merge at different y-axis heights. A long vertical gap before a merge suggests a natural place to cut. To cut it, draw a horizontal line across the plot: each branch it crosses is one cluster. Here we cut at <em>k</em> = 5, and <code>rect.hclust()</code> draws boxes around the clusters you get.</p>
+<p>Here we have our clustering result. In a dendrogram, branches merge at different y-axis heights. A long vertical gap before a merge suggests a natural place to cut. To cut it, draw a horizontal line across the plot: each branch it crosses is one cluster. If we cut it at <em>k</em> = 4, and <code>rect.hclust()</code> draws boxes around the clusters you get.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hc.out, <span class="at">cex =</span> <span class="fl">0.7</span>, <span class="at">hang =</span> <span class="sc">-</span><span class="dv">1</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc.out, <span class="at">k =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hc.out, <span class="at">k =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -537,18 +538,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Because we used the zone names as row names, each leaf is labeled with its zone. Zones that merge near the bottom have very similar daily patterns, such as neighbors like the two Financial District zones. We can see Marble Hill and Randalls Island form their own small cluster, because they have almost no pickups (mostly 0 in a lot of hours). The totals are small, so their shares are noisy.</p>
+<p>Because we used the zone names as row names, each leaf is labeled with its zone. Zones that merge near the bottom have very similar daily patterns, such as neighbors like the two Financial District zones.</p>
 <p>The <code>cutree()</code> function returns the cluster number of each zone for a given <em>k</em>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>hc_cluster <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc.out, <span class="at">k =</span> <span class="dv">5</span>)</span>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>hc_cluster <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc.out, <span class="at">k =</span> <span class="dv">4</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>hc_cluster <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       Alphabet City    Battery Park City         Bloomingdale 
                    1                    2                    3 
       Central Harlem Central Harlem North            Chinatown 
-                   4                    4                    5 
+                   4                    4                    2 
         Clinton East         Clinton West         East Chelsea 
-                   1                    3                    5 
+                   1                    3                    2 
    East Harlem North 
                    4 </code></pre>
 </div>
@@ -583,12 +584,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Clusters 3 and 2 show weekday peaks, especially in the early morning for Cluster 3, but peak patterns for both disappear on weekends. Cluster 1 has a particularly strong late-night weekend activity, likely linked to bars and restaurants.</p>
-<p>Cluster 5 is the two-zone cluster containing Marble Hill and Randalls Island. Both have low pickups and shares are unstable (small-number instability), so their pattern should not be over-interpreted.</p>
+<p>Clusters 2 and 4 show weekday peaks, especially in the early morning for Cluster 4, but peak patterns for both disappear on weekends. Cluster 1 has a particularly strong late-night weekend activity, likely linked to bars and restaurants.</p>
 </section>
 <section id="name-the-clusters-1" class="level2">
 <h2 class="anchored" data-anchor-id="name-the-clusters-1">Name the clusters</h2>
-<p>Reading the curves, the 5 groups can be roughly grouped to:</p>
+<p>Reading the curves, the 4 groups can be roughly grouped to:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -610,38 +610,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>2</td>
-<td>Weekday peak around 6pm, a flat day on weekends</td>
-<td>Residential and midtown, evening peak</td>
+<td>Weekday and weekend peak around 6 to 8pm</td>
+<td>Commercial and midtown, evening peak</td>
 </tr>
 <tr class="odd">
 <td>3</td>
-<td>Sharp peak at 7 to 8am on weekdays</td>
-<td>Uptown, morning commute</td>
+<td>Activity stays high through day on both weekdays and weekends</td>
+<td>Downtown, all-day and evening</td>
 </tr>
 <tr class="even">
 <td>4</td>
-<td>Activity stays high through the evening on both weekdays and weekends</td>
-<td>Downtown, all-day and evening</td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td>Almost no pickups (unstable shares)</td>
-<td>Low-volume zones</td>
+<td>Sharp peak at 7 to 8am on weekdays</td>
+<td>Uptown residential, morning commute</td>
 </tr>
 </tbody>
 </table>
 <p>Like before, we attach the names to the cluster numbers, and then get the zone IDs back from <code>zones</code> so that we can join to the map.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>hc_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Downtown nightlife"</span>,</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Residential and midtown, evening peak"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Uptown, morning commute"</span>,</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Downtown, all-day and evening"</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Low-volume zones (noisy pattern)"</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>hc_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">zone =</span> <span class="fu">names</span>(hc_cluster),</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Cluster =</span> <span class="fu">factor</span>(hc_cluster),</span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Type =</span> <span class="fu">factor</span>(hc_cluster, <span class="at">labels =</span> hc_names)) <span class="sc">|&gt;</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(zones, LocationID, zone), <span class="at">by =</span> <span class="st">"zone"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Commercial and midtown, evening peak"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Downtown, all-day and evening"</span>,</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>              <span class="st">"Uptown, morning commute"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>hc_table <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">zone =</span> <span class="fu">names</span>(hc_cluster),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Cluster =</span> <span class="fu">factor</span>(hc_cluster),</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>                   <span class="at">Type =</span> <span class="fu">factor</span>(hc_cluster, <span class="at">labels =</span> hc_names)) <span class="sc">|&gt;</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="fu">select</span>(zones, LocationID, zone), <span class="at">by =</span> <span class="st">"zone"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="map-the-clusters-1" class="level2">
@@ -671,8 +665,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>We clustered the same zones twice with two different lenses. The first tells us what kind of place a zone is, and the second tells us how taxi pickups happen there. By looking at both, we can get a better idea of what’s going on in each zone. The groups don’t have to match, but where they agree, the kind of place helps explain the rhythm of pickups. Where they disagree, something else is at play, which could be something worth digging into.</p>
 <p>K-means and hierarchical clustering are two ways to run the same workflow, and they have different strengths:</p>
 <ul>
-<li><strong>K-means</strong> assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows, but you have to choose <em>k</em> in advance, and it assumes roughly round clusters in the data space.</li>
-<li><strong>Hierarchical clustering</strong> gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it needs all pairwise distances, so it gets slow and memory-heavy past a few hundred rows.</li>
+<li><strong>K-means</strong> assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows. It assumes roughly round clusters in the data space.</li>
+<li><strong>Hierarchical clustering</strong> gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it gets slow and memory-heavy past a few hundred rows, because it needs all pairwise distances.</li>
 </ul>
 <p>There is also no strict criterion that says one clustering is “right”. Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense when you look back at the map.</p>
 </section>

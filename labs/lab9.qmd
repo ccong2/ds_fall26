@@ -1,7 +1,7 @@
 ---
 title: "Cluster Places by Characteristics and Use in ![](../img/Rlogo.png){width=60px}"
 subtitle: <span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span>
-date: "November 20, 2026"
+date: "November 22, 2026"
 format: html
 editor: visual
 execute:
@@ -295,27 +295,28 @@ The algorithm builds the tree (a "dendrogram") bottom-up. First, every observati
 trips_dist <- dist(trips_scale)
 ```
 
-Then we choose a **linkage method**, which defines how to measure the distance between two *clusters* that each have several members. Common options are `"complete"` (compare the two farthest members), `"average"`, and `"ward.D2"` (merge the pair of clusters that increases the within-cluster variance the least, which often behaves like k-means). We use `"ward.D2"` because it produces more compact clusters.
+Then we choose a **linkage method**, which defines how to measure the distance between two *clusters* that each have several members. Common options are `"complete"` (compare the two farthest members), `"average"`, and `"ward.D2"` (merge the pair of clusters that increases the within-cluster variance the least, which often behaves like k-means). Feel free to try each. We can take a look at what `"ward.D2"` produces. It generally produces more compact clusters.
 
 ```{r}
+set.seed(24)
 hc.out <- hclust(trips_dist, method = "ward.D2")
 ```
 
-Here we have our clustering result. In a dendrogram, branches merge at different y-axis heights. A long vertical gap before a merge suggests a natural place to cut. To cut it, draw a horizontal line across the plot: each branch it crosses is one cluster. Here we cut at *k* = 5, and `rect.hclust()` draws boxes around the clusters you get.
+Here we have our clustering result. In a dendrogram, branches merge at different y-axis heights. A long vertical gap before a merge suggests a natural place to cut. To cut it, draw a horizontal line across the plot: each branch it crosses is one cluster. If we cut it at *k* = 4, and `rect.hclust()` draws boxes around the clusters you get.
 
 ```{r}
 #| fig-width: 12
 #| fig-height: 6
 plot(hc.out, cex = 0.7, hang = -1)
-rect.hclust(hc.out, k = 5)
+rect.hclust(hc.out, k = 4)
 ```
 
-Because we used the zone names as row names, each leaf is labeled with its zone. Zones that merge near the bottom have very similar daily patterns, such as neighbors like the two Financial District zones. We can see Marble Hill and Randalls Island form their own small cluster, because they have almost no pickups (mostly 0 in a lot of hours). The totals are small, so their shares are noisy.
+Because we used the zone names as row names, each leaf is labeled with its zone. Zones that merge near the bottom have very similar daily patterns, such as neighbors like the two Financial District zones.
 
 The `cutree()` function returns the cluster number of each zone for a given *k*:
 
 ```{r}
-hc_cluster <- cutree(hc.out, k = 5)
+hc_cluster <- cutree(hc.out, k = 4)
 hc_cluster |> head(10)
 ```
 
@@ -343,30 +344,26 @@ trips_profile |>
     theme_minimal()
 ```
 
-Clusters 3 and 2 show weekday peaks, especially in the early morning for Cluster 3, but peak patterns for both disappear on weekends. Cluster 1 has a particularly strong late-night weekend activity, likely linked to bars and restaurants.
-
-Cluster 5 is the two-zone cluster containing Marble Hill and Randalls Island. Both have low pickups and shares are unstable (small-number instability), so their pattern should not be over-interpreted.
+Clusters 2 and 4 show weekday peaks, especially in the early morning for Cluster 4, but peak patterns for both disappear on weekends. Cluster 1 has a particularly strong late-night weekend activity, likely linked to bars and restaurants.
 
 ## Name the clusters
 
-Reading the curves, the 5 groups can be roughly grouped to:
+Reading the curves, the 4 groups can be roughly grouped to:
 
 | Cluster | Pattern in the daily signature | A possible name |
 |------------------|-----------------------------|-------------------------|
 | 1 | Weekend pickups are highest after midnight (0 to 3am) | Downtown nightlife |
-| 2 | Weekday peak around 6pm, a flat day on weekends | Residential and midtown, evening peak |
-| 3 | Sharp peak at 7 to 8am on weekdays | Uptown, morning commute |
-| 4 | Activity stays high through the evening on both weekdays and weekends | Downtown, all-day and evening |
-| 5 | Almost no pickups (unstable shares) | Low-volume zones |
+| 2 | Weekday and weekend peak around 6 to 8pm | Commercial and midtown, evening peak |
+| 3 | Activity stays high through day on both weekdays and weekends | Downtown, all-day and evening |
+| 4 | Sharp peak at 7 to 8am on weekdays | Uptown residential, morning commute |
 
 Like before, we attach the names to the cluster numbers, and then get the zone IDs back from `zones` so that we can join to the map.
 
 ```{r}
 hc_names <- c("Downtown nightlife",
-              "Residential and midtown, evening peak",
-              "Uptown, morning commute",
+              "Commercial and midtown, evening peak",
               "Downtown, all-day and evening",
-              "Low-volume zones (noisy pattern)")
+              "Uptown, morning commute")
 
 hc_table <- tibble(zone = names(hc_cluster),
                    Cluster = factor(hc_cluster),
@@ -394,8 +391,8 @@ We clustered the same zones twice with two different lenses. The first tells us 
 
 K-means and hierarchical clustering are two ways to run the same workflow, and they have different strengths:
 
--   **K-means** assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows, but you have to choose *k* in advance, and it assumes roughly round clusters in the data space.
--   **Hierarchical clustering** gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it needs all pairwise distances, so it gets slow and memory-heavy past a few hundred rows.
+-   **K-means** assigns each point to its nearest center. It is simple and fast, and it works with thousands of rows. It assumes roughly round clusters in the data space.
+-   **Hierarchical clustering** gives you a whole tree, so you can see which zones are most alike and decide later where to cut. But it gets slow and memory-heavy past a few hundred rows, because it needs all pairwise distances.
 
 There is also no strict criterion that says one clustering is "right". Clustering is exploratory: the results are a tool to help you describe places. What matters is that you can say what each group means, and that the meaning makes sense when you look back at the map.
 
