@@ -1,7 +1,7 @@
 ---
 title: "Cluster Places by Characteristics and Use in ![](../img/Rlogo.png){width=60px}"
 subtitle: <span style="color:#2C3E50">11.118/11.218 Applied Data Science for Cities</span>
-date: "Last Updated `r Sys.Date()`"
+date: "November 20, 2026"
 format: html
 editor: visual
 execute:
@@ -65,7 +65,7 @@ zones_map <- st_read("../data/taxi_zones.geojson")
 
 We will first focus on `manhattan_taxi_zones.csv` and look for zones that are similar in their land use characteristics. For interpretation later on, it helps to organize the variables by what they describe. Ours fall into a few dimensions of a place: **residential characteristics (who lives there), employment (what jobs are there), and what the place is like, such as commercial activity and transportation connections**.
 
-We name the new variables with a prefix: `R_` for residential, `E_` for employment, `P_` for place. Turn the raw counts into rates and densities so that we describe the *characteristics* of a zone instead of its size. We also leave out the ID and name columns, because we only want to cluster on the characteristics.
+While organizing the variables, we can name them with a prefix: `R_` for residential, `E_` for employment, `P_` for place, just for easy interpretation. Turn the raw counts into rates and densities so that we describe the *characteristics* of a zone instead of its size. We also leave out the ID and name columns, because we only want to cluster on the characteristics.
 
 ```{r}
 zones_data <- zones |>
@@ -116,14 +116,28 @@ But we have to tell it *k*. A few diagnostics can help. The package `factoextra`
 -   **Elbow method (`"wss"`).** Plots the total within-cluster sum of squares against *k*. It always decreases as *k* grows, so we look for the "elbow", the point after which adding more clusters brings only small improvements.
 
 ```{r}
+#| eval: false
+fviz_nbclust(zones_scale, kmeans, method = "wss")
+```
+
+```{r}
 #| fig-width: 5
+#| echo: false
+set.seed(123)
 fviz_nbclust(zones_scale, kmeans, method = "wss")
 ```
 
 -   **Silhouette method (`"silhouette"`).** For each observation, the silhouette compares how close it is to its own cluster with how close it is to the nearest other cluster. We look for the *k* with a high average silhouette.
 
 ```{r}
+#| eval: false
+fviz_nbclust(zones_scale, kmeans, method = "silhouette")
+```
+
+```{r}
 #| fig-width: 5
+#| echo: false
+set.seed(123)
 fviz_nbclust(zones_scale, kmeans, method = "silhouette")
 ```
 
